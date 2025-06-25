@@ -1,49 +1,20 @@
 <!DOCTYPE html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boz Yap - Puzzle Oyunu</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
-</head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Boz Yap - Puzzle Oyunu</title><link rel="stylesheet" href="style.css">
+       <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script></head>
 <body>
-    <div class="game-container">
-        <h1 id="gameTitle">Boz Yap</h1>
-        <div class="selection-screen" id="selectionScreen">
-            <p>Zorluk Seviyesi Seçin:</p>
-            <div class="piece-options">
-                <button class="piece-button" data-cols="4" data-rows="3">Kolay (4x3)</button>
-                <button class="piece-button" data-cols="8" data-rows="6">Orta (8x6)</button>
-                <button class="piece-button" data-cols="12" data-rows="9">Zor (12x9)</button>
-                <button class="piece-button" data-cols="16" data-rows="12">Çok Zor (16x12)</button>
-                <button class="piece-button" data-cols="20" data-rows="15">İmkansız (20x15)</button>
-            </div>
-
-            <p>Resim Kategorisi Seçin:</p>
-            <div class="category-options">
-                </div>
-            <button id="startGameButton" disabled>Oyuna Başla</button>
-        </div>
-
-        <div class="game-board" id="gameBoard">
-            </div>
-
-        <div class="game-controls">
-            <div id="timer" class="timer">00:00</div>
-            <button id="hintButton" class="hint-button">İpucu Al</button>
-            <button id="mainMenuFromGame" class="hint-button">Ana Menüye Dön</button>
-        </div>
-
-        <div class="win-screen" id="winScreen">
-            <h2>Tebrikler!</h2>
-            <p>Yapbozu başarıyla tamamladınız!</p>
-            <p id="finalTime">Tamamlama Süreniz: 00:00</p>
-            <button id="playAgainButton">Tekrar Oyna</button>
-            <button id="mainMenuButton">Ana Menü</button>
-        </div>
-    </div>
+    <div class="game-container"><h1 id="gameTitle">Boz Yap</h1><div class="selection-screen" id="selectionScreen"><p>Zorluk Seviyesi Seçin:</p><div class="piece-options">
+                <button class="piece-button" data-cols="4" data-rows="3">Kolay (4x3)</button><button class="piece-button" data-cols="8" data-rows="6">Orta (8x6)</button>
+                <button class="piece-button" data-cols="12" data-rows="9">Zor (12x9)</button><button class="piece-button" data-cols="16" data-rows="12">Çok Zor (16x12)</button>
+                <button class="piece-button" data-cols="20" data-rows="15">İmkansız (20x15)</button></div><p>Resim Kategorisi Seçin:</p>
+    <div class="category-options"></div><button id="startGameButton" disabled>Oyuna Başla</button></div>
+    <div class="game-board" id="gameBoard"></div>
+    <div class="game-controls"><div id="timer" class="timer">00:00</div><button id="hintButton" class="hint-button">İpucu Al</button><button id="mainMenuFromGame" class="hint-button">Ana Menüye Dön</button></div>
+    <div class="win-screen" id="winScreen"><h2>Tebrikler!</h2><p>Yapbozu başarıyla tamamladınız!</p><p id="finalTime">Tamamlama Süreniz: 00:00</p><button id="playAgainButton">Tekrar Oyna</button>
+        <button id="mainMenuButton">Ana Menü</button></div></div>
+    <footer>Ozcelik Inc. 2025</footer>
     <script src="image-data.js"></script>
     <script src="script.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9557c91abe83d612',t:'MTc1MDg4OTMyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    <script>
+        (function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9557c91abe83d612',t:'MTc1MDg4OTMyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
