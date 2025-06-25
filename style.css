@@ -124,10 +124,6 @@ h1 {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
-.puzzle-piece {
-    /* ... diğer stiller ... */
-    /* transform: none;  // Eğer burada bir transform varsa kaldırın */
-}
 
 .puzzle-piece img {
     display: block;
