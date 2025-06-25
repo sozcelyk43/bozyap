@@ -46,14 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSound('hint', 'sounds/button-3.mp3');
 
     // --- Zorluk seviyeleri ve parça sayıları ---
-    // Her seviye için [sütun sayısı, satır sayısı]
     const difficultyLevels = {
-        "Çok Kolay (3x2)": [3, 2],    // Yeni seviye: 6 parça
-        "Kolay (4x3)": [4, 3],       // 12 parça
-        "Orta (6x4)": [6, 4],       // 24 parça
-        "Zor (8x6)": [8, 6],        // 48 parça
-        "Çok Zor (10x8)": [10, 8],   // 80 parça
-        "İmkansız (11x9)": [11, 9]   // 99 parça
+        "Çok Kolay (3x2)": [3, 2],
+        "Kolay (4x3)": [4, 3],
+        "Orta (6x4)": [6, 4],
+        "Zor (8x6)": [8, 6],
+        "Çok Zor (10x8)": [10, 8],
+        "İmkansız (11x9)": [11, 9]
     };
 
     // --- Resim kategorileri ve örnek resim URL'leri (Lokal dosya yolları) ---
@@ -857,18 +856,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 5 saniye boyunca tamamlanmış resmi göster, sonra popup'ı çıkar
             setTimeout(() => {
+                // Tahta stilini sıfırla
                 gameBoard.classList.remove('solved-effect');
                 gameBoard.style.gap = '2px';
                 gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
                 
+                // Final süreyi ayarla
                 const finalTime = timerDisplay.textContent;
                 finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
 
-                // Kazanma ekranını güncelle
+                // Kazanma ekranı metinlerini ve butonlarını görünür yap
                 document.querySelector('#winScreen h2').textContent = 'Harika Başardınız!';
-                document.querySelector('#winScreen #finalTime').style.display = 'block'; // Süreyi göster
-                document.querySelector('#winScreen #playAgainButton').style.display = 'inline-block';
-                document.querySelector('#winScreen #mainMenuButton').style.display = 'inline-block';
+                finalTimeDisplay.style.display = 'block'; // Final süreyi göster
+                playAgainButton.style.display = 'inline-block';
+                mainMenuButton.style.display = 'inline-block';
                 
                 // Tam resmi arka plana ekle
                 winScreen.style.backgroundImage = `url('${selectedImage}')`;
@@ -876,6 +877,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 winScreen.style.backgroundRepeat = 'no-repeat';
                 winScreen.style.backgroundPosition = 'center';
 
+                // Ekranları gizle/göster
                 gameBoard.style.display = 'none';
                 gameControls.style.display = 'none';
                 winScreen.style.display = 'flex'; // Popup'ı göster
