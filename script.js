@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 return response.arrayBuffer();
             })
-            .then(buffer => audioContext.decodeAudioData(buffer))
+            .then(buffer => audioContext.decodeSound(buffer))
             .then(decodedData => {
                 sounds[name] = decodedData;
             })
@@ -187,12 +187,12 @@ document.addEventListener('DOMContentLoaded', () => {
             "images/deniz/deniz03.jpg", "images/deniz/deniz04.jpg",
             "images/deniz/deniz05.jpg", "images/deniz/deniz06.jpg",
             "images/deniz/deniz07.jpg", "images/deniz/deniz08.jpg",
-            "images/deniz/deniz09.jpg", "images/deniz/deniz10.jpg",
-            "images/deniz/deniz11.jpg", "images/deniz/deniz12.jpg",
-            "images/deniz/deniz13.jpg", "images/deniz/deniz14.jpg",
-            "images/deniz/deniz15.jpg", "images/deniz/deniz16.jpg",
-            "images/deniz/deniz17.jpg", "images/deniz/deniz18.jpg",
-            "images/deniz/deniz19.jpg", "images/deniz/deniz20.jpg"
+            "images/deniz/deniz09.jpg", "images/deniz/deniz010.jpg",
+            "images/deniz/deniz011.jpg", "images/deniz/deniz012.jpg",
+            "images/deniz/deniz013.jpg", "images/deniz/deniz014.jpg",
+            "images/deniz/deniz015.jpg", "images/deniz/deniz016.jpg",
+            "images/deniz/deniz017.jpg", "images/deniz/deniz018.jpg",
+            "images/deniz/deniz019.jpg", "images/deniz/deniz020.jpg"
         ],
         "Müzik": [
             "images/muzik/muzik01.jpg", "images/muzik/muzik02.jpg",
@@ -758,7 +758,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalDisplay = currentTouchPiece.style.display;
         const originalVisibility = currentTouchPiece.style.visibility; 
         currentTouchPiece.style.display = 'none'; // DOM'dan geçici olarak kaldırılıyor gibi davran
-        currentTouchPiece.style.visibility = 'hidden'; // Ekstra güvenlik için gizle (render ağacından tamamen gizler)
+        currentTouchPiece.style.visibility = 'hidden'; // Ekstra güvenlik için gizle
         
         const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
         
@@ -776,21 +776,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // İki puzzle parçasının DOM'daki yerini güvenli bir şekilde değiştirme
             const parent = gameBoard; // gameBoard, tüm puzzle parçalarının ebeveyni
             
-            // Bu takas mantığı, herhangi iki kardeş DOM düğümünü yer değiştirmek için evrenseldir.
-            // Bu yöntem, birçok tarayıcıda en güvenilir olanlardan biridir.
-            const dragged = currentTouchPiece;
-            const target = targetPiece;
-
             const temp = document.createElement('div'); // Geçici bir yer tutucu oluştur
             
-            // Önce hedefi geçicinin önüne yerleştir (hedefin şu anki konumunu korumak için)
-            parent.insertBefore(temp, target); 
+            // Elemanları takas etme mantığı:
+            // 1. Hedef parçanın hemen önüne geçici bir yer tutucu koy
+            parent.insertBefore(temp, targetPiece); 
             
-            // Sonra sürükleneni hedefin yerine yerleştir
-            parent.insertBefore(target, dragged); 
+            // 2. Sürüklenen parçayı, hedef parçanın yerine koy
+            parent.insertBefore(targetPiece, currentTouchPiece); 
             
-            // Son olarak hedefi, sürüklenenin eski yerine yerleştir (yani temp'in yerine)
-            parent.insertBefore(dragged, temp); 
+            // 3. Hedef parçanın eski yerine sürüklenen parçayı koy (yani temp'in yerine)
+            parent.insertBefore(currentTouchPiece, temp); 
             
             temp.remove(); // Geçici yer tutucuyu kaldır
 
