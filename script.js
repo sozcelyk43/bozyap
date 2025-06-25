@@ -809,13 +809,73 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
+function showConfetti() {
+        const confettiContainer = document.createElement('div');
+        confettiContainer.style.position = 'fixed';
+        confettiContainer.style.top = '0';
+        confettiContainer.style.left = '0';
+        confettiContainer.style.width = '100%';
+        confettiContainer.style.height = '100%';
+        confettiContainer.style.pointerEvents = 'none'; // Altındaki elementlere tıklanabilir
+        confettiContainer.style.zIndex = '2001'; // İpucu ekranının üzerinde olsun
+        document.body.appendChild(confettiContainer);
 
+        const colors = ['#fce18a', '#ff726d', '#b48cff', '#78d2ff', '#5cd159'];
+        const duration = 1500;
+        const animationEnd = Date.now() + duration;
+
+        (function frame() {
+            const timeLeft = animationEnd - Date.now();
+
+            if (timeLeft <= 0) {
+                confettiContainer.remove();
+                return;
+            }
+
+            const particleCount = 50 * (timeLeft / duration);
+
+            // Daha yoğun bir konfeti yağmuru için particleCount'u artırabilirsiniz
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = '10px';
+                particle.style.height = '10px';
+                particle.style.backgroundColor = colors[[Math.floor(Math.random() * colors.length)]];
+                particle.style.borderRadius = '50%';
+
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+
+                const scale = Math.random() * 0.8 + 0.6;
+                const rotation = Math.random() * 360;
+                const speedX = Math.random() * 2 - 1;
+                const speedY = Math.random() * 5 + 5;
+
+                particle.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${rotation}deg)`;
+
+                confettiContainer.appendChild(particle);
+
+                particle.animate([
+                    { transform: `translate(-50%, -50%) scale(${scale}) rotate(${rotation}deg)`, opacity: 1 },
+                    { transform: `translate(${x + speedX * 100}px, ${y + speedY * 100}px) scale(${scale * 0.8}) rotate(${rotation + 360}deg)`, opacity: 0 }
+                ], {
+                    duration: duration,
+                    easing: 'ease-out'
+                }).finished.then(() => particle.remove());
+            }
+
+            requestAnimationFrame(frame);
+        })();
+    }
     // --- Kazanma Koşulu Kontrolü ---
     function checkWinCondition() {
         const currentOrderDOM = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'));
         let isSolved = true;
         for (let i = 0; i < currentOrderDOM.length; i++) {
-            if (parseInt(currentOrderDOM[i].dataset.originalIndex) !== i) {
+            if (parseInt(currentOrderDOM[[i]].dataset.originalIndex) !== i) {
                 isSolved = false;
                 break;
             }
@@ -825,31 +885,42 @@ document.addEventListener('DOMContentLoaded', () => {
             stopTimer();
             playSound('win');
 
+            // Konfeti Efekti Fonksiyonunu Çağır
+            showConfetti();
+
             const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
-                                 .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
-            
+                .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
+
             gameBoard.innerHTML = '';
             sortedPieces.forEach(piece => {
                 piece.style.opacity = '1';
                 gameBoard.appendChild(piece);
             });
 
-            gameBoard.style.gap = '0px'; 
+            gameBoard.style.gap = '0px';
             gameBoard.style.borderColor = 'transparent';
             gameBoard.classList.add('solved-effect');
 
-            setTimeout(() => {
-                gameBoard.classList.remove('solved-effect');
-                gameBoard.style.gap = '2px';
-                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+            const finalTime = timerDisplay.textContent;
+            finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
 
-                const finalTime = timerDisplay.textContent;
-                finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
+            // Kazanma Ekranını Güncelle ve Göster
+            document.querySelector('#winScreen h2').textContent = 'Harika Başardınız!';
+            document.querySelector('#winScreen #finalTime').style.display = 'block'; // Süreyi göster
+            document.querySelector('#winScreen #playAgainButton').style.display = 'inline-block';
+            document.querySelector('#winScreen #mainMenuButton').style.display = 'inline-block';
 
-                gameBoard.style.display = 'none';
-                gameControls.style.display = 'none';
-                winScreen.style.display = 'block';
-            }, 5000);
+            // Tam resmi arka plana ekle (isteğe bağlı, sadece görsel bir ipucu)
+            winScreen.style.backgroundImage = `url('${selectedImage}')`;
+            winScreen.style.backgroundSize = 'contain';
+            winScreen.style.backgroundRepeat = 'no-repeat';
+            winScreen.style.backgroundPosition = 'center';
+
+            gameBoard.style.display = 'none';
+            gameControls.style.display = 'none';
+            winScreen.style.display = 'flex'; // Flex yaparak içerikleri düzenle
+            winScreen.style.flexDirection = 'column';
+            winScreen.style.alignItems = 'center';
         }
     }
 
