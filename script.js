@@ -843,7 +843,14 @@ document.getElementById('startGameButton').addEventListener('click', () => {
             }, { once: true });
         }, 3000);
     }
-
+function showSelectionScreen() {
+    console.log('Returning to main menu...');
+    document.getElementById('winScreen').style.display = 'none';
+    document.getElementById('selectionScreen').style.display = 'block';
+    // Oyun sıfırlama veya diğer temizlik işlemlerini ekleyebilirsiniz
+    gameBoard.style.display = 'none';
+    gameControls.style.display = 'none';
+}
 function checkWinCondition() {
     const currentOrderDOM = Array.from(gameBoard.querySelectorAll('.puzzle-piece'));
     let isSolved = true;
