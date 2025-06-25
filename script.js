@@ -675,7 +675,7 @@ document.addEventListener('DOMContentLoaded', () => {
             piece.addEventListener('touchstart', touchStart);
             piece.addEventListener('touchmove', touchMove);
             piece.addEventListener('touchend', touchEnd);
-            piece.addEventListener('touchcancel', touchEnd);
+            piece.addEventListener('touchcancel', touchEnd); // touchcancel da eklendi
         });
     }
 
@@ -751,21 +751,24 @@ document.addEventListener('DOMContentLoaded', () => {
         const touch = e.changedTouches[0];
         
         // Bırakılan noktadaki hedef elementi bulmak için:
-        // Orijinal parçayı geçici olarak gizleyerek elementFromPoint'in onu görmesini engelle
+        // Orijinal parçayı geçici olarak gizleyerek elementFromPoint'in onu görmesini engelle.
+        // Hem display hem de opacity değiştirilerek en güçlü gizleme sağlanır.
         const originalDisplay = currentTouchPiece.style.display;
+        const originalOpacity = currentTouchPiece.style.opacity;
         const originalPointerEvents = currentTouchPiece.style.pointerEvents;
         
         currentTouchPiece.style.display = 'none';
+        currentTouchPiece.style.opacity = '0'; // Ekstra güvenlik için
         currentTouchPiece.style.pointerEvents = 'none';
         
         const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
         
         // Orijinal parçayı eski haline getir
         currentTouchPiece.style.display = originalDisplay;
+        currentTouchPiece.style.opacity = originalOpacity;
         currentTouchPiece.style.pointerEvents = originalPointerEvents;
 
         let targetPiece = null;
-        // Eğer bulunan element bir puzzle parçasıysa ve kendi parçamız değilse, onu hedef olarak al
         if (targetElement && targetElement.classList.contains('puzzle-piece') && targetElement !== currentTouchPiece) {
             targetPiece = targetElement;
         }
@@ -777,24 +780,36 @@ document.addEventListener('DOMContentLoaded', () => {
             // dragged: sürüklenen parça (currentTouchPiece)
             // target: bırakılan yerdeki parça (targetPiece)
 
-            // Evrensel DOM düğümü takas fonksiyonu
-            function swapDomNodes(node1, node2) {
-                const parent1 = node1.parentNode;
-                const parent2 = node2.parentNode;
+            // 1. Hedef parçayı, sürüklenen parçanın orijinal konumunun hemen önüne yerleştir (geçici olarak)
+            parent.insertBefore(targetPiece, currentTouchPiece);
+            
+            // 2. Sürüklenen parçayı, hedefin orijinal konumunun hemen önüne yerleştir
+            // (Bu adımda targetPiece zaten hareket etmiş olduğu için, temp referans kullanmak daha güvenli olabilir,
+            // veya nextSibling kontrolü yapılabilir. En güvenilir yöntem alttaki gibi basit swap.)
 
-                if (!parent1 || !parent2) return; // Geçerli ebeveyn yoksa takas yapma
+            // Daha basit ve sağlam bir takas yöntemi:
+            // Sürüklenen parçanın ve hedef parçanın mevcut DOM referanslarını al
+            const dragged = currentTouchPiece;
+            const target = targetPiece;
 
-                // node1'in hemen sonraki kardeşini kaydet
-                const nextSibling1 = node1.nextSibling;
+            // Eğer target, dragged'ın hemen ardından geliyorsa
+            if (dragged.nextSibling === target) {
+                parent.insertBefore(target, dragged); // Target'ı dragged'ın önüne taşı
+            } 
+            // Eğer dragged, target'ın hemen ardından geliyorsa
+            else if (target.nextSibling === dragged) {
+                parent.insertBefore(dragged, target); // Dragged'ı target'ın önüne taşı
+            } 
+            // Uzak elementlerin takası
+            else {
+                const tempNode = document.createElement('div'); // Geçici bir yer tutucu
+                parent.insertBefore(tempNode, target); // Hedefin yerine geçiciyi koy
                 
-                // node2'yi node1'in yerine yerleştir
-                parent1.insertBefore(node2, nextSibling1);
+                parent.insertBefore(target, dragged); // Hedefi sürüklenenin yerine koy
+                parent.insertBefore(dragged, tempNode); // Sürükleneni geçicinin yerine koy
                 
-                // node1'i node2'nin orijinal yerine yerleştir
-                parent2.insertBefore(node1, node2.nextSibling); // node2 artık yeni yerinde olduğu için onun nextSibling'ine göre yerleştir.
+                tempNode.remove(); // Geçiciyi kaldır
             }
-
-            swapDomNodes(currentTouchPiece, targetPiece);
 
             playSound('piecePlace');
         } 
@@ -803,7 +818,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTouchPiece = null; // Sürükleme durumu sıfırla
         checkWinCondition(); // Kazanma koşulunu kontrol et
     }
-
     async function showHint() {
         const tempImage = new Image();
         tempImage.src = selectedImage;
