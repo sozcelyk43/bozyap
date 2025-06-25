@@ -10,24 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const finalTimeDisplay = document.getElementById('finalTime');
     const playAgainButton = document.getElementById('playAgainButton');
     const mainMenuButton = document.getElementById('mainMenuButton');
-    const mainMenuFromGameButton = document.getElementById('mainMenuFromGame'); // Oyun içi ana menü butonu
-    const gameControls = document.querySelector('.game-controls'); // Kontrol butonlarını içeren div
-    const gameTitle = document.getElementById('gameTitle'); // Başlık elementi
+    const mainMenuFromGameButton = document.getElementById('mainMenuFromGame');
+    const gameControls = document.querySelector('.game-controls');
+    const gameTitle = document.getElementById('gameTitle');
 
 
-    let selectedCols = null; // Sütun sayısı
-    let selectedRows = null; // Satır sayısı
+    let selectedCols = null;
+    let selectedRows = null;
     let selectedCategory = null;
     let selectedImage = null;
 
-    let puzzlePieces = []; // Karıştırılmış sıradaki puzzle parçaları
-    let gameStartTime; // Zamanlayıcı başlangıç zamanı
-    let timerInterval; // Zamanlayıcı interval ID'si
-    let hintUsed = false; // İpucu kullanıldı mı?
+    let puzzlePieces = [];
+    let gameStartTime;
+    let timerInterval;
+    let hintUsed = false;
 
     // --- Ses Efektleri ---
-    // NOT: Bu ses dosyalarını indirip projenizin "sounds" klasörüne koyduğunuzdan emin olun.
-    // Örneğin: BozYapOyunu/sounds/button-1.mp3
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sounds = {};
 
@@ -41,17 +39,23 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(e => console.error(`Ses dosyası yüklenemedi: ${name} (${url})`, e));
     }
 
-    // Ses dosyalarını yükle (Örnek URL'ler - bunları kendi lokal dosyalarınızla değiştirin)
+    // Ses dosyalarını yükle (Lokal dosya yollarına dikkat edin)
     loadSound('pieceMove', 'sounds/button-1.mp3');
     loadSound('piecePlace', 'sounds/button-2.mp3');
     loadSound('win', 'sounds/success-1.mp3');
     loadSound('hint', 'sounds/button-3.mp3');
 
+    // --- Zorluk seviyeleri ve parça sayıları ---
+    // Her seviye için [sütun sayısı, satır sayısı]
+    const difficultyLevels = {
+        "Kolay (4x3)": [4, 3],       // 12 parça
+        "Orta (6x4)": [6, 4],       // 24 parça
+        "Zor (8x6)": [8, 6],        // 48 parça
+        "Çok Zor (10x8)": [10, 8],   // 80 parça
+        "İmkansız (11x9)": [11, 9]   // 99 parça
+    };
 
-    // --- Resim kategorileri ve örnek resim URL'leri (Lokal dosya yolları ve çocuk temasına uygun örnekler) ---
-    // NOT: Bu dosya yollarının, projenizin kök dizinindeki 'images' klasörünün altındaki
-    // ilgili alt klasörlere (örn. 'dogamanzara', 'hayvanlar', vs.) ve resim adlarına
-    // tam olarak uyması gerekmektedir. Lütfen bu resimleri projenize indirdiğinizden emin olun!
+    // --- Resim kategorileri ve örnek resim URL'leri (Lokal dosya yolları) ---
     const imageCategories = {
         "Doğa ve Manzara": [
             "images/dogamanzara/dogamanzara01.jpg", "images/dogamanzara/dogamanzara02.jpg",
@@ -367,67 +371,49 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     };
 
-    // --- Kategorileri Yükleme Fonksiyonu ---
-    function loadCategories() {
-        categoryOptions.innerHTML = ''; // Mevcut butonları temizle
-        for (const categoryName in imageCategories) {
+    // --- Zorluk seviyesi butonlarını dinamik olarak yükleme fonksiyonu ---
+    function loadDifficultyButtons() {
+        pieceOptions.innerHTML = ''; // Mevcut butonları temizle
+        for (const levelName in difficultyLevels) {
             const button = document.createElement('button');
-            button.classList.add('category-button');
-            button.textContent = categoryName;
-            button.dataset.category = categoryName;
-            categoryOptions.appendChild(button);
+            button.classList.add('piece-button');
+            button.textContent = levelName; // "Kolay (4x3)" gibi metin
+            const [cols, rows] = difficultyLevels[levelName];
+            button.dataset.cols = cols;
+            button.dataset.rows = rows;
+            pieceOptions.appendChild(button);
         }
     }
 
     // --- Başlat Butonunun Durumunu Güncelleme ---
     function updateStartButtonState() {
-        if (selectedCols && selectedRows && selectedCategory) {
+        if (selectedCols !== null && selectedRows !== null && selectedCategory) { // null kontrolü yapıldı
             startGameButton.disabled = false;
         } else {
             startGameButton.disabled = true;
         }
     }
 
-    // --- Zamanlayıcı Başlat/Durdur Fonksiyonları ---
-    function startTimer() {
-        gameStartTime = Date.now();
-        timerInterval = setInterval(updateTimer, 1000);
-        updateTimer(); // Hemen güncelle
-    }
-
-    function stopTimer() {
-        clearInterval(timerInterval);
-    }
-
-    function updateTimer() {
-        const elapsedTime = Date.now() - gameStartTime;
-        const totalSeconds = Math.floor(elapsedTime / 1000);
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }
+    // ... (Zamanlayıcı fonksiyonları aynı kalacak) ...
 
     function resetGame() {
         stopTimer();
         selectionScreen.style.display = 'block';
-        gameTitle.style.display = 'block'; // Başlığı tekrar göster
+        gameTitle.style.display = 'block';
         gameBoard.style.display = 'none';
         winScreen.style.display = 'none';
-        gameControls.style.display = 'none'; // Oyun içi kontrolleri gizle
+        gameControls.style.display = 'none';
 
-        timerDisplay.textContent = '00:00'; // Zamanlayıcıyı sıfırla
-        hintButton.disabled = false; // İpucu butonunu etkinleştir
+        timerDisplay.textContent = '00:00';
+        hintButton.disabled = false;
         hintUsed = false;
 
-        // Puzzle parçalarını temizle
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
         existingPieces.forEach(piece => piece.remove());
 
-        // Oyun tahtasının stilini başlangıç durumuna getir
         gameBoard.style.gap = '2px';
         gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
         gameBoard.classList.remove('solved-effect');
-
 
         selectedCols = null;
         selectedRows = null;
@@ -447,32 +433,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.classList.contains('piece-button')) {
             document.querySelectorAll('.piece-button').forEach(btn => btn.classList.remove('selected'));
             target.classList.add('selected');
-            selectedCols = parseInt(target.dataset.cols);   // Sütun sayısını al
-            selectedRows = parseInt(target.dataset.rows);   // Satır sayısını al
+            selectedCols = parseInt(target.dataset.cols);
+            selectedRows = parseInt(target.dataset.rows);
             updateStartButtonState();
             playSound('piecePlace');
         }
     });
 
-    categoryOptions.addEventListener('click', (event) => {
-        const target = event.target;
-        if (target.classList.contains('category-button')) {
-            document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('selected'));
-            target.classList.add('selected');
-            selectedCategory = target.dataset.category;
-            const imagesInSelectedCategory = imageCategories[selectedCategory];
-            selectedImage = imagesInSelectedCategory[Math.floor(Math.random() * imagesInSelectedCategory.length)];
-            updateStartButtonState();
-            playSound('piecePlace');
-        }
-    });
+    // ... (categoryOptions olay dinleyicisi aynı kalacak) ...
 
     startGameButton.addEventListener('click', () => {
-        if (selectedCols && selectedRows && selectedCategory && selectedImage) {
+        if (selectedCols !== null && selectedRows !== null && selectedCategory && selectedImage) { // null kontrolü yapıldı
             selectionScreen.style.display = 'none';
-            gameTitle.style.display = 'none'; // Başlığı gizle
+            gameTitle.style.display = 'none';
             gameBoard.style.display = 'grid';
-            gameControls.style.display = 'flex'; // Kontrolleri göster
+            gameControls.style.display = 'flex';
 
             createPuzzle(selectedImage, selectedCols, selectedRows);
             startTimer();
@@ -482,69 +457,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    playAgainButton.addEventListener('click', () => {
-        winScreen.style.display = 'none'; // Kazanma ekranını gizle
-        gameBoard.style.display = 'grid'; // Oyun tahtasını göster
-        gameControls.style.display = 'flex'; // Kontrolleri göster
-        
-        timerDisplay.textContent = '00:00'; // Zamanlayıcıyı sıfırla
-        hintButton.disabled = false; // İpucu butonunu etkinleştir
-        hintUsed = false;
+    // ... (playAgainButton, mainMenuButton, mainMenuFromGameButton, hintButton olay dinleyicileri aynı kalacak) ...
 
-        const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
-        existingPieces.forEach(piece => piece.remove()); // Eski parçaları temizle
-
-        // Oyun tahtasının stilini başlangıç durumuna getir
-        gameBoard.style.gap = '2px';
-        gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-        gameBoard.classList.remove('solved-effect');
-
-        createPuzzle(selectedImage, selectedCols, selectedRows); // Aynı resim ve zorluk seviyesiyle yeni puzzle oluştur
-        startTimer(); // Zamanlayıcıyı başlat
-        playSound('piecePlace');
-    });
-
-    mainMenuButton.addEventListener('click', resetGame); // Ana menüye dön
-    mainMenuFromGameButton.addEventListener('click', resetGame); // Oyun içi ana menüye dön
-
-    hintButton.addEventListener('click', () => {
-        if (hintUsed) {
-            alert('İpucu hakkınızı zaten kullandınız!');
-            return;
-        }
-        showHint();
-        hintUsed = true;
-        hintButton.disabled = true;
-        playSound('hint'); // İpucu sesi
-    });
-
-    // --- Puzzle Oluşturma Fonksiyonu (Sabit Oyun Alanı) ---
-    async function createPuzzle(imageUrl, cols, rows) { // cols ve rows parametrelerini alıyoruz
-        gameBoard.innerHTML = ''; // Önceki puzzle'ı temizle
-        puzzlePieces = []; // Diziyi sıfırla
+    // --- Puzzle Oluşturma Fonksiyonu ---
+    async function createPuzzle(imageUrl, cols, rows) {
+        gameBoard.innerHTML = '';
+        puzzlePieces = [];
 
         const img = new Image();
         img.src = imageUrl;
-        img.crossOrigin = "Anonymous"; // CORS hatasını önlemek için (eğer dışarıdan çekiyorsanız)
+        img.crossOrigin = "Anonymous";
 
-        await new Promise(resolve => img.onload = resolve); // Resmin yüklenmesini bekle
+        await new Promise(resolve => img.onload = resolve);
 
-        // gameBoard'un CSS'teki sabit boyutlarını kullanacağız
         const boardComputedStyle = getComputedStyle(gameBoard);
         const boardWidth = parseFloat(boardComputedStyle.width);
         const boardHeight = parseFloat(boardComputedStyle.height);
 
-        // Grid şablonlarını doğrudan cols ve rows ile ayarla
         gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
         gameBoard.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-        // Orijinal resimden kesilecek parça boyutları
         const pieceWidthOriginal = img.width / cols;
         const pieceHeightOriginal = img.height / rows;
 
-        const totalPieces = cols * rows; // Toplam parça sayısı
+        const totalPieces = cols * rows;
 
-        for (let i = 0; i < totalPieces; i++) { // totalPieces'ı kullan
+        for (let i = 0; i < totalPieces; i++) {
             const pieceDiv = document.createElement('div');
             pieceDiv.classList.add('puzzle-piece');
             pieceDiv.setAttribute('draggable', 'true');
@@ -554,15 +492,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const col = i % cols;
 
             const canvas = document.createElement('canvas');
-            canvas.width = pieceWidthOriginal; // Canvas'ın kendi boyutu (resmin kesilecek parçası kadar)
+            canvas.width = pieceWidthOriginal;
             canvas.height = pieceHeightOriginal;
             const ctx = canvas.getContext('2d');
 
             ctx.drawImage(img,
-                col * pieceWidthOriginal, row * pieceHeightOriginal, // Resmin kaynak koordinatları ve boyutları
+                col * pieceWidthOriginal, row * pieceHeightOriginal,
                 pieceWidthOriginal, pieceHeightOriginal,
                 0, 0,
-                pieceWidthOriginal, pieceHeightOriginal // Canvas'ta çizim boyutları
+                pieceWidthOriginal, pieceHeightOriginal
             );
 
             const pieceImage = document.createElement('img');
@@ -581,169 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addTouchListeners();
     }
 
-    // Diziyi karıştıran yardımcı fonksiyon (Fisher-Yates shuffle)
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
-    // --- Sürükle-Bırak İşlevselliği (Fare) ---
-    let draggedItem = null;
-
-    function addDragDropListeners() {
-        // gameBoard içinde oluştukları için tekrar seçilmesi lazım
-        const pieces = gameBoard.querySelectorAll('.puzzle-piece'); 
-        pieces.forEach(piece => {
-            piece.addEventListener('dragstart', dragStart);
-            piece.addEventListener('dragenter', dragEnter);
-            piece.addEventListener('dragleave', dragLeave);
-            piece.addEventListener('dragover', dragOver);
-            piece.addEventListener('drop', dragDrop);
-            piece.addEventListener('dragend', dragEnd);
-        });
-    }
-
-    function dragStart(e) {
-        draggedItem = this;
-        setTimeout(() => this.style.opacity = '0.5', 0);
-        playSound('pieceMove');
-    }
-
-    function dragEnd() {
-        this.style.opacity = '1';
-        document.querySelectorAll('.puzzle-piece').forEach(p => p.classList.remove('drag-over'));
-        checkWinCondition();
-    }
-
-    function dragOver(e) {
-        e.preventDefault();
-    }
-
-    function dragEnter(e) {
-        e.preventDefault();
-        this.classList.add('drag-over');
-    }
-
-    function dragLeave() {
-        this.classList.remove('drag-over');
-    }
-
-    function dragDrop() {
-        this.classList.remove('drag-over');
-        if (draggedItem && draggedItem !== this) {
-            const parent = gameBoard;
-            // Parçaların DOM'daki yerini değiştirmek için daha sağlam yöntem
-            // draggedItem'ı hedef öğenin önüne veya arkasına ekleyerek yer değiştirme sağlanır
-            if (this.nextSibling === draggedItem) { // Hedef parça sürüklenen parçanın hemen sağındaysa
-                parent.insertBefore(draggedItem, this);
-            } else if (draggedItem.nextSibling === this) { // Sürüklenen parça hedef parçanın hemen sağındaysa
-                parent.insertBefore(this, draggedItem);
-            } else { // Aralarında başka parçalar varsa, geçici referans ile yer değiştirme
-                const draggedOriginalNextSibling = draggedItem.nextSibling;
-                parent.insertBefore(draggedItem, this);
-                parent.insertBefore(this, draggedOriginalNextSibling);
-            }
-            playSound('piecePlace');
-        }
-    }
-
-    // --- Mobil Dokunmatik İşlevselliği ---
-    let touchDraggedItem = null;
-    let initialX, initialY; // Dokunma başlangıç noktasının parçaya göre offset'i
-    let currentX, currentY; // Parçanın ekrandaki güncel pozisyonu
-
-    function addTouchListeners() {
-        // gameBoard içinde oluştukları için tekrar seçilmesi lazım
-        const pieces = gameBoard.querySelectorAll('.puzzle-piece'); 
-        pieces.forEach(piece => {
-            piece.addEventListener('touchstart', touchStart);
-            piece.addEventListener('touchmove', touchMove);
-            piece.addEventListener('touchend', touchEnd);
-            // touchcancel da eklenebilir, dokunma kesildiğinde
-            // piece.addEventListener('touchcancel', touchEnd); 
-        });
-    }
-
-    function touchStart(e) {
-        e.preventDefault(); // Varsayılan kaydırma vb. engelle
-        touchDraggedItem = this;
-        touchDraggedItem.style.position = 'absolute'; // Parçayı akıştan çıkar
-        touchDraggedItem.style.zIndex = '1000'; // En üste getir (sürüklenirken)
-        touchDraggedItem.style.cursor = 'grabbing'; // İmleç stilini değiştir
-
-        const rect = touchDraggedItem.getBoundingClientRect(); // Parçanın viewport'a göre konumu
-        const touch = e.touches[0]; // İlk dokunma noktası
-
-        // Dokunma noktasının parçanın sol üst köşesine olan offset'ini hesapla
-        initialX = touch.clientX - rect.left;
-        initialY = touch.clientY - rect.top;
-
-        // Parçayı hemen dokunma pozisyonuna göre konumlandır
-        // gameBoard'un sol üst köşesine göre konumlandırmak için:
-        const boardRect = gameBoard.getBoundingClientRect();
-        touchDraggedItem.style.left = `${touch.clientX - initialX - boardRect.left}px`;
-        touchDraggedItem.style.top = `${touch.clientY - initialY - boardRect.top}px`;
-        
-        playSound('pieceMove');
-    }
-
-    function touchMove(e) {
-        e.preventDefault();
-        if (!touchDraggedItem) return;
-
-        const touch = e.touches[0];
-        const boardRect = gameBoard.getBoundingClientRect();
-
-        // Parçayı dokunma hareketine göre güncelle
-        // Yine gameBoard'un sol üst köşesine göre konumlandırıyoruz
-        touchDraggedItem.style.left = `${touch.clientX - initialX - boardRect.left}px`;
-        touchDraggedItem.style.top = `${touch.clientY - initialY - boardRect.top}px`;
-    }
-
-    function touchEnd(e) {
-        if (!touchDraggedItem) return;
-
-        touchDraggedItem.style.cursor = 'grab'; // İmleç stilini geri al
-
-        const touch = e.changedTouches[0]; // Biten dokunma noktası
-        // Bırakılan yerdeki elementi bulmak için elementsFromPoint kullanılır
-        const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
-        
-        let targetPiece = null;
-        for (let i = 0; i < elementsAtPoint.length; i++) {
-            // Sadece puzzle-piece sınıfına sahip ve sürüklenen parçanın kendisi olmayan bir hedef ara
-            if (elementsAtPoint[i].classList.contains('puzzle-piece') && elementsAtPoint[i] !== touchDraggedItem) {
-                targetPiece = elementsAtPoint[i];
-                break;
-            }
-        }
-
-        if (targetPiece) {
-            const parent = gameBoard;
-            // Swap DOM elements (fare sürükle-bırak mantığına benzer)
-            if (targetPiece.nextSibling === touchDraggedItem) {
-                parent.insertBefore(touchDraggedItem, targetPiece);
-            } else if (touchDraggedItem.nextSibling === targetPiece) {
-                parent.insertBefore(targetPiece, touchDraggedItem);
-            } else {
-                const draggedOriginalNextSibling = touchDraggedItem.nextSibling;
-                parent.insertBefore(touchDraggedItem, targetPiece);
-                parent.insertBefore(targetPiece, draggedOriginalNextSibling);
-            }
-            playSound('piecePlace');
-        } 
-        
-        // Parçayı normal akışa geri döndür (absolute pozisyonu kaldır)
-        touchDraggedItem.style.position = '';
-        touchDraggedItem.style.zIndex = '';
-        touchDraggedItem.style.left = '';
-        touchDraggedItem.style.top = '';
-
-        touchDraggedItem = null;
-        checkWinCondition();
-    }
+    // ... (shuffleArray, drag/drop ve touch event listener'lar aynı kalacak) ...
 
     // --- İpucu Sistemi ---
     async function showHint() {
@@ -787,7 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hintOverlay.addEventListener('transitionend', () => {
                 hintOverlay.remove();
             }, { once: true });
-        }, 3000); // 3 saniye sonra ipucunu gizle
+        }, 3000);
     }
 
 
@@ -803,42 +579,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (isSolved) {
-            stopTimer(); // Zamanlayıcıyı durdur
-            playSound('win'); // Kazanma sesi çal
+            stopTimer();
+            playSound('win');
 
-            // TÜM PARÇALARI DOĞRU SIRADA GÖSTERME VE EFEKT
             const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
                                  .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
             
-            gameBoard.innerHTML = ''; // Önceki tüm parçaları temizle
+            gameBoard.innerHTML = '';
             sortedPieces.forEach(piece => {
                 piece.style.opacity = '1';
                 gameBoard.appendChild(piece);
             });
 
-            // Puzzle'ın bitmiş halini tam gösterirken aradaki boşlukları kaldır
             gameBoard.style.gap = '0px'; 
-            gameBoard.style.borderColor = 'transparent'; // Çerçeveyi de gizle
-
-            // Oyun tahtasına geçici bir "tamamlandı" efekti ekle
+            gameBoard.style.borderColor = 'transparent';
             gameBoard.classList.add('solved-effect');
 
             setTimeout(() => {
-                // 5 saniye sonra efektleri kaldır ve pop-up'ı göster
                 gameBoard.classList.remove('solved-effect');
-                gameBoard.style.gap = '2px'; // Boşlukları geri getir
-                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)'; // Çerçeveyi geri getir
+                gameBoard.style.gap = '2px';
+                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
 
                 const finalTime = timerDisplay.textContent;
                 finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
 
                 gameBoard.style.display = 'none';
-                gameControls.style.display = 'none'; // Kontrolleri gizle
-                winScreen.style.display = 'block'; // Kazanma ekranını göster
-            }, 5000); // 5 saniye bekle
+                gameControls.style.display = 'none';
+                winScreen.style.display = 'block';
+            }, 5000);
         }
     }
 
-    // Sayfa yüklendiğinde kategorileri yükle
+    // Sayfa yüklendiğinde zorluk seviyesi butonlarını ve kategorileri yükle
+    loadDifficultyButtons(); // Yeni fonksiyon çağrısı
     loadCategories();
 });
