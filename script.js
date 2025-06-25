@@ -665,51 +665,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- MOBİL DOKUNMATİK İŞLEVSELLİĞİ (KLONLAMA YÖNTEMİ) ---
-    let currentTouchPiece = null; // Dokunulan orijinal puzzle parçası
+   let currentTouchPiece = null; // Dokunulan orijinal puzzle parçası
     let touchPieceClone = null;   // Parmağın hareket ettiği klon puzzle parçası
     let cloneOffsetX = 0;         // Parmağın klona göre x offset'i
     let cloneOffsetY = 0;         // Parmağın klona göre y offset'i
 
-    function addTouchListeners() {
-        const pieces = gameBoard.querySelectorAll('.puzzle-piece'); 
+function addTouchListeners() {
+        const pieces = gameBoard.querySelectorAll('.puzzle-piece');
         pieces.forEach(piece => {
             piece.addEventListener('touchstart', touchStart);
             piece.addEventListener('touchmove', touchMove);
             piece.addEventListener('touchend', touchEnd);
-            piece.addEventListener('touchcancel', touchEnd); // Dokunma kesildiğinde temizlik için
+            piece.addEventListener('touchcancel', touchEnd);
         });
     }
 
     function touchStart(e) {
-        if (e.touches.length !== 1) return; // Sadece tek parmak dokunuşunu dinle
-        e.preventDefault(); // Tarayıcının varsayılan kaydırma/yakınlaştırma davranışını engelle
+        if (e.touches.length !== 1) return;
+        e.preventDefault();
 
-        currentTouchPiece = this; // Dokunulan orijinal puzzle parçası
+        currentTouchPiece = this;
         currentTouchPiece.style.opacity = '0.4'; // Orijinal parçayı şeffaf yap
-        currentTouchPiece.style.pointerEvents = 'none'; // Orijinal parçanın olayları yakalamasını engelle (hedef tespiti için)
+        currentTouchPiece.style.pointerEvents = 'none'; // Orijinal parçanın olayları yakalamasını engelle
 
-        // Klon puzzle parçasını oluştur ve stilini ayarla
         touchPieceClone = currentTouchPiece.cloneNode(true);
         Object.assign(touchPieceClone.style, {
-            position: 'fixed', // Ekranın viewport'una göre sabit konumlandırma
-            zIndex: '1001',    // En üstte görünmesini sağla
-            opacity: '1',      // Klonun tamamen görünür olmasını sağla
-            pointerEvents: 'none', // Klonun kendisinin dokunma olaylarını yakalamasını engelle
-            // Klonun boyutunu orijinal parça ile aynı yap
-            width: currentTouchPiece.offsetWidth + 'px', 
+            position: 'fixed',
+            zIndex: '1001',
+            opacity: '1',
+            pointerEvents: 'none',
+            width: currentTouchPiece.offsetWidth + 'px',
             height: currentTouchPiece.offsetHeight + 'px',
-            // Orijinal parçanın CSS'indeki diğer görsellikleri klona aktar
             borderRadius: getComputedStyle(currentTouchPiece).borderRadius,
             boxShadow: getComputedStyle(currentTouchPiece).boxShadow,
             border: getComputedStyle(currentTouchPiece).border,
             backgroundColor: getComputedStyle(currentTouchPiece).backgroundColor,
-            display: 'flex', // İçindeki img elementinin tam sığması için
+            display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transform: 'scale(1.05)' // Hafif bir "kalkma" efekti için
+            transform: 'scale(1.05)'
         });
         
-        // Klonun içindeki img elementinin de boyutunu ayarlayalım
         const imgInClone = touchPieceClone.querySelector('img');
         if (imgInClone) {
             Object.assign(imgInClone.style, {
@@ -719,16 +715,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        document.body.appendChild(touchPieceClone); // Klonu body'ye ekle
+        document.body.appendChild(touchPieceClone);
 
-        const touch = e.touches[0]; // İlk dokunma noktası
-        const rect = currentTouchPiece.getBoundingClientRect(); // Orijinal parçanın ekran koordinatları
+        const touch = e.touches[0];
+        const rect = currentTouchPiece.getBoundingClientRect();
 
-        // Parmak ucunun klonun sol üst köşesine göre offset'ini hesapla
         cloneOffsetX = touch.clientX - rect.left;
         cloneOffsetY = touch.clientY - rect.top;
 
-        // Klonu parmak pozisyonuna göre konumlandır
         touchPieceClone.style.left = `${touch.clientX - cloneOffsetX}px`;
         touchPieceClone.style.top = `${touch.clientY - cloneOffsetY}px`;
 
@@ -740,7 +734,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
 
         const touch = e.touches[0];
-        // Klonu parmak pozisyonuna göre güncelle
         touchPieceClone.style.left = `${touch.clientX - cloneOffsetX}px`;
         touchPieceClone.style.top = `${touch.clientY - cloneOffsetY}px`;
     }
@@ -756,56 +749,57 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTouchPiece.style.opacity = '1'; // Orijinal parçayı tekrar tamamen görünür yap
         currentTouchPiece.style.pointerEvents = 'auto'; // Orijinal parçanın olay yakalamasını tekrar etkinleştir
         
-        const touch = e.changedTouches[0]; // Bırakılan dokunma noktası
+        const touch = e.changedTouches[0];
         
         // Bırakılan noktadaki hedef elementi bul
-        // currentTouchPiece'in pointer-events: none olması, kendi kendini hedef olarak görmesini engeller.
+        // Geçici olarak orijinal parçanın pointer-events'ini ve opacity'sini değiştirerek
+        // elementFromPoint'in onu görmesini engelle ve doğru hedefi bul
+        currentTouchPiece.style.pointerEvents = 'none'; // Kendi üzerine tıklamayı engelle
+        currentTouchPiece.style.opacity = '0'; // Geçici olarak gizle
+        
         const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+        
+        currentTouchPiece.style.opacity = '1'; // Tekrar görünür yap
+        currentTouchPiece.style.pointerEvents = 'auto'; // Olayları tekrar etkinleştir
 
         let targetPiece = null;
-        // Eğer bulunan element bir puzzle parçasıysa ve kendi parçamız değilse, onu hedef olarak al
         if (targetElement && targetElement.classList.contains('puzzle-piece') && targetElement !== currentTouchPiece) {
             targetPiece = targetElement;
         }
 
         if (targetPiece) {
-            // İki puzzle parçasının DOM'daki yerini güvenli bir şekilde değiştirme (replaceChild yöntemi)
+            // İki puzzle parçasının DOM'daki yerini güvenli bir şekilde değiştirme
             const parent = gameBoard; // gameBoard, tüm puzzle parçalarının ebeveyni
             
-            // Sürüklenen parçanın orijinal konumundaki referansını al
-            const originalDraggedReference = currentTouchPiece.nextSibling === targetPiece ? targetPiece : currentTouchPiece.nextSibling;
-            
-            // Hedef parçanın orijinal konumundaki referansını al
-            const originalTargetReference = targetPiece.nextSibling === currentTouchPiece ? currentTouchPiece : targetPiece.nextSibling;
+            // Swap Elements Function (Güvenli Takas Metodu)
+            function swapNodes(node1, node2) {
+                const parent1 = node1.parentNode;
+                const parent2 = node2.parentNode;
 
-            // Önemli: replaceChild kullanmadan önce elemanların parentNode'larını kontrol etmek iyidir
-            // Veya daha basit bir swap fonksiyonu kullanabiliriz:
-            function swapElements(elm1, elm2) {
-                const parent1 = elm1.parentNode;
-                const parent2 = elm2.parentNode;
+                if (!parent1 || !parent2) {
+                    console.warn("Swap işlemi için geçerli ebeveyn bulunamadı.");
+                    return;
+                }
 
-                if (!parent1 || !parent2) return; // Geçerli ebeveyn yoksa takas yapma
-
-                const nextSibling1 = elm1.nextSibling; // elm1'in sonraki kardeşini kaydet
-                const nextSibling2 = elm2.nextSibling; // elm2'nin sonraki kardeşini kaydet
-
-                // elm2'yi elm1'in yerine koy
-                parent1.insertBefore(elm2, nextSibling1);
-
-                // elm1'i elm2'nin yerine koy
-                parent2.insertBefore(elm1, nextSibling2);
+                // Node1'in bir sonraki kardeşini kaydet (yer değiştirme sonrası Node2'nin oraya gelmesi için)
+                const nextSibling1 = node1.nextSibling;
+                
+                // Node1'i, Node2'nin önüne yerleştir (yerini değiştir)
+                parent2.insertBefore(node1, node2);
+                
+                // Node2'yi, Node1'in orijinal yerine yerleştir
+                parent1.insertBefore(node2, nextSibling1);
             }
 
-            swapElements(currentTouchPiece, targetPiece);
+            swapNodes(currentTouchPiece, targetPiece);
 
             playSound('piecePlace');
         } 
-        // Eğer hedef bulunamazsa veya hedef kendi parçamızsa, parça otomatik olarak orijinal yerinde kalır (çünkü DOM'dan hiç ayrılmadı).
+        // Eğer hedef bulunamazsa veya hedef kendi parçamızsa, parça otomatik olarak orijinal yerinde kalır.
         
         currentTouchPiece = null; // Sürükleme durumu sıfırla
         checkWinCondition(); // Kazanma koşulunu kontrol et
     }
-
 
     async function showHint() {
         const tempImage = new Image();
