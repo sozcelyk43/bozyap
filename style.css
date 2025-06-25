@@ -21,8 +21,7 @@ body {
     border: 1px solid rgba(189, 195, 199, 0.5);
     width: 95%; /* Konteynerin genişliğini esnek tut */
     max-width: 900px; /* Maksimum genişlik */
-    min-height: 650px; /* ANA DEĞİŞİKLİK: Konteynerin minimum yüksekliğini artırdık */
-    /* Bu min-height değeri, tüm içeriğin sığmasını sağlamalıdır. */
+    min-height: 650px; /* Konteynerin minimum yüksekliğini artırdık */
     box-sizing: border-box;
     position: relative;
     display: flex;
@@ -33,7 +32,7 @@ body {
 
 h1 {
     color: #ecf0f1;
-    margin-bottom: 20px; /* ANA DEĞİŞİKLİK: Başlık alt boşluğu azaltıldı */
+    margin-bottom: 20px;
     text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
     font-size: 2.8em;
     letter-spacing: 2px;
@@ -42,7 +41,7 @@ h1 {
 
 .selection-screen p {
     font-size: 1.3em;
-    margin-bottom: 10px; /* ANA DEĞİŞİKLİK: Paragraf alt boşluğu azaltıldı */
+    margin-bottom: 10px;
     color: #bdc3c7;
 }
 
@@ -50,8 +49,8 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px; /* ANA DEĞİŞİKLİK: Butonlar arası boşluk biraz daha azaltıldı */
-    margin-bottom: 20px; /* ANA DEĞİŞİKLİK: Bölüm alt boşluğu azaltıldı */
+    gap: 8px;
+    margin-bottom: 20px;
 }
 
 .piece-button, .category-button {
@@ -59,13 +58,13 @@ h1 {
     color: #ecf0f1;
     border: 2px solid #3498db;
     padding: 10px 15px;
-    border-radius: 10px; /* Kıvrım daha belirgin */
-    font-size: 1em; /* ANA DEĞİŞİKLİK: Font boyutu biraz daha küçültüldü */
+    border-radius: 10px;
+    font-size: 1em;
     cursor: pointer;
     transition: all 0.3s ease;
-    flex: 1 1 auto; /* Esnekliği koru */
-    min-width: 110px; /* ANA DEĞİŞİKLİK: Minimum genişlik biraz daha daraltıldı */
-    max-width: 190px; /* ANA DEĞİŞİKLİK: Maksimum genişlik biraz daha daraltıldı */
+    flex: 1 1 auto;
+    min-width: 110px;
+    max-width: 190px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     text-align: center;
@@ -90,12 +89,12 @@ h1 {
 #startGameButton {
     background-color: #2ecc71;
     border-color: #2ecc71;
-    padding: 15px 35px; /* ANA DEĞİŞİKLİK: Padding biraz azaltıldı */
-    font-size: 1.2em; /* ANA DEĞİŞİKLİK: Font boyutu biraz düşürüldü */
+    padding: 15px 35px;
+    font-size: 1.2em;
     width: auto;
-    max-width: 280px; /* ANA DEĞİŞİKLİK: Maksimum genişlik biraz daha daraltıldı */
+    max-width: 280px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    margin-top: 25px; /* ANA DEĞİŞİKLİK: Üst boşluk azaltıldı */
+    margin-top: 25px;
     border-radius: 10px;
 }
 
@@ -116,7 +115,7 @@ h1 {
     overflow: hidden;
     background-color: rgba(44, 62, 80, 0.6);
     position: relative;
-    display: none;
+    display: none; /* JS tarafından gösterilecek/gizlenecek */
 
     max-width: 800px;
     width: 100%;
@@ -124,6 +123,17 @@ h1 {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
 }
 
+.puzzle-piece {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-sizing: border-box;
+    cursor: grab;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    /* Orijinal parçada transition olmamalı, opacity anında değişmeli */
+    /* transform veya transition ile ilgili diğer tanımlamaları kaldırın */
+}
 
 .puzzle-piece img {
     display: block;
@@ -137,23 +147,12 @@ h1 {
     border-color: #f1c40f;
 }
 
-
-.puzzle-piece[style*="position: absolute"] {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    /* Buradaki transform: scale veya benzeri bir büyütme varsa kaldırın. */
-    /* Veya özellikle scale(1) olarak ayarlayın ki hiç büyümesin */
-    transform: scale(1); /* Parça dokunulduğunda büyümesini istemiyorsanız */
-    transition: none; /* Bu kalsın, ani geçişleri önler */
-    
-    /* Eğer parçalar çok büyüyorsa bu max-width/height'ı dikkatlice deneyebilirsiniz. */
-    /* Ancak transform: scale(1) ile bu genellikle gereksizdir. */
-    /* max-width: auto; */ 
-    /* max-height: auto; */
-}
+/* ÖNEMLİ: Bu kuralı kaldırdık. Sürüklenen klon için ayrı stil kullanacağız. */
+/* .puzzle-piece[style*="position: absolute"] { } */
 
 
 .game-controls {
-    display: none;
+    display: none; /* JS tarafından gösterilecek/gizlenecek */
     justify-content: center;
     align-items: center;
     gap: 20px;
@@ -205,7 +204,7 @@ h1 {
     text-align: center;
     color: #ecf0f1;
     z-index: 1001;
-    display: none;
+    display: none; /* JS tarafından gösterilecek/gizlenecek */
     animation: fadeIn 0.6s ease-out;
     border: 2px solid #2ecc71;
 }
@@ -257,12 +256,11 @@ h1 {
 }
 
 /* MOBİL UYUMLULUK VE KÜÇÜK EKRAN DÜZENLEMESİ */
-/* Bu medya sorgusu, daha geniş mobil cihazlar ve daraltılmış masaüstü pencereleri için optimize edildi. */
-@media (max-width: 800px) { /* Medya sorgusu eşik değeri 800px */
+@media (max-width: 800px) {
     .game-container {
-        padding: 15px 10px; /* Yatay padding azaltıldı */
-        max-width: 98vw; /* Ekranın neredeyse tamamını kapla */
-        min-height: 580px; /* ANA DEĞİŞİKLİK: Mobil için min-height ayarı */
+        padding: 15px 10px;
+        max-width: 98vw;
+        min-height: 580px; /* Mobil için min-height ayarı */
     }
     h1 {
         font-size: 2em;
@@ -272,25 +270,23 @@ h1 {
     .selection-screen p {
         font-size: 1.1em;
     }
-    /* ZORLUK SEVİYESİ BUTONLARI */
     .piece-button {
-        font-size: 0.8em; /* Font boyutu biraz daha küçültüldü */
-        padding: 6px 8px; /* Padding azaltıldı */
-        flex: 1 1 47%; /* İkişerli satırlara sığsın */
+        font-size: 0.8em;
+        padding: 6px 8px;
+        flex: 1 1 47%;
     }
     .piece-options {
-        gap: 5px; /* Butonlar arası boşluğu azalt */
+        gap: 5px;
         margin-bottom: 15px;
     }
 
-    /* KATEGORİ BUTONLARI */
     .category-button {
-        font-size: 0.8em; /* Font boyutu biraz daha küçültüldü */
-        padding: 6px 8px; /* Padding azaltıldı */
-        flex: 1 1 31%; /* Üçerli satırlara sığsın */
+        font-size: 0.8em;
+        padding: 6px 8px;
+        flex: 1 1 31%;
     }
     .category-options {
-        gap: 5px; /* Butonlar arası boşluğu azalt */
+        gap: 5px;
         margin-bottom: 15px;
     }
 
@@ -346,7 +342,6 @@ h1 {
     }
 }
 
-/* Daha küçük telefon ekranları için özel ayar (e.g., iPhone 5/SE veya çok dar Androidler) */
 @media (max-width: 420px) {
     .game-container {
         padding: 10px 5px;
@@ -361,13 +356,13 @@ h1 {
     .piece-button, .category-button {
         font-size: 0.7em;
         padding: 4px 6px;
-        flex: 1 1 48%; /* İkişerli sığması için */
-        white-space: nowrap; /* Metnin tek satırda kalmasını dene */
+        flex: 1 1 48%;
+        white-space: nowrap;
         overflow: hidden;
-        text-overflow: ellipsis; /* Taşarsa "..." göster */
+        text-overflow: ellipsis;
     }
     .category-button {
-        flex: 1 1 31%; /* Üçerli sığması için */
+        flex: 1 1 31%;
     }
     .piece-options, .category-options {
         gap: 3px;
