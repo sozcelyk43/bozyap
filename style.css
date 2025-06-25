@@ -131,8 +131,6 @@ h1 {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    /* Orijinal parçada transition olmamalı, opacity anında değişmeli */
-    /* transform veya transition ile ilgili diğer tanımlamaları kaldırın */
 }
 
 .puzzle-piece img {
@@ -146,10 +144,6 @@ h1 {
     box-shadow: inset 0 0 10px 5px #f1c40f;
     border-color: #f1c40f;
 }
-
-/* ÖNEMLİ: Bu kuralı kaldırdık. Sürüklenen klon için ayrı stil kullanacağız. */
-/* .puzzle-piece[style*="position: absolute"] { } */
-
 
 .game-controls {
     display: none; /* JS tarafından gösterilecek/gizlenecek */
@@ -363,20 +357,6 @@ h1 {
         overflow: hidden;
         text-overflow: ellipsis;
     }
-    footer {
-    position: fixed; /* Ekranın altına sabitlemek için */
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 10px 0;
-    background-color: rgba(0, 0, 0, 0.25); /* Hafif yarı şeffaf arka plan */
-    color: #bdc3c7; /* Mevcut tasarımla uyumlu metin rengi */
-    text-align: center;
-    font-size: 0.9em;
-    z-index: 100; /* Diğer elementlerin arkasında kalması için */
-    backdrop-filter: blur(3px); /* Arka planla uyum için hafif bulanıklık efekti */
-    border-top: 1px solid rgba(189, 195, 199, 0.2); /* Üstte ince bir ayırıcı çizgi */
-}
     .category-button {
         flex: 1 1 31%;
     }
@@ -396,4 +376,19 @@ h1 {
         font-size: 0.8em;
         padding: 6px 12px;
     }
+}
+
+footer {
+    position: fixed; /* Ekranın altına sabitlemek için */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 0;
+    background-color: rgba(0, 0, 0, 0.25); /* Hafif yarı şeffaf arka plan */
+    color: #bdc3c7; /* Mevcut tasarımla uyumlu metin rengi */
+    text-align: center;
+    font-size: 0.9em;
+    z-index: 100; /* Diğer elementlerin arkasında kalması için */
+    backdrop-filter: blur(3px); /* Arka planla uyum için hafif bulanıklık efekti */
+    border-top: 1px solid rgba(189, 195, 199, 0.2); /* Üstte ince bir ayırıcı çizgi */
 }
