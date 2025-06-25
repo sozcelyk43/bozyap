@@ -8,7 +8,7 @@ body {
     background: linear-gradient(135deg, #2c3e50, #34495e, #1abc9c, #2980b9); /* Daha koyu ve kurumsal tonlarda gradient */
     color: #ecf0f1; /* Açık gri metin rengi */
     overflow-x: hidden; /* YATAY KAYDIRMAYI KESİNLİKLE ENGELLE */
-    overflow-y: auto; /* Dikey kaydırmaya varsayılan olarak izin ver (ileride gerektiğinde devre dışı bırakılabilir) */
+    overflow-y: auto; /* Dikey kaydırmaya varsayılan olarak izin ver */
 }
 
 .game-container {
@@ -21,8 +21,7 @@ body {
     border: 1px solid rgba(189, 195, 199, 0.5);
     width: 95%; /* Konteynerin genişliğini esnek tut */
     max-width: 900px; /* Maksimum genişlik */
-    min-height: 620px; /* ANA DEĞİŞİKLİK: Konteynerin minimum yüksekliğini artırdık */
-    /* Bu min-height değeri, tüm içeriğin sığmasını sağlamalıdır. */
+    min-height: 620px; /* Konteynerin minimum yüksekliğini garanti altına al */
     box-sizing: border-box;
     position: relative;
     display: flex;
@@ -33,7 +32,7 @@ body {
 
 h1 {
     color: #ecf0f1;
-    margin-bottom: 20px; /* ANA DEĞİŞİKLİK: Başlık alt boşluğu azaltıldı */
+    margin-bottom: 20px; /* Başlık alt boşluğu azaltıldı */
     text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
     font-size: 2.8em;
     letter-spacing: 2px;
@@ -42,7 +41,7 @@ h1 {
 
 .selection-screen p {
     font-size: 1.3em;
-    margin-bottom: 10px; /* ANA DEĞİŞİKLİK: Paragraf alt boşluğu azaltıldı */
+    margin-bottom: 10px; /* Paragraf alt boşluğu azaltıldı */
     color: #bdc3c7;
 }
 
@@ -50,8 +49,8 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px; /* ANA DEĞİŞİKLİK: Butonlar arası boşluk biraz daha azaltıldı */
-    margin-bottom: 20px; /* ANA DEĞİŞİKLİK: Bölüm alt boşluğu azaltıldı */
+    gap: 8px; /* Butonlar arası boşluk */
+    margin-bottom: 20px; /* Bölüm alt boşluğu azaltıldı */
 }
 
 .piece-button, .category-button {
@@ -60,12 +59,12 @@ h1 {
     border: 2px solid #3498db;
     padding: 10px 15px;
     border-radius: 10px; /* Kıvrım daha belirgin */
-    font-size: 1em; /* ANA DEĞİŞİKLİK: Font boyutu biraz daha küçültüldü */
+    font-size: 1em; /* Font boyutu */
     cursor: pointer;
     transition: all 0.3s ease;
-    flex: 1 1 auto; /* Esnekliği koru */
-    min-width: 110px; /* ANA DEĞİŞİKLİK: Minimum genişlik biraz daha daraltıldı */
-    max-width: 190px; /* ANA DEĞİŞİKLİK: Maksimum genişlik biraz daha daraltıldı */
+    flex: 1 1 auto;
+    min-width: 110px; /* Minimum genişlik */
+    max-width: 190px; /* Maksimum genişlik */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     text-align: center;
@@ -90,12 +89,12 @@ h1 {
 #startGameButton {
     background-color: #2ecc71;
     border-color: #2ecc71;
-    padding: 15px 35px; /* ANA DEĞİŞİKLİK: Padding biraz azaltıldı */
-    font-size: 1.2em; /* ANA DEĞİŞİKLİK: Font boyutu biraz düşürüldü */
+    padding: 15px 35px;
+    font-size: 1.2em;
     width: auto;
-    max-width: 280px; /* ANA DEĞİŞİKLİK: Maksimum genişlik biraz daha daraltıldı */
+    max-width: 280px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    margin-top: 25px; /* ANA DEĞİŞİKLİK: Üst boşluk azaltıldı */
+    margin-top: 25px;
     border-radius: 10px;
 }
 
@@ -257,12 +256,11 @@ h1 {
 }
 
 /* MOBİL UYUMLULUK VE KÜÇÜK EKRAN DÜZENLEMESİ */
-/* Bu medya sorgusu, daha geniş mobil cihazlar ve daraltılmış masaüstü pencereleri için optimize edildi. */
 @media (max-width: 800px) { /* Medya sorgusu eşik değeri 800px */
     .game-container {
-        padding: 15px 10px; /* Yatay padding azaltıldı */
-        max-width: 98vw; /* Ekranın neredeyse tamamını kapla */
-        min-height: 550px; /* ANA DEĞİŞİKLİK: Mobil için min-height ayarı */
+        padding: 15px 10px;
+        max-width: 98vw;
+        min-height: 550px; /* Mobil için min-height ayarı */
     }
     h1 {
         font-size: 2em;
@@ -274,23 +272,23 @@ h1 {
     }
     /* ZORLUK SEVİYESİ BUTONLARI */
     .piece-button {
-        font-size: 0.8em; /* Font boyutu biraz daha küçültüldü */
-        padding: 6px 8px; /* Padding azaltıldı */
+        font-size: 0.8em;
+        padding: 6px 8px;
         flex: 1 1 47%; /* İkişerli satırlara sığsın */
     }
     .piece-options {
-        gap: 5px; /* Butonlar arası boşluğu azalt */
+        gap: 5px;
         margin-bottom: 15px;
     }
 
     /* KATEGORİ BUTONLARI */
     .category-button {
-        font-size: 0.8em; /* Font boyutu biraz daha küçültüldü */
-        padding: 6px 8px; /* Padding azaltıldı */
+        font-size: 0.8em;
+        padding: 6px 8px;
         flex: 1 1 31%; /* Üçerli satırlara sığsın */
     }
     .category-options {
-        gap: 5px; /* Butonlar arası boşluğu azalt */
+        gap: 5px;
         margin-bottom: 15px;
     }
 
