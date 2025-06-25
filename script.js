@@ -828,82 +828,83 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Kazanma Koşulu Kontrolü ---
-    function checkWinCondition() {
-        const currentOrderDOM = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'));
-        let isSolved = true;
-        for (let i = 0; i < currentOrderDOM.length; i++) {
-            if (parseInt(currentOrderDOM[i].dataset.originalIndex) !== i) {
-                isSolved = false;
-                break;
-            }
-        }
+function checkWinCondition() {
+    const currentOrderDOM = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'));
+    let isSolved = true;
 
-        if (isSolved) {
-            stopTimer();
-            playSound('win');
-
-            const confettiCanvas = document.createElement('canvas');
-            confettiCanvas.id = 'confetti-canvas';
-            confettiCanvas.style.position = 'fixed';
-            confettiCanvas.style.top = '0';
-            confettiCanvas.style.left = '0';
-            confettiCanvas.style.width = '100%';
-            confettiCanvas.style.height = '100%';
-            confettiCanvas.style.zIndex = '9999';
-            document.body.appendChild(confettiCanvas);
-
-            const confettiSettings = { 
-                target: 'confetti-canvas',
-                max: 80, 
-                size: 1, 
-                animate: true, 
-                props: ['circle', 'triangle', 'square', 'line'], 
-                colors: [[165,104,246],[230,61,135],[0,199,228],[253,214,126]], 
-                clock: 25, 
-                start_from_zero: false, 
-                decay: 0.9, 
-                width: window.innerWidth, 
-                height: window.innerHeight 
-            };
-            confettiInstance = new ConfettiGenerator(confettiSettings);
-            confettiInstance.render();
-
-            alert('Tebrikler! Yapbozu tamamladınız!');
-
-            const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
-                                 .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
-            
-            gameBoard.innerHTML = '';
-            sortedPieces.forEach(piece => {
-                piece.style.opacity = '1';
-                gameBoard.appendChild(piece);
-            });
-
-            gameBoard.style.gap = '0px';
-            gameBoard.style.borderColor = 'transparent';
-            gameBoard.classList.add('solved-effect');
-
-            setTimeout(() => {
-                gameBoard.classList.remove('solved-effect');
-                gameBoard.style.gap = '2px';
-                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-
-                const finalTime = timerDisplay.textContent;
-                finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
-
-                gameBoard.style.display = 'none';
-                gameControls.style.display = 'none';
-                winScreen.style.display = 'block';
-                
-                if (confettiInstance) {
-                    confettiInstance.clear();
-                    confettiCanvas.remove();
-                    confettiInstance = null;
-                }
-
-            }, 5000);
+    for (let i = 0; i < currentOrderDOM.length; i++) {
+        if (parseInt(currentOrderDOM[i].dataset.originalIndex) !== i) {
+            isSolved = false;
+            break;
         }
     }
+
+    if (isSolved) {
+        stopTimer();
+        playSound('win');
+
+        const confettiCanvas = document.createElement('canvas');
+        confettiCanvas.id = 'confetti-canvas';
+        confettiCanvas.style.position = 'fixed';
+        confettiCanvas.style.top = '0';
+        confettiCanvas.style.left = '0';
+        confettiCanvas.style.width = '100%';
+        confettiCanvas.style.height = '100%';
+        confettiCanvas.style.zIndex = '9999';
+        document.body.appendChild(confettiCanvas);
+
+        const confettiSettings = { 
+            target: 'confetti-canvas',
+            max: 80, 
+            size: 1, 
+            animate: true, 
+            props: ['circle', 'triangle', 'square', 'line'], 
+            colors: [[165,104,246],[230,61,135],[0,199,228],[253,214,126]], 
+            clock: 25, 
+            start_from_zero: false, 
+            decay: 0.9, 
+            width: window.innerWidth, 
+            height: window.innerHeight 
+        };
+        confettiInstance = new ConfettiGenerator(confettiSettings);
+        confettiInstance.render();
+
+        alert('Tebrikler! Yapbozu tamamladınız!');
+
+        const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
+                             .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
+        
+        gameBoard.innerHTML = '';
+        sortedPieces.forEach(piece => {
+            piece.style.opacity = '1';
+            gameBoard.appendChild(piece);
+        });
+
+        gameBoard.style.gap = '0px'; 
+        gameBoard.style.borderColor = 'transparent';
+        gameBoard.classList.add('solved-effect');
+
+        setTimeout(() => {
+            gameBoard.classList.remove('solved-effect');
+            gameBoard.style.gap = '2px';
+            gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+
+            const finalTime = timerDisplay.textContent;
+            finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
+
+            gameBoard.style.display = 'none';
+            gameControls.style.display = 'none';
+            winScreen.style.display = 'block';
+            
+            if (confettiInstance) {
+                confettiInstance.clear();
+                confettiCanvas.remove();
+                confettiInstance = null;
+            }
+
+        }, 5000);
+    }
+}
 
     // Sayfa yüklendiğinde kategorileri yükle
     loadCategories();
