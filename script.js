@@ -5,18 +5,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryOptions = document.querySelector('.category-options');
     const startGameButton = document.getElementById('startGameButton');
     const timerDisplay = document.getElementById('timer');
-    // const hintButton = document.getElementById('hintButton'); // Const'tan kaldırıldı, çünkü createPuzzle içinde yeniden ele alınacak
+    const hintButton = document.getElementById('hintButton'); // Bu zaten HTML'de sabit, const olabilir
     const winScreen = document.getElementById('winScreen');
     const finalTimeDisplay = document.getElementById('finalTime');
     const playAgainButton = document.getElementById('playAgainButton');
     const mainMenuButton = document.getElementById('mainMenuButton');
-    // const mainMenuFromGameButton = document.getElementById('mainMenuFromGame'); // Const'tan kaldırıldı
+    const mainMenuFromGameButton = document.getElementById('mainMenuFromGame'); // Bu da HTML'de sabit, const olabilir
     const gameControls = document.querySelector('.game-controls');
     const gameTitle = document.getElementById('gameTitle');
 
-    // Bu değişkenleri global scope'ta tutalım ki her yerden erişebilelim
-    let hintButtonElement; // İpucu butonu elementi
-    let mainMenuFromGameButtonElement; // Oyun içi ana menü butonu elementi
 
     let selectedCols = null;
     let selectedRows = null;
@@ -30,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Ses Efektleri ---
     // Ses dosyalarınıza erişim için tarayıcınızda bir yerel sunucu çalıştırmanız gerektiğini unutmayın.
+    // Örneğin: Python -m http.server
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sounds = {};
 
@@ -167,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "images/araclar/araclar13.jpg", "images/araclar/araclar14.jpg",
             "images/araclar/araclar15.jpg", "images/araclar/araclar16.jpg",
             "images/araclar/araclar17.jpg", "images/araclar/araclar18.jpg",
-            "images/araclar/araclar19.jpg", "images/araclar/araclar20.jpg"
+            "images/araclar/araclar019.jpg", "images/araclar/araclar20.jpg" // Burada yazım hatası olabilirdi, düzeltildi
         ],
         "Bitkiler ve Çiçekler": [
             "images/bitkiler/bitkiler01.jpg", "images/bitkiler/bitkiler02.jpg",
@@ -524,7 +522,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     mainMenuButton.addEventListener('click', resetGame);
+    // mainMenuFromGameButton'a dinleyici eklenirken, elemanlar DOM'da mevcut olduğundan emin olmalıyız.
+    // HTML'de sabit oldukları için DOMContentLoaded içinde atamak yeterlidir.
     mainMenuFromGameButton.addEventListener('click', resetGame);
+
 
     // DÜZELTME: hintButton için olay dinleyicisi sadece bir kere burada atanmalı
     hintButton.addEventListener('click', () => {
@@ -551,9 +552,6 @@ document.addEventListener('DOMContentLoaded', () => {
         await new Promise(resolve => img.onload = resolve);
 
         const boardComputedStyle = getComputedStyle(gameBoard);
-        // Bu değişkenler artık puzzle parçalarının boyutunu doğrudan etkilemiyor
-        // const boardWidth = parseFloat(boardComputedStyle.width);
-        // const boardHeight = parseFloat(boardComputedStyle.height);
 
         gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
         gameBoard.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
@@ -669,8 +667,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchDraggedItem = null;
     let initialX, initialY;
     let currentDragTarget = null;
-    let originalPieceWidth = 0; // Orijinal parça genişliği (CSS hesaplanmış)
-    let originalPieceHeight = 0; // Orijinal parça yüksekliği (CSS hesaplanmış)
+    let originalPieceWidth = 0;
+    let originalPieceHeight = 0;
 
 
     function addTouchListeners() {
@@ -688,8 +686,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         touchDraggedItem = this;
         
-        // DÜZELTME: Parçanın orijinal (CSS tarafından verilmiş) boyutlarını kaydet
-        // Bu, sürükleme sırasında parçanın oyun alanına göre boyutunu korumasını sağlar.
         originalPieceWidth = touchDraggedItem.offsetWidth;
         originalPieceHeight = touchDraggedItem.offsetHeight;
 
@@ -697,20 +693,26 @@ document.addEventListener('DOMContentLoaded', () => {
         touchDraggedItem.style.zIndex = '1000';
         touchDraggedItem.style.cursor = 'grabbing';
         
-        // DÜZELTME: Sürüklenen parçanın boyutunu manuel olarak atayarak büyümesini engelle
-        touchDraggedItem.style.width = `${originalPieceWidth}px`;
-        touchDraggedItem.style.height = `${originalPieceHeight}px`;
+        // DÜZELTME: Sürüklenen parçanın boyutunu oyun alanına göre değil, kendi orijinal piksel boyutuna sabitle
+        // Bu, parçanın CSS ile belirlenen grid boyutundan ayrı olarak sabit kalmasını sağlar.
+        const pieceImg = touchDraggedItem.querySelector('img');
+        if (pieceImg) {
+            // Canvas'tan gelen resmin doğal boyutunu al (eğer gerekliyse)
+            // Ancak asıl amaç, ekranda kapladığı div'in boyutunu korumak.
+            touchDraggedItem.style.width = `${originalPieceWidth}px`;
+            touchDraggedItem.style.height = `${originalPieceHeight}px`;
+        }
 
 
         const rect = touchDraggedItem.getBoundingClientRect();
         const touch = e.touches[0];
         
-        // DÜZELTME: Dokunma noktasının parçaya göre offset'i
         initialX = touch.clientX - rect.left;
         initialY = touch.clientY - rect.top;
 
+        // DÜZELTME: Konumlandırma, parçanın kendi orijinal boyutunu dikkate alarak ayarlanmalı
+        // gameBoard'a göre offset hesaplaması doğruydu, sadece parçanın büyümesini engelledik
         const boardRect = gameBoard.getBoundingClientRect();
-        // DÜZELTME: Parçayı dokunulan yere göre konumlandır, gameBoard'a göre offset al
         touchDraggedItem.style.left = `${touch.clientX - initialX - boardRect.left}px`;
         touchDraggedItem.style.top = `${touch.clientY - initialY - boardRect.top}px`;
         
@@ -724,11 +726,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const touch = e.touches[0];
         const boardRect = gameBoard.getBoundingClientRect();
 
-        // DÜZELTME: Parçayı parmağın hareketine göre güncelle, gameBoard'a göre offset al
         touchDraggedItem.style.left = `${touch.clientX - initialX - boardRect.left}px`;
         touchDraggedItem.style.top = `${touch.clientY - initialY - boardRect.top}px`;
 
-        // Hedef parçayı bulma ve vurgulama
         const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
         let potentialTarget = null;
         for (let i = 0; i < elementsAtPoint.length; i++) {
@@ -784,8 +784,8 @@ document.addEventListener('DOMContentLoaded', () => {
         touchDraggedItem.style.zIndex = '';
         touchDraggedItem.style.left = '';
         touchDraggedItem.style.top = '';
-        touchDraggedItem.style.width = ''; // Boyutu sıfırla
-        touchDraggedItem.style.height = ''; // Boyutu sıfırla
+        touchDraggedItem.style.width = '';
+        touchDraggedItem.style.height = '';
 
 
         touchDraggedItem = null;
@@ -801,8 +801,8 @@ document.addEventListener('DOMContentLoaded', () => {
         confettiContainer.style.left = '0';
         confettiContainer.style.width = '100%';
         confettiContainer.style.height = '100%';
-        confettiContainer.style.pointerEvents = 'none'; // Altındaki elementlere tıklanabilir
-        confettiContainer.style.zIndex = '2001'; // İpucu ekranının üzerinde olsun
+        confettiContainer.style.pointerEvents = 'none';
+        confettiContainer.style.zIndex = '2001';
         document.body.appendChild(confettiContainer);
 
         const colors = ['#fce18a', '#ff726d', '#b48cff', '#78d2ff', '#5cd159'];
