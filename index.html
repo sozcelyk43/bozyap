@@ -3,47 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boz Yap - Puzzle Oyunu</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
+    <title>Puzzle Oyunu</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <div class="game-container">
-        <h1 id="gameTitle">Boz Yap</h1>
-        <div class="selection-screen" id="selectionScreen">
-            <p>Zorluk Seviyesi Seçin:</p>
-            <div class="piece-options">
-                <button class="piece-button" data-cols="4" data-rows="3">Kolay (4x3)</button>
-                <button class="piece-button" data-cols="8" data-rows="6">Orta (8x6)</button>
-                <button class="piece-button" data-cols="12" data-rows="9">Zor (12x9)</button>
-                <button class="piece-button" data-cols="16" data-rows="12">Çok Zor (16x12)</button>
-                <button class="piece-button" data-cols="20" data-rows="15">İmkansız (20x15)</button>
-            </div>
-
-            <p>Resim Kategorisi Seçin:</p>
-            <div class="category-options">
-                </div>
-            <button id="startGameButton" disabled>Oyuna Başla</button>
-        </div>
-
-        <div class="game-board" id="gameBoard">
-            </div>
-
-        <div class="game-controls">
-            <div id="timer" class="timer">00:00</div>
-            <button id="hintButton" class="hint-button">İpucu Al</button>
-            <button id="mainMenuFromGame" class="hint-button">Ana Menüye Dön</button>
-        </div>
-
-        <div class="win-screen" id="winScreen">
-            <h2>Tebrikler!</h2>
-            <p>Yapbozu başarıyla tamamladınız!</p>
-            <p id="finalTime">Tamamlama Süreniz: 00:00</p>
-            <button id="playAgainButton">Tekrar Oyna</button>
-            <button id="mainMenuButton">Ana Menü</button>
-        </div>
+    <h1 id="gameTitle">Puzzle Oyunu</h1>
+    <div id="selectionScreen">
+        <h2>Zorluk Seviyesi Seçin</h2>
+        <div class="piece-options"></div>
+        <h2>Resim Kategorisi Seçin</h2>
+        <div class="category-options"></div>
+        <button id="startGameButton" disabled>OYUNU BAŞLAT</button>
     </div>
-
+    <div class="game-controls">
+        <span id="timer">00:00</span>
+        <button id="hintButton">İPUCU</button>
+        <button id="mainMenuFromGame">ANA MENÜ</button>
+    </div>
+    <div id="gameBoard"></div>
+    <div id="winScreen">
+        <h2>Tebrikler!</h2>
+        <p id="finalTime">Tamamlama Süreniz: 00:00</p>
+        <button id="playAgainButton">TEKRAR OYNA</button>
+        <button id="mainMenuButton">ANA MENÜ</button>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
