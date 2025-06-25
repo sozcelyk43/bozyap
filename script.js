@@ -13,18 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainMenuFromGameButton = document.getElementById('mainMenuFromGame');
     const gameControls = document.querySelector('.game-controls');
     const gameTitle = document.getElementById('gameTitle');
+    const footer = document.querySelector('footer'); // Footer elementini seç
 
     let selectedCols = null;
     let selectedRows = null;
     let selectedCategory = null;
     let selectedImage = null;
-
     let puzzlePieces = [];
     let gameStartTime;
     let timerInterval;
     let hintUsed = false;
     let confettiInstance = null;
-
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sounds = {};
 
@@ -37,9 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return response.arrayBuffer();
             })
             .then(buffer => audioContext.decodeAudioData(buffer))
-            .then(decodedData => {
-                sounds[name] = decodedData;
-            })
+            .then(decodedData => { sounds[name] = decodedData; })
             .catch(e => console.error(`Ses dosyası yüklenemedi: ${name} (${url})`, e));
     }
 
@@ -59,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSound('win', 'sounds/success-1.mp3');
     loadSound('hint', 'sounds/button-3.mp3');
 
- 
     function loadCategories() {
         categoryOptions.innerHTML = '';
         for (const categoryName in imageCategories) {
@@ -80,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
             { name: 'Zor (6x4)', cols: 6, rows: 4 },
             { name: 'Çok Zor (7x5)', cols: 7, rows: 5 }
         ];
-
         pieceConfigs.forEach(config => {
             const button = document.createElement('button');
             button.classList.add('piece-button');
@@ -118,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     startGameButton.addEventListener('click', () => {
         if (selectedCols && selectedRows && selectedCategory && selectedImage) {
+            footer.style.display = 'none'; // Oyuna başlarken footer'ı gizle
             selectionScreen.style.display = 'none';
             gameTitle.style.display = 'none';
             gameBoard.style.display = 'grid';
@@ -157,6 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function restartPuzzle() {
+        footer.style.display = 'none'; // Tekrar oynarken footer'ı gizli tut
         winScreen.style.display = 'none';
         gameBoard.style.display = 'grid';
         gameControls.style.display = 'flex';
@@ -178,6 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetGame() {
+        footer.style.display = 'block'; // Ana menüye dönerken footer'ı göster
         stopTimer();
         if (confettiInstance) {
             confettiInstance.clear();
@@ -297,18 +295,9 @@ document.addEventListener('DOMContentLoaded', () => {
         checkWinCondition();
     }
 
-    function dragOver(e) {
-        e.preventDefault();
-    }
-
-    function dragEnter(e) {
-        e.preventDefault();
-        this.classList.add('drag-over');
-    }
-
-    function dragLeave() {
-        this.classList.remove('drag-over');
-    }
+    function dragOver(e) { e.preventDefault(); }
+    function dragEnter(e) { e.preventDefault(); this.classList.add('drag-over'); }
+    function dragLeave() { this.classList.remove('drag-over'); }
 
     function dragDrop() {
         this.classList.remove('drag-over');
@@ -348,9 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
             display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'scale(1.05)'
         });
         const imgInClone = touchPieceClone.querySelector('img');
-        if (imgInClone) {
-            Object.assign(imgInClone.style, { width: '100%', height: '100%', objectFit: 'fill' });
-        }
+        if (imgInClone) { Object.assign(imgInClone.style, { width: '100%', height: '100%', objectFit: 'fill' }); }
         document.body.appendChild(touchPieceClone);
         const touch = e.touches[0];
         const rect = currentTouchPiece.getBoundingClientRect();
@@ -489,6 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    footer.style.display = 'block'; // Sayfa ilk yüklendiğinde footer'ı göster
     loadCategories();
     updatePieceOptions();
 });
