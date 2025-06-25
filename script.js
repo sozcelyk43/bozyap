@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // ... (Mevcut DOM elemanı tanımlamaları ve diğer fonksiyonlar) ...
     const selectionScreen = document.getElementById('selectionScreen');
     const gameBoard = document.getElementById('gameBoard');
     const pieceOptions = document.querySelector('.piece-options');
@@ -15,17 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameControls = document.querySelector('.game-controls');
     const gameTitle = document.getElementById('gameTitle');
 
-    let selectedCols = null;
-    let selectedRows = null;
+    let selectedCols = null; // Sütun sayısı
+    let selectedRows = null; // Satır sayısı
     let selectedCategory = null;
     let selectedImage = null;
 
-    let puzzlePieces = [];
-    let gameStartTime;
-    let timerInterval;
-    let hintUsed = false;
-    let confettiInstance = null;
+    let puzzlePieces = []; // Karıştırılmış sıradaki puzzle parçaları
+    let gameStartTime; // Zamanlayıcı başlangıç zamanı
+    let timerInterval; // Zamanlayıcı interval ID'si
+    let hintUsed = false; // İpucu kullanıldı mı?
+    let confettiInstance = null; // Konfetti örneğini saklamak için
 
+    // --- Ses Efektleri ---
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sounds = {};
 
@@ -55,11 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Ses dosyalarını yükle (Örnek URL'ler - bunları kendi lokal dosyalarınızla değiştirin)
     loadSound('pieceMove', 'sounds/button-1.mp3');
     loadSound('piecePlace', 'sounds/button-2.mp3');
     loadSound('win', 'sounds/success-1.mp3');
     loadSound('hint', 'sounds/button-3.mp3');
 
+
+    // --- Resim kategorileri ve örnek resim URL'leri (Lokal dosya yolları ve çocuk temasına uygun örnekler) ---
     const imageCategories = {
         "Doğa ve Manzara": [
             "images/dogamanzara/dogamanzara01.jpg", "images/dogamanzara/dogamanzara02.jpg",
@@ -375,6 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     };
 
+    // --- Kategorileri Yükleme Fonksiyonu ---
     function loadCategories() {
         categoryOptions.innerHTML = '';
         for (const categoryName in imageCategories) {
@@ -386,6 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- Başlat Butonunun Durumunu Güncelleme ---
     function updateStartButtonState() {
         if (selectedCols && selectedRows && selectedCategory) {
             startGameButton.disabled = false;
@@ -394,6 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- Zamanlayıcı Başlat/Durdur Fonksiyonları ---
     function startTimer() {
         gameStartTime = Date.now();
         timerInterval = setInterval(updateTimer, 1000);
@@ -446,6 +452,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStartButtonState();
     }
 
+
+    // --- Olay Dinleyicileri ---
     pieceOptions.addEventListener('click', (event) => {
         const target = event.target;
         if (target.classList.contains('piece-button')) {
@@ -525,6 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
         playSound('hint');
     });
 
+    // --- Puzzle Oluşturma Fonksiyonu (Sabit Oyun Alanı) ---
     async function createPuzzle(imageUrl, cols, rows) {
         gameBoard.innerHTML = '';
         puzzlePieces = [];
@@ -550,7 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < totalPieces; i++) {
             const pieceDiv = document.createElement('div');
             pieceDiv.classList.add('puzzle-piece');
-            pieceDiv.setAttribute('draggable', 'true');
+            pieceDiv.setAttribute('draggable', 'true'); // Fare için draggable özelliği
             pieceDiv.dataset.originalIndex = i;
 
             const row = Math.floor(i / cols);
@@ -580,10 +589,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         puzzlePieces.forEach(piece => gameBoard.appendChild(piece));
 
-        addDragDropListeners(); // Fare için
-        addTouchListeners();   // Dokunmatik için
+        addDragDropListeners(); // Fare için sürükle-bırak olaylarını ekle
+        addTouchListeners();   // Dokunmatik için olayları ekle
     }
 
+    // Diziyi karıştıran yardımcı fonksiyon (Fisher-Yates shuffle)
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -591,10 +601,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- FARE SÜRÜKLE-BIRAK İŞLEVSELLİĞİ (DEĞİŞMEDİ) ---
-    let draggedItem = null;
+    // --- FARE SÜRÜKLE-BIRAK İŞLEVSELLİĞİ ---
+    let draggedItem = null; // Sürüklenen orijinal element
 
     function addDragDropListeners() {
+        // gameBoard içinde oluştukları için tekrar seçilmesi lazım
         const pieces = gameBoard.querySelectorAll('.puzzle-piece'); 
         pieces.forEach(piece => {
             piece.addEventListener('dragstart', dragStart);
@@ -608,23 +619,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function dragStart(e) {
         draggedItem = this;
-        setTimeout(() => this.style.opacity = '0.5', 0);
+        // Fare sürüklemesinde orijinali şeffaf yapma
+        setTimeout(() => this.style.opacity = '0.5', 0); 
         playSound('pieceMove');
     }
 
     function dragEnd() {
-        this.style.opacity = '1';
+        this.style.opacity = '1'; // Orijinali tekrar görünür yap
         document.querySelectorAll('.puzzle-piece').forEach(p => p.classList.remove('drag-over'));
         checkWinCondition();
     }
 
     function dragOver(e) {
-        e.preventDefault();
+        e.preventDefault(); // Drop olayının gerçekleşmesi için bu gerekli
     }
 
     function dragEnter(e) {
         e.preventDefault();
-        this.classList.add('drag-over');
+        this.classList.add('drag-over'); // Sürüklenen elementin üzerine gelindiğinde görsel geri bildirim
     }
 
     function dragLeave() {
@@ -635,58 +647,69 @@ document.addEventListener('DOMContentLoaded', () => {
         this.classList.remove('drag-over');
         if (draggedItem && draggedItem !== this) {
             const parent = gameBoard;
-            const draggedOriginalNextSibling = draggedItem.nextSibling;
-            parent.insertBefore(draggedItem, this);
-            parent.insertBefore(this, draggedOriginalNextSibling);
+            // İki elementi DOM içinde takas etme mantığı (Fare sürüklemesi için)
+            // Bu takas mantığı en basit ve güvenilir olanıdır.
+            const target = this; // Bırakılan hedef
+            const dragged = draggedItem; // Sürüklenen eleman
+
+            const temp = document.createElement('div'); // Geçici bir yer tutucu oluştur
+            parent.insertBefore(temp, target); // Hedefin yerine geçiciyi koy
+
+            parent.insertBefore(target, dragged); // Hedefi sürüklenenin orijinal yerine (veya yeni yerine) taşı
+            parent.insertBefore(dragged, temp); // Sürükleneni geçicinin yerine taşı (hedefin eski yeri)
             
+            temp.remove(); // Geçici yer tutucuyu kaldır
+
             playSound('piecePlace');
         }
     }
 
-    // --- MOBİL DOKUNMATİK İŞLEVSELLİĞİ (BÜYÜK DEĞİŞİKLİK BURADA) ---
-     let currentTouchPiece = null; // Orijinal parça
-    let touchPieceClone = null;   // Hareket eden klon parça
-    let startTouchX = 0;
-    let startTouchY = 0;
-    let cloneOffsetX = 0;
-    let cloneOffsetY = 0;
+    // --- MOBİL DOKUNMATİK İŞLEVSELLİĞİ (KLONLAMA YÖNTEMİ) ---
+    let currentTouchPiece = null; // Dokunulan orijinal puzzle parçası
+    let touchPieceClone = null;   // Parmağın hareket ettiği klon puzzle parçası
+    let cloneOffsetX = 0;         // Parmağın klona göre x offset'i
+    let cloneOffsetY = 0;         // Parmağın klona göre y offset'i
 
-   function addTouchListeners() {
-        const pieces = gameBoard.querySelectorAll('.puzzle-piece');
+    function addTouchListeners() {
+        const pieces = gameBoard.querySelectorAll('.puzzle-piece'); 
         pieces.forEach(piece => {
             piece.addEventListener('touchstart', touchStart);
             piece.addEventListener('touchmove', touchMove);
             piece.addEventListener('touchend', touchEnd);
-            piece.addEventListener('touchcancel', touchEnd);
+            piece.addEventListener('touchcancel', touchEnd); // Dokunma kesildiğinde temizlik için
         });
     }
 
-        function touchStart(e) {
-        if (e.touches.length !== 1) return;
-        e.preventDefault();
+    function touchStart(e) {
+        if (e.touches.length !== 1) return; // Sadece tek parmak dokunuşunu dinle
+        e.preventDefault(); // Tarayıcının varsayılan kaydırma/yakınlaştırma davranışını engelle
 
-        currentTouchPiece = this;
-        currentTouchPiece.style.opacity = '0.4';
-        currentTouchPiece.style.pointerEvents = 'none';
+        currentTouchPiece = this; // Dokunulan orijinal puzzle parçası
+        currentTouchPiece.style.opacity = '0.4'; // Orijinal parçayı şeffaf yap
+        currentTouchPiece.style.pointerEvents = 'none'; // Orijinal parçanın olayları yakalamasını engelle (hedef tespiti için)
 
+        // Klon puzzle parçasını oluştur ve stilini ayarla
         touchPieceClone = currentTouchPiece.cloneNode(true);
         Object.assign(touchPieceClone.style, {
-            position: 'fixed',
-            zIndex: '1001',
-            opacity: '1',
-            pointerEvents: 'none',
-            width: currentTouchPiece.offsetWidth + 'px',
+            position: 'fixed', // Ekranın viewport'una göre sabit konumlandırma
+            zIndex: '1001',    // En üstte görünmesini sağla
+            opacity: '1',      // Klonun tamamen görünür olmasını sağla
+            pointerEvents: 'none', // Klonun kendisinin dokunma olaylarını yakalamasını engelle
+            // Klonun boyutunu orijinal parça ile aynı yap
+            width: currentTouchPiece.offsetWidth + 'px', 
             height: currentTouchPiece.offsetHeight + 'px',
+            // Orijinal parçanın CSS'indeki diğer görsellikleri klona aktar
             borderRadius: getComputedStyle(currentTouchPiece).borderRadius,
             boxShadow: getComputedStyle(currentTouchPiece).boxShadow,
             border: getComputedStyle(currentTouchPiece).border,
             backgroundColor: getComputedStyle(currentTouchPiece).backgroundColor,
-            display: 'flex',
+            display: 'flex', // İçindeki img elementinin tam sığması için
             alignItems: 'center',
             justifyContent: 'center',
-            transform: 'scale(1.05)'
+            transform: 'scale(1.05)' // Hafif bir "kalkma" efekti için
         });
         
+        // Klonun içindeki img elementinin de boyutunu ayarlayalım
         const imgInClone = touchPieceClone.querySelector('img');
         if (imgInClone) {
             Object.assign(imgInClone.style, {
@@ -696,14 +719,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        document.body.appendChild(touchPieceClone);
+        document.body.appendChild(touchPieceClone); // Klonu body'ye ekle
 
-        const touch = e.touches[0];
-        const rect = currentTouchPiece.getBoundingClientRect();
+        const touch = e.touches[0]; // İlk dokunma noktası
+        const rect = currentTouchPiece.getBoundingClientRect(); // Orijinal parçanın ekran koordinatları
 
+        // Parmak ucunun klonun sol üst köşesine göre offset'ini hesapla
         cloneOffsetX = touch.clientX - rect.left;
         cloneOffsetY = touch.clientY - rect.top;
 
+        // Klonu parmak pozisyonuna göre konumlandır
         touchPieceClone.style.left = `${touch.clientX - cloneOffsetX}px`;
         touchPieceClone.style.top = `${touch.clientY - cloneOffsetY}px`;
 
@@ -715,6 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
 
         const touch = e.touches[0];
+        // Klonu parmak pozisyonuna göre güncelle
         touchPieceClone.style.left = `${touch.clientX - cloneOffsetX}px`;
         touchPieceClone.style.top = `${touch.clientY - cloneOffsetY}px`;
     }
@@ -722,59 +748,66 @@ document.addEventListener('DOMContentLoaded', () => {
     function touchEnd(e) {
         if (!currentTouchPiece || !touchPieceClone) return;
 
-        e.preventDefault();
+        e.preventDefault(); // Varsayılan tıklama/seçme davranışını engelle
 
-        touchPieceClone.remove();
-        touchPieceClone = null;
+        touchPieceClone.remove(); // Klonu DOM'dan kaldır
+        touchPieceClone = null; // Klon referansını sıfırla
 
-        currentTouchPiece.style.opacity = '1';
-        currentTouchPiece.style.pointerEvents = 'auto';
+        currentTouchPiece.style.opacity = '1'; // Orijinal parçayı tekrar tamamen görünür yap
+        currentTouchPiece.style.pointerEvents = 'auto'; // Orijinal parçanın olay yakalamasını tekrar etkinleştir
         
-        const touch = e.changedTouches[0];
+        const touch = e.changedTouches[0]; // Bırakılan dokunma noktası
         
-        // Geçici olarak orijinal parçayı gizle, böylece elementsFromPoint doğru hedefi bulur
-        currentTouchPiece.style.opacity = '0'; 
-        currentTouchPiece.style.pointerEvents = 'none'; // Tekrar olayları engelle
+        // Bırakılan noktadaki hedef elementi bul
+        // currentTouchPiece'in pointer-events: none olması, kendi kendini hedef olarak görmesini engeller.
         const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
-        currentTouchPiece.style.opacity = '1'; // Tekrar görünür yap
-        currentTouchPiece.style.pointerEvents = 'auto'; // Olayları tekrar etkinleştir
 
         let targetPiece = null;
-        if (targetElement && targetElement.classList.contains('puzzle-piece')) {
+        // Eğer bulunan element bir puzzle parçasıysa ve kendi parçamız değilse, onu hedef olarak al
+        if (targetElement && targetElement.classList.contains('puzzle-piece') && targetElement !== currentTouchPiece) {
             targetPiece = targetElement;
         }
 
-        if (targetPiece && targetPiece !== currentTouchPiece) {
-            // İki puzzle parçasının DOM'daki yerini değiştirme
-            const parent = gameBoard; // gameBoard, tüm parçaların ebeveyni
+        if (targetPiece) {
+            // İki puzzle parçasının DOM'daki yerini güvenli bir şekilde değiştirme
+            const parent = gameBoard; // gameBoard, tüm puzzle parçalarının ebeveyni
             
-            // Yöntem 1: Geçici referans ile yer değiştirme
-            const nextSiblingOfDragged = currentTouchPiece.nextSibling;
-            const nextSiblingOfTarget = targetPiece.nextSibling;
+            // dragged: sürüklenen parça (currentTouchPiece)
+            // target: bırakılan yerdeki parça (targetPiece)
 
-            parent.insertBefore(currentTouchPiece, nextSiblingOfTarget); // Sürüklenen parçayı hedefin yerine yerleştir
-            parent.insertBefore(targetPiece, nextSiblingOfDragged);    // Hedef parçayı sürüklenenin orijinal yerine yerleştir
+            // 1. target'ın hemen sonraki kardeşini kaydet (target, DOM'da taşınmadan önce)
+            const targetNextSibling = targetPiece.nextSibling;
 
-            // Yöntem 2: (Daha kısa, ancak bazı edge case'lerde dikkatli olmak gerekir)
-            // const temp = document.createElement('div'); // Geçici bir boş element oluştur
-            // parent.insertBefore(temp, targetPiece); // Hedefin yerine geçiciyi koy
-            // parent.insertBefore(targetPiece, currentTouchPiece); // Hedefi sürüklenenin yerine taşı
-            // parent.insertBefore(currentTouchPiece, temp); // Sürükleneni geçicinin yerine taşı
-            // temp.remove(); // Geçiciyi kaldır
+            // 2. dragged'ı target'ın yerine koy
+            parent.insertBefore(currentTouchPiece, targetPiece);
+
+            // 3. target'ı dragged'ın orijinal yerine koy
+            // Eğer dragged, target'ın hemen önündeyse, targetNextSibling yanlış olurdu.
+            // Bu yüzden daha genel bir swap mantığı kullanalım:
+            
+            // Eğer sürüklenen parça, hedefin hemen önündeyse (sürükleme yönüne göre)
+            if (targetPiece.parentNode === parent && targetPiece.nextSibling === currentTouchPiece) {
+                 parent.insertBefore(targetPiece, currentTouchPiece); // Sürükleneni hedefin yerine, hedefi de sürüklenenin eski yerine koy
+            } else {
+                // Diğer durumlarda (uzak takas)
+                const temp = document.createElement('div'); // Geçici bir yer tutucu
+                parent.insertBefore(temp, currentTouchPiece); // Sürüklenenin yerine geçiciyi koy
+                
+                parent.insertBefore(currentTouchPiece, targetPiece); // Sürükleneni hedefin yerine koy
+                parent.insertBefore(targetPiece, temp); // Hedefi geçicinin yerine koy
+                
+                temp.remove(); // Geçiciyi kaldır
+            }
 
             playSound('piecePlace');
         } 
-        // Eğer hedef bulunamazsa veya hedef kendi parçamızsa, parça zaten orijinal yerinde kalır
-
-        currentTouchPiece = null;
-        // orijinalPieceParent ve originalPieceNextSibling'a artık ihtiyacımız yok
-        // çünkü parça yer değiştirmezse zaten DOM'da kalır.
-        checkWinCondition();
+        // Eğer hedef bulunamazsa veya hedef kendi parçamızsa, parça otomatik olarak orijinal yerinde kalır (çünkü DOM'dan hiç ayrılmadı).
+        
+        currentTouchPiece = null; // Sürükleme durumu sıfırla
+        checkWinCondition(); // Kazanma koşulunu kontrol et
     }
 
-    // ... (Diğer fonksiyonlar aynı kalacak) ...
-});
-
+    // --- İpucu Sistemi ---
     async function showHint() {
         const tempImage = new Image();
         tempImage.src = selectedImage;
@@ -819,6 +852,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
+
+    // --- Kazanma Koşulu Kontrolü ---
     function checkWinCondition() {
         const currentOrderDOM = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'));
         let isSolved = true;
@@ -830,9 +865,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (isSolved) {
-            stopTimer();
-            playSound('win');
+            stopTimer(); // Zamanlayıcıyı durdur
+            playSound('win'); // Kazanma sesi çal
 
+            // Konfetti efektini başlatmak için canvas oluştur ve ekle
             const confettiCanvas = document.createElement('canvas');
             confettiCanvas.id = 'confetti-canvas';
             confettiCanvas.style.position = 'fixed';
@@ -840,11 +876,11 @@ document.addEventListener('DOMContentLoaded', () => {
             confettiCanvas.style.left = '0';
             confettiCanvas.style.width = '100%';
             confettiCanvas.style.height = '100%';
-            confettiCanvas.style.zIndex = '9999';
+            confettiCanvas.style.zIndex = '9999'; // En üstte olmalı
             document.body.appendChild(confettiCanvas);
 
             const confettiSettings = { 
-                target: 'confetti-canvas',
+                target: 'confetti-canvas', // Canvas id'sini hedef olarak veriyoruz
                 max: 80, 
                 size: 1, 
                 animate: true, 
@@ -859,42 +895,50 @@ document.addEventListener('DOMContentLoaded', () => {
             confettiInstance = new ConfettiGenerator(confettiSettings);
             confettiInstance.render();
 
-            alert('Tebrikler! Yapbozu tamamladınız!');
+            alert('Tebrikler! Yapbozu tamamladınız!'); // Uyarı mesajı
 
+            // TÜM PARÇALARI DOĞRU SIRADA GÖSTERME VE EFEKT
+            // Mevcut parçaları orijinal indexlerine göre sırala
             const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
                                  .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
             
-            gameBoard.innerHTML = '';
+            gameBoard.innerHTML = ''; // Önceki tüm parçaları temizle
             sortedPieces.forEach(piece => {
-                piece.style.opacity = '1';
-                gameBoard.appendChild(piece);
+                piece.style.opacity = '1'; // Tüm parçaları tam görünür yap
+                gameBoard.appendChild(piece); // Sıralanmış parçaları tahtaya ekle
             });
 
+            // Puzzle'ın bitmiş halini tam gösterirken aradaki boşlukları kaldır
             gameBoard.style.gap = '0px'; 
-            gameBoard.style.borderColor = 'transparent';
+            gameBoard.style.borderColor = 'transparent'; // Çerçeveyi de gizle
+
+            // Oyun tahtasına geçici bir "tamamlandı" efekti ekle
             gameBoard.classList.add('solved-effect');
 
             setTimeout(() => {
+                // 5 saniye sonra efektleri kaldır ve pop-up'ı göster
                 gameBoard.classList.remove('solved-effect');
-                gameBoard.style.gap = '2px';
-                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                gameBoard.style.gap = '2px'; // Boşlukları geri getir
+                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)'; // Çerçeveyi geri getir
 
                 const finalTime = timerDisplay.textContent;
                 finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
 
-                gameBoard.style.display = 'none';
-                gameControls.style.display = 'none';
-                winScreen.style.display = 'block';
+                gameBoard.style.display = 'none'; // Oyun tahtasını gizle
+                gameControls.style.display = 'none'; // Kontrolleri gizle
+                winScreen.style.display = 'block'; // Kazanma ekranını göster
                 
+                // Konfettiyi durdur ve canvas'ı kaldır
                 if (confettiInstance) {
                     confettiInstance.clear();
-                    confettiCanvas.remove(); // Sadece confettiCanvas'ı kaldır
-                    confettiInstance = null; // confettiInstance'ı null yap
+                    confettiCanvas.remove(); // Canvas elementini DOM'dan kaldır
+                    confettiInstance = null; // Konfetti örneğini sıfırla
                 }
 
-            }, 5000);
+            }, 5000); // 5 saniye bekle
         }
     }
 
+    // Sayfa yüklendiğinde kategorileri yükle
     loadCategories();
 });
