@@ -5,15 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryOptions = document.querySelector('.category-options');
     const startGameButton = document.getElementById('startGameButton');
     const timerDisplay = document.getElementById('timer');
-    const hintButton = document.getElementById('hintButton'); // Const olarak kalacak
+    // const hintButton = document.getElementById('hintButton'); // Const'tan kaldırıldı, çünkü createPuzzle içinde yeniden ele alınacak
     const winScreen = document.getElementById('winScreen');
     const finalTimeDisplay = document.getElementById('finalTime');
     const playAgainButton = document.getElementById('playAgainButton');
     const mainMenuButton = document.getElementById('mainMenuButton');
-    const mainMenuFromGameButton = document.getElementById('mainMenuFromGame'); // Const olarak kalacak
+    // const mainMenuFromGameButton = document.getElementById('mainMenuFromGame'); // Const'tan kaldırıldı
     const gameControls = document.querySelector('.game-controls');
     const gameTitle = document.getElementById('gameTitle');
 
+    // Bu değişkenleri global scope'ta tutalım ki her yerden erişebilelim
+    let hintButtonElement; // İpucu butonu elementi
+    let mainMenuFromGameButtonElement; // Oyun içi ana menü butonu elementi
 
     let selectedCols = null;
     let selectedRows = null;
@@ -23,9 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let puzzlePieces = [];
     let gameStartTime;
     let timerInterval;
-    let hintUsed = false; // Her oyun başlangıcında sıfırlanacak
+    let hintUsed = false;
 
     // --- Ses Efektleri ---
+    // Ses dosyalarınıza erişim için tarayıcınızda bir yerel sunucu çalıştırmanız gerektiğini unutmayın.
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sounds = {};
 
@@ -665,8 +669,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchDraggedItem = null;
     let initialX, initialY;
     let currentDragTarget = null;
-    let originalPieceWidth = 0; // Orijinal parça genişliği
-    let originalPieceHeight = 0; // Orijinal parça yüksekliği
+    let originalPieceWidth = 0; // Orijinal parça genişliği (CSS hesaplanmış)
+    let originalPieceHeight = 0; // Orijinal parça yüksekliği (CSS hesaplanmış)
 
 
     function addTouchListeners() {
@@ -675,6 +679,8 @@ document.addEventListener('DOMContentLoaded', () => {
             piece.addEventListener('touchstart', touchStart);
             piece.addEventListener('touchmove', touchMove);
             piece.addEventListener('touchend', touchEnd);
+            // touchcancel da eklenebilir, dokunma kesildiğinde
+            // piece.addEventListener('touchcancel', touchEnd); 
         });
     }
 
@@ -682,7 +688,8 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         touchDraggedItem = this;
         
-        // DÜZELTME: Parçanın orijinal boyutlarını kaydet
+        // DÜZELTME: Parçanın orijinal (CSS tarafından verilmiş) boyutlarını kaydet
+        // Bu, sürükleme sırasında parçanın oyun alanına göre boyutunu korumasını sağlar.
         originalPieceWidth = touchDraggedItem.offsetWidth;
         originalPieceHeight = touchDraggedItem.offsetHeight;
 
@@ -690,7 +697,7 @@ document.addEventListener('DOMContentLoaded', () => {
         touchDraggedItem.style.zIndex = '1000';
         touchDraggedItem.style.cursor = 'grabbing';
         
-        // DÜZELTME: Sürüklenen parçanın boyutunu manuel olarak ayarla
+        // DÜZELTME: Sürüklenen parçanın boyutunu manuel olarak atayarak büyümesini engelle
         touchDraggedItem.style.width = `${originalPieceWidth}px`;
         touchDraggedItem.style.height = `${originalPieceHeight}px`;
 
@@ -698,10 +705,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const rect = touchDraggedItem.getBoundingClientRect();
         const touch = e.touches[0];
         
+        // DÜZELTME: Dokunma noktasının parçaya göre offset'i
         initialX = touch.clientX - rect.left;
         initialY = touch.clientY - rect.top;
 
         const boardRect = gameBoard.getBoundingClientRect();
+        // DÜZELTME: Parçayı dokunulan yere göre konumlandır, gameBoard'a göre offset al
         touchDraggedItem.style.left = `${touch.clientX - initialX - boardRect.left}px`;
         touchDraggedItem.style.top = `${touch.clientY - initialY - boardRect.top}px`;
         
@@ -715,9 +724,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const touch = e.touches[0];
         const boardRect = gameBoard.getBoundingClientRect();
 
+        // DÜZELTME: Parçayı parmağın hareketine göre güncelle, gameBoard'a göre offset al
         touchDraggedItem.style.left = `${touch.clientX - initialX - boardRect.left}px`;
         touchDraggedItem.style.top = `${touch.clientY - initialY - boardRect.top}px`;
 
+        // Hedef parçayı bulma ve vurgulama
         const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
         let potentialTarget = null;
         for (let i = 0; i < elementsAtPoint.length; i++) {
