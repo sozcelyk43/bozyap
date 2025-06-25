@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let hintUsed = false;
     let confettiInstance = null;
 
-    // --- Ses Efektleri ---
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sounds = {};
 
@@ -251,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
             "images/tarih/tarih13.jpg", "images/tarih/tarih14.jpg",
             "images/tarih/tarih15.jpg", "images/tarih/tarih16.jpg",
             "images/tarih/tarih17.jpg", "images/tarih/tarih18.jpg",
-            "images/tarih/tarih19.jpg", "images/tarih/teknoloji20.jpg" // Burada bir typo olabilir, kontrol edin
+            "images/tarih/tarih19.jpg", "images/tarih/tarih20.jpg" // Burada typo düzeltildi, önceki koddaki "teknoloji20.jpg" yerine "tarih20.jpg" olmalıydı.
         ],
         "Bilim": [
             "images/bilim/bilim01.jpg", "images/bilim/bilim02.jpg",
@@ -647,6 +646,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastKnownX = 0;
     let lastKnownY = 0;
     let animationFrameId = null;
+    let originalPieceParent = null; // Parçanın orijinal ebeveynini tutmak için
+    let originalPieceNextSibling = null; // Parçanın orijinal sonraki kardeşini tutmak için
 
     function addTouchListeners() {
         const pieces = gameBoard.querySelectorAll('.puzzle-piece'); 
@@ -654,27 +655,37 @@ document.addEventListener('DOMContentLoaded', () => {
             piece.addEventListener('touchstart', touchStart);
             piece.addEventListener('touchmove', touchMove);
             piece.addEventListener('touchend', touchEnd);
-            // touchcancel da ekleyelim, bir kesinti olursa temizleme için
-            piece.addEventListener('touchcancel', touchEnd); 
+            piece.addEventListener('touchcancel', touchEnd); // touchcancel eklenmişti, kalsın
         });
     }
 
     function touchStart(e) {
-        e.preventDefault(); // Varsayılan kaydırma vb. engelle
+        e.preventDefault(); 
         touchDraggedItem = this;
+
+        // Orijinal konum bilgilerini kaydet
+        originalPieceParent = touchDraggedItem.parentNode;
+        originalPieceNextSibling = touchDraggedItem.nextSibling;
+
         touchDraggedItem.style.position = 'absolute';
         touchDraggedItem.style.zIndex = '1000';
         touchDraggedItem.style.cursor = 'grabbing';
         touchDraggedItem.style.pointerEvents = 'none'; // Sürüklerken kendi üzerine dokunma olaylarını engelle
         
+        // Sürüklenen parçanın görüntüsünü büyütmeden sadece hareket etmesini sağlamak için
+        // CSS'te transform: scale(1) veya none olarak ayarlandığından emin olun.
+        // Burada da ek bir scale vermiyoruz.
+
         const rect = touchDraggedItem.getBoundingClientRect();
         const touch = e.touches[0];
 
+        // Dokunma noktasının parçanın sol üst köşesine göre offset'i
         initialXOffset = touch.clientX - rect.left;
         initialYOffset = touch.clientY - rect.top;
 
-        // Anında ilk konumlandırma
         const boardRect = gameBoard.getBoundingClientRect();
+
+        // Anında ilk konumlandırma
         lastKnownX = touch.clientX - initialXOffset - boardRect.left;
         lastKnownY = touch.clientY - initialYOffset - boardRect.top;
         touchDraggedItem.style.transform = `translate(${lastKnownX}px, ${lastKnownY}px)`;
@@ -701,74 +712,80 @@ document.addEventListener('DOMContentLoaded', () => {
         if (touchDraggedItem) {
             touchDraggedItem.style.transform = `translate(${lastKnownX}px, ${lastKnownY}px)`;
         }
-        animationFrameId = null; // Bir sonraki kare için tekrar ayarla
+        animationFrameId = null;
     }
 
     function touchEnd(e) {
         if (!touchDraggedItem) return;
 
-        cancelAnimationFrame(animationFrameId); // Devam eden animasyon karesini iptal et
+        cancelAnimationFrame(animationFrameId); 
         animationFrameId = null;
 
         touchDraggedItem.style.cursor = 'grab';
-        touchDraggedItem.style.pointerEvents = 'auto'; // Olayları tekrar etkinleştir
+        touchDraggedItem.style.pointerEvents = 'auto'; 
 
         const touch = e.changedTouches[0];
         
-        // Geçici olarak sürüklenen parçayı gizleyerek doğru hedefi bul
-        touchDraggedItem.style.display = 'none'; 
-        const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
-        touchDraggedItem.style.display = ''; // Tekrar görünür yap
+        // Doğru hedef tespiti için sürüklenen parçayı geçici olarak gizle
+        touchDraggedItem.style.opacity = '0'; // Görünmez yap ama DOM'dan kaldırma
+        touchDraggedItem.style.pointerEvents = 'none'; // Olayları engelle ki kendi üstüne düşmesin
 
         let targetPiece = null;
+        // Bırakılan noktadaki elemanları al
+        const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
+        
         for (let i = 0; i < elementsAtPoint.length; i++) {
-            if (elementsAtPoint[i].classList.contains('puzzle-piece')) { // && elementsAtPoint[i] !== touchDraggedItem (zaten gizledik)
+            // Sadece puzzle-piece sınıfına sahip bir hedef ara (sürüklenen parçanın kendisi değil)
+            if (elementsAtPoint[i].classList.contains('puzzle-piece') && elementsAtPoint[i] !== touchDraggedItem) {
                 targetPiece = elementsAtPoint[i];
                 break;
             }
         }
+        
+        // Sürüklenen parçayı tekrar görünür yap
+        touchDraggedItem.style.opacity = '1'; 
+        touchDraggedItem.style.pointerEvents = 'auto';
 
-        if (targetPiece && targetPiece !== touchDraggedItem) { // Hedefin kendimiz olmadığından emin ol
+
+        if (targetPiece) {
             const parent = gameBoard;
-            // Daha güvenli ve tutarlı bir yer değiştirme:
-            // Sürüklenen parçanın ve hedefin DOM'daki pozisyonlarını belirle
-            const touchDraggedIndex = Array.from(parent.children).indexOf(touchDraggedItem);
-            const targetIndex = Array.from(parent.children).indexOf(targetPiece);
+            
+            // Basit ve sağlam yer değiştirme mantığı:
+            // Sürüklenen parçayı geçici bir yere taşı
+            const tempPlaceholder = document.createElement('div');
+            parent.insertBefore(tempPlaceholder, touchDraggedItem);
 
-            if (touchDraggedIndex < targetIndex) {
-                // Sürüklenen parça hedef parçadan önceyse, hedefin arkasına ekle
-                parent.insertBefore(touchDraggedItem, targetPiece.nextSibling);
-            } else {
-                // Sürüklenen parça hedef parçadan sonraysa, hedefin önüne ekle
-                parent.insertBefore(touchDraggedItem, targetPiece);
-            }
-            // Ardından hedef parçayı sürüklenen parçanın orijinal konumuna ekle
-            // Bu kısım çok karmaşık olabilir, daha basit bir swap kullanalım
-            // temp swap nodes
-            const tempNode = document.createElement('div'); // geçici yer tutucu
-            parent.insertBefore(tempNode, targetPiece); // Hedefin yerine geçiciyi koy
-            parent.comappendChild(targetPiece); // Hedefi geçici olarak sona taşı (veya başka bir yere)
-            parent.insertBefore(touchDraggedItem, tempNode); // Sürükleneni hedefin eski yerine koy
-            tempNode.remove(); // Geçiciyi kaldır
+            // Hedef parçayı sürüklenen parçanın eski yerine koy
+            parent.insertBefore(touchDraggedItem, targetPiece);
+            
+            // Sürüklenen parçayı hedefin eski yerine koy (tempPlaceholder'ın yerine)
+            parent.insertBefore(targetPiece, tempPlaceholder);
 
-            // Basit takas (swap) fonksiyonu:
-            const draggedEl = touchDraggedItem;
-            const targetEl = targetPiece;
-            const tempFragment = document.createDocumentFragment();
-            draggedEl.parentNode.replaceChild(tempFragment, draggedEl);
-            targetEl.parentNode.replaceChild(draggedEl, targetEl);
-            tempFragment.appendChild(targetEl);
-            draggedEl.parentNode.appendChild(tempFragment);
+            tempPlaceholder.remove(); // Geçici yer tutucuyu kaldır
             
             playSound('piecePlace');
-
-        } 
+        } else {
+            // Hedef bulunamazsa parçayı orijinal yerine geri döndür
+            if (originalPieceParent && originalPieceNextSibling) {
+                originalPieceParent.insertBefore(touchDraggedItem, originalPieceNextSibling);
+            } else if (originalPieceParent) {
+                // Eğer orijinalde en sondaysa
+                originalPieceParent.appendChild(touchDraggedItem);
+            } else {
+                // Eğer hiçbir şey bulunamazsa (çok nadir), en azından abs. konumunu kaldır
+                gameBoard.appendChild(touchDraggedItem); // Default olarak gameBoard'a ekle
+            }
+        }
         
+        // Son temizlik: absolute pozisyonunu ve transformu kaldır
         touchDraggedItem.style.position = '';
         touchDraggedItem.style.zIndex = '';
         touchDraggedItem.style.transform = ''; 
         
-        touchDraggedItem = null;
+        touchDraggedItem = null; // Sürüklenen parçayı sıfırla
+        originalPieceParent = null; // Sıfırla
+        originalPieceNextSibling = null; // Sıfırla
+
         checkWinCondition();
     }
 
