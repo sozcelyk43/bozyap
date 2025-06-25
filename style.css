@@ -341,7 +341,9 @@ h1 {
         margin: 8px;
     }
 }
-
+.piece-button, .category-button, #startGameButton, .hint-button, #mainMenuFromGame, #playAgainButton, #mainMenuButton {
+    pointer-events: auto !important;
+}
 @media (max-width: 420px) {
     .game-container {
         padding: 10px 5px;
