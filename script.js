@@ -371,6 +371,19 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     };
 
+    // --- Kategorileri Yükleme Fonksiyonu ---
+    // Bu fonksiyon global scopeta olmalı veya DOMContentLoaded içinde tanımlanmalı
+    function loadCategories() {
+        categoryOptions.innerHTML = ''; // Mevcut butonları temizle
+        for (const categoryName in imageCategories) {
+            const button = document.createElement('button');
+            button.classList.add('category-button');
+            button.textContent = categoryName;
+            button.dataset.category = categoryName;
+            categoryOptions.appendChild(button);
+        }
+    }
+
     // --- Zorluk seviyesi butonlarını dinamik olarak yükleme fonksiyonu ---
     function loadDifficultyButtons() {
         pieceOptions.innerHTML = ''; // Mevcut butonları temizle
@@ -387,14 +400,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Başlat Butonunun Durumunu Güncelleme ---
     function updateStartButtonState() {
-        if (selectedCols !== null && selectedRows !== null && selectedCategory) { // null kontrolü yapıldı
+        if (selectedCols !== null && selectedRows !== null && selectedCategory) {
             startGameButton.disabled = false;
         } else {
             startGameButton.disabled = true;
         }
     }
 
-    // ... (Zamanlayıcı fonksiyonları aynı kalacak) ...
+    // --- Zamanlayıcı Başlat/Durdur Fonksiyonları ---
+    function startTimer() {
+        gameStartTime = Date.now();
+        timerInterval = setInterval(updateTimer, 1000);
+        updateTimer(); // Hemen güncelle
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
+
+    function updateTimer() {
+        const elapsedTime = Date.now() - gameStartTime;
+        const totalSeconds = Math.floor(elapsedTime / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
 
     function resetGame() {
         stopTimer();
@@ -414,6 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gameBoard.style.gap = '2px';
         gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
         gameBoard.classList.remove('solved-effect');
+
 
         selectedCols = null;
         selectedRows = null;
@@ -440,10 +471,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ... (categoryOptions olay dinleyicisi aynı kalacak) ...
+    categoryOptions.addEventListener('click', (event) => {
+        const target = event.target;
+        if (target.classList.contains('category-button')) {
+            document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('selected'));
+            target.classList.add('selected');
+            selectedCategory = target.dataset.category;
+            const imagesInSelectedCategory = imageCategories[selectedCategory];
+            selectedImage = imagesInSelectedCategory[Math.floor(Math.random() * imagesInSelectedCategory.length)];
+            updateStartButtonState();
+            playSound('piecePlace');
+        }
+    });
 
     startGameButton.addEventListener('click', () => {
-        if (selectedCols !== null && selectedRows !== null && selectedCategory && selectedImage) { // null kontrolü yapıldı
+        if (selectedCols !== null && selectedRows !== null && selectedCategory && selectedImage) {
             selectionScreen.style.display = 'none';
             gameTitle.style.display = 'none';
             gameBoard.style.display = 'grid';
@@ -457,7 +499,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ... (playAgainButton, mainMenuButton, mainMenuFromGameButton, hintButton olay dinleyicileri aynı kalacak) ...
+    playAgainButton.addEventListener('click', () => {
+        winScreen.style.display = 'none';
+        gameBoard.style.display = 'grid';
+        gameControls.style.display = 'flex';
+        
+        timerDisplay.textContent = '00:00';
+        hintButton.disabled = false;
+        hintUsed = false;
+
+        const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
+        existingPieces.forEach(piece => piece.remove());
+
+        gameBoard.style.gap = '2px';
+        gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+        gameBoard.classList.remove('solved-effect');
+
+        createPuzzle(selectedImage, selectedCols, selectedRows);
+        startTimer();
+        playSound('piecePlace');
+    });
+
+    mainMenuButton.addEventListener('click', resetGame);
+    mainMenuFromGameButton.addEventListener('click', resetGame);
+
+    hintButton.addEventListener('click', () => {
+        if (hintUsed) {
+            alert('İpucu hakkınızı zaten kullandınız!');
+            return;
+        }
+        showHint();
+        hintUsed = true;
+        hintButton.disabled = true;
+        playSound('hint');
+    });
 
     // --- Puzzle Oluşturma Fonksiyonu ---
     async function createPuzzle(imageUrl, cols, rows) {
@@ -519,7 +594,175 @@ document.addEventListener('DOMContentLoaded', () => {
         addTouchListeners();
     }
 
-    // ... (shuffleArray, drag/drop ve touch event listener'lar aynı kalacak) ...
+    // Diziyi karıştıran yardımcı fonksiyon (Fisher-Yates shuffle)
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // --- Sürükle-Bırak İşlevselliği (Fare) ---
+    let draggedItem = null;
+
+    function addDragDropListeners() {
+        const pieces = gameBoard.querySelectorAll('.puzzle-piece');
+        pieces.forEach(piece => {
+            piece.addEventListener('dragstart', dragStart);
+            piece.addEventListener('dragenter', dragEnter);
+            piece.addEventListener('dragleave', dragLeave);
+            piece.addEventListener('dragover', dragOver);
+            piece.addEventListener('drop', dragDrop);
+            piece.addEventListener('dragend', dragEnd);
+        });
+    }
+
+    function dragStart(e) {
+        draggedItem = this;
+        setTimeout(() => this.style.opacity = '0.5', 0);
+        playSound('pieceMove');
+    }
+
+    function dragEnd() {
+        this.style.opacity = '1';
+        document.querySelectorAll('.puzzle-piece').forEach(p => p.classList.remove('drag-over'));
+        checkWinCondition();
+    }
+
+    function dragOver(e) {
+        e.preventDefault();
+    }
+
+    function dragEnter(e) {
+        e.preventDefault();
+        this.classList.add('drag-over');
+    }
+
+    function dragLeave() {
+        this.classList.remove('drag-over');
+    }
+
+    function dragDrop() {
+        this.classList.remove('drag-over');
+        if (draggedItem && draggedItem !== this) {
+            const parent = gameBoard;
+            if (this.nextSibling === draggedItem) {
+                parent.insertBefore(draggedItem, this);
+            } else if (draggedItem.nextSibling === this) {
+                parent.insertBefore(this, draggedItem);
+            } else {
+                const draggedOriginalNextSibling = draggedItem.nextSibling;
+                parent.insertBefore(draggedItem, this);
+                parent.insertBefore(this, draggedOriginalNextSibling);
+            }
+            playSound('piecePlace');
+        }
+    }
+
+    // --- Mobil Dokunmatik İşlevselliği ---
+    let touchDraggedItem = null;
+    let initialX, initialY;
+    let currentDragTarget = null; // Dokunma ile sürüklemede hedef parça
+
+    function addTouchListeners() {
+        const pieces = gameBoard.querySelectorAll('.puzzle-piece');
+        pieces.forEach(piece => {
+            piece.addEventListener('touchstart', touchStart);
+            piece.addEventListener('touchmove', touchMove);
+            piece.addEventListener('touchend', touchEnd);
+        });
+    }
+
+    function touchStart(e) {
+        e.preventDefault();
+        touchDraggedItem = this;
+        touchDraggedItem.style.position = 'absolute';
+        touchDraggedItem.style.zIndex = '1000';
+        touchDraggedItem.style.cursor = 'grabbing';
+
+        const rect = touchDraggedItem.getBoundingClientRect();
+        const touch = e.touches[0];
+        
+        initialX = touch.clientX - rect.left;
+        initialY = touch.clientY - rect.top;
+
+        const boardRect = gameBoard.getBoundingClientRect();
+        touchDraggedItem.style.left = `${touch.clientX - initialX - boardRect.left}px`;
+        touchDraggedItem.style.top = `${touch.clientY - initialY - boardRect.top}px`;
+        
+        playSound('pieceMove');
+    }
+
+    function touchMove(e) {
+        e.preventDefault();
+        if (!touchDraggedItem) return;
+
+        const touch = e.touches[0];
+        const boardRect = gameBoard.getBoundingClientRect();
+
+        touchDraggedItem.style.left = `${touch.clientX - initialX - boardRect.left}px`;
+        touchDraggedItem.style.top = `${touch.clientY - initialY - boardRect.top}px`;
+
+        // Hedef parçayı bulma ve vurgulama (touch dragover benzeri)
+        const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
+        let potentialTarget = null;
+        for (let i = 0; i < elementsAtPoint.length; i++) {
+            if (elementsAtPoint[i].classList.contains('puzzle-piece') && elementsAtPoint[i] !== touchDraggedItem) {
+                potentialTarget = elementsAtPoint[i];
+                break;
+            }
+        }
+
+        if (potentialTarget && potentialTarget !== currentDragTarget) {
+            if (currentDragTarget) currentDragTarget.classList.remove('drag-over');
+            potentialTarget.classList.add('drag-over');
+            currentDragTarget = potentialTarget;
+        } else if (!potentialTarget && currentDragTarget) {
+            currentDragTarget.classList.remove('drag-over');
+            currentDragTarget = null;
+        }
+    }
+
+    function touchEnd(e) {
+        if (!touchDraggedItem) return;
+
+        touchDraggedItem.style.cursor = 'grab';
+        if (currentDragTarget) currentDragTarget.classList.remove('drag-over'); // Vurguyu temizle
+
+        const touch = e.changedTouches[0];
+        const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
+        
+        let targetPiece = null;
+        for (let i = 0; i < elementsAtPoint.length; i++) {
+            if (elementsAtPoint[i].classList.contains('puzzle-piece') && elementsAtPoint[i] !== touchDraggedItem) {
+                targetPiece = elementsAtPoint[i];
+                break;
+            }
+        }
+
+        if (targetPiece) {
+            const parent = gameBoard;
+            if (targetPiece.nextSibling === touchDraggedItem) {
+                parent.insertBefore(touchDraggedItem, targetPiece);
+            } else if (touchDraggedItem.nextSibling === targetPiece) {
+                parent.insertBefore(targetPiece, touchDraggedItem);
+            } else {
+                const draggedOriginalNextSibling = touchDraggedItem.nextSibling;
+                parent.insertBefore(touchDraggedItem, targetPiece);
+                parent.insertBefore(targetPiece, draggedOriginalNextSibling);
+            }
+            playSound('piecePlace');
+        } 
+        
+        touchDraggedItem.style.position = '';
+        touchDraggedItem.style.zIndex = '';
+        touchDraggedItem.style.left = '';
+        touchDraggedItem.style.top = '';
+
+        touchDraggedItem = null;
+        currentDragTarget = null; // Hedef parçayı sıfırla
+        checkWinCondition();
+    }
 
     // --- İpucu Sistemi ---
     async function showHint() {
@@ -611,6 +854,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Sayfa yüklendiğinde zorluk seviyesi butonlarını ve kategorileri yükle
-    loadDifficultyButtons(); // Yeni fonksiyon çağrısı
-    loadCategories();
+    loadDifficultyButtons(); // Zorluk butonlarını yükle
+    loadCategories(); // Kategori butonlarını yükle
 });
