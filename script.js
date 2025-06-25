@@ -723,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
         touchDraggedItem.style.top = `${touch.clientY - initialYOffset - boardRect.top}px`;
     }
 
-    function touchEnd(e) {
+      function touchEnd(e) {
         if (!touchDraggedItem) return;
 
         touchDraggedItem.style.cursor = 'grab'; // İmleç stilini geri al
@@ -743,11 +743,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (targetPiece) {
             const parent = gameBoard;
-            // Swap DOM elements (fare sürükle-bırak mantığına benzer)
-            // Daha güvenli bir yer değiştirme için geçici bir placeholder kullanabiliriz
-            const draggedOriginalNextSibling = touchDraggedItem.nextSibling;
+            // Daha güvenli ve tutarlı bir yer değiştirme:
+            // Sürüklenen parçanın hemen sonraki kardeşini sakla
+            const draggedNextSibling = touchDraggedItem.nextSibling;
+            
+            // Sürüklenen parçayı hedefin yerine koy
             parent.insertBefore(touchDraggedItem, targetPiece);
-            parent.insertBefore(targetPiece, draggedOriginalNextSibling);
+            
+            // Hedef parçayı sürüklenen parçanın eski yerine (sakladığımız yere) koy
+            // Eğer draggedNextSibling null ise (sürüklenen parça en sondaysa), appendChild ile sona ekler
+            parent.insertBefore(targetPiece, draggedNextSibling);
             
             playSound('piecePlace');
         } 
@@ -761,14 +766,13 @@ document.addEventListener('DOMContentLoaded', () => {
         touchDraggedItem = null;
         checkWinCondition();
     }
-
     // --- İpucu Sistemi ---
     async function showHint() {
         const tempImage = new Image();
         tempImage.src = selectedImage;
         tempImage.crossOrigin = "Anonymous";
 
-        // `img` yerine `tempImage` nesnesinin yüklenmesini bekliyoruz
+        // HATA DÜZELTMESİ: 'img' yerine 'tempImage' kullanılmalı
         await new Promise(resolve => tempImage.onload = resolve);
 
         const hintOverlay = document.createElement('div');
@@ -808,8 +812,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { once: true });
         }, 3000); // 3 saniye sonra ipucunu gizle
     }
-
-
     // --- Kazanma Koşulu Kontrolü ---
     function checkWinCondition() {
         const currentOrderDOM = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'));
