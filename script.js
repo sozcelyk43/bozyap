@@ -385,6 +385,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function updatePieceOptions() {
+        pieceOptions.innerHTML = '';
+        const pieceConfigs = [
+            { name: 'Çok Kolay (3x2)', cols: 3, rows: 2 },
+            { name: 'Kolay (4x3)', cols: 4, rows: 3 },
+            { name: 'Orta (5x4)', cols: 5, rows: 4 },
+            { name: 'Zor (6x4)', cols: 6, rows: 4 },
+            { name: 'Çok Zor (7x5)', cols: 7, rows: 5 }
+        ];
+
+        pieceConfigs.forEach(config => {
+            const button = document.createElement('button');
+            button.classList.add('piece-button');
+            button.textContent = config.name;
+            button.dataset.cols = config.cols;
+            button.dataset.rows = config.rows;
+            pieceOptions.appendChild(button);
+        });
+    }
+
     function updateStartButtonState() {
         if (selectedCols && selectedRows && selectedCategory) {
             startGameButton.disabled = false;
@@ -908,4 +928,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loadCategories();
+    updatePieceOptions();
 });
