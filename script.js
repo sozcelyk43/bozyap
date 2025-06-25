@@ -844,91 +844,94 @@ document.getElementById('startGameButton').addEventListener('click', () => {
         }, 3000);
     }
 
-    function checkWinCondition() {
-        const currentOrderDOM = Array.from(gameBoard.querySelectorAll('.puzzle-piece'));
-        let isSolved = true;
+function checkWinCondition() {
+    const currentOrderDOM = Array.from(gameBoard.querySelectorAll('.puzzle-piece'));
+    let isSolved = true;
 
-        console.log('Checking win condition...');
-        console.log('Current order:', currentOrderDOM.map(piece => parseInt(piece.dataset.originalIndex)));
+    console.log('Checking win condition...');
+    console.log('Current order:', currentOrderDOM.map(piece => parseInt(piece.dataset.originalIndex)));
 
-        for (let i = 0; i < currentOrderDOM.length; i++) {
-            const pieceIndex = parseInt(currentOrderDOM[i].dataset.originalIndex);
-            if (pieceIndex !== i) {
-                isSolved = false;
-                console.log(`Mismatch at position ${i}: expected ${i}, got ${pieceIndex}`);
-                break;
-            }
-        }
-
-        if (isSolved) {
-            console.log('Puzzle solved!');
-            stopTimer();
-            playSound('win');
-
-            const confettiCanvas = document.createElement('canvas');
-            confettiCanvas.id = 'confetti-canvas';
-            confettiCanvas.style.position = 'fixed';
-            confettiCanvas.style.top = '0';
-            confettiCanvas.style.left = '0';
-            confettiCanvas.style.width = '100%';
-            confettiCanvas.style.height = '100%';
-            confettiCanvas.style.zIndex = '9999';
-            document.body.appendChild(confettiCanvas);
-
-            const confettiSettings = {
-                target: 'confetti-canvas',
-                max: 80,
-                size: 1,
-                animate: true,
-                props: ['circle', 'triangle', 'square', 'line'],
-                colors: [[165, 104, 246], [230, 61, 135], [0, 199, 228], [253, 214, 126]],
-                clock: 25,
-                start_from_zero: false,
-                decay: 0.9,
-                width: window.innerWidth,
-                height: window.innerHeight
-            };
-            confettiInstance = new ConfettiGenerator(confettiSettings);
-            confettiInstance.render();
-
-            console.log('Tebrikler! Yapbozu tamamladınız!');
-
-            const sortedPieces = Array.from(gameBoard.querySelectorAll('.puzzle-piece'))
-                .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
-
-            gameBoard.innerHTML = '';
-            sortedPieces.forEach(piece => {
-                piece.style.opacity = '1';
-                gameBoard.appendChild(piece);
-            });
-
-            gameBoard.style.gap = '0px';
-            gameBoard.style.borderColor = 'transparent';
-            gameBoard.classList.add('solved-effect');
-
-            setTimeout(() => {
-                gameBoard.classList.remove('solved-effect');
-                gameBoard.style.gap = '2px';
-                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-
-                const finalTime = timerDisplay.textContent;
-                finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
-
-                gameBoard.style.display = 'none';
-                gameControls.style.display = 'none';
-                winScreen.style.display = 'block';
-
-                if (confettiInstance) {
-                    confettiInstance.clear();
-                    confettiCanvas.remove();
-                    confettiInstance = null;
-                }
-            }, 5000);
-        } else {
-            console.log('Puzzle not solved yet.');
+    for (let i = 0; i < currentOrderDOM.length; i++) {
+        const pieceIndex = parseInt(currentOrderDOM[i].dataset.originalIndex);
+        if (pieceIndex !== i) {
+            isSolved = false;
+            console.log(`Mismatch at position ${i}: expected ${i}, got ${pieceIndex}`);
+            break;
         }
     }
 
+    if (isSolved) {
+        console.log('Puzzle solved!');
+        stopTimer();
+        playSound('win');
+
+        const confettiCanvas = document.createElement('canvas');
+        confettiCanvas.id = 'confetti-canvas';
+        confettiCanvas.style.position = 'fixed';
+        confettiCanvas.style.top = '0';
+        confettiCanvas.style.left = '0';
+        confettiCanvas.style.width = '100%';
+        confettiCanvas.style.height = '100%';
+        confettiCanvas.style.zIndex = '9999';
+        document.body.appendChild(confettiCanvas);
+
+        const confettiSettings = {
+            target: 'confetti-canvas',
+            max: 80,
+            size: 1,
+            animate: true,
+            props: ['circle', 'triangle', 'square', 'line'],
+            colors: [[165, 104, 246], [230, 61, 135], [0, 199, 228], [253, 214, 126]],
+            clock: 25,
+            start_from_zero: false,
+            decay: 0.9,
+            width: window.innerWidth,
+            height: window.innerHeight
+        };
+        confettiInstance = new ConfettiGenerator(confettiSettings);
+        confettiInstance.render();
+
+        console.log('Tebrikler! Yapbozu tamamladınız!');
+
+        const sortedPieces = Array.from(gameBoard.querySelectorAll('.puzzle-piece'))
+            .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
+
+        gameBoard.innerHTML = '';
+        sortedPieces.forEach(piece => {
+            piece.style.opacity = '1';
+            gameBoard.appendChild(piece);
+        });
+
+        gameBoard.style.gap = '0px';
+        gameBoard.style.borderColor = 'transparent';
+        gameBoard.classList.add('solved-effect');
+
+        setTimeout(() => {
+            gameBoard.classList.remove('solved-effect');
+            gameBoard.style.gap = '2px';
+            gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+
+            const finalTime = timerDisplay.textContent;
+            finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
+
+            gameBoard.style.display = 'none';
+            gameControls.style.display = 'none';
+            winScreen.style.display = 'block';
+
+            if (confettiInstance) {
+                confettiInstance.clear();
+                confettiCanvas.remove();
+                confettiInstance = null;
+            }
+
+            // Buton olaylarını ekle
+            document.getElementById('playAgainButton').addEventListener('click', resetGame);
+            document.getElementById('mainMenuButton').addEventListener('click', showSelectionScreen);
+        }, 6000); // 6 saniye bekle
+    } else {
+        console.log('Puzzle not solved yet.');
+    }
+}
     loadCategories();
     updatePieceOptions();
 });
