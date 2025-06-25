@@ -373,7 +373,9 @@ document.addEventListener('DOMContentLoaded', () => {
             "images/meslekler/meslekler19.jpg", "images/meslekler/meslekler20.jpg"
         ]
     };
-
+document.getElementById('startGameButton').addEventListener('click', () => {
+    console.log('Start button clicked!');
+});
     function loadCategories() {
         categoryOptions.innerHTML = '';
         for (const categoryName in imageCategories) {
