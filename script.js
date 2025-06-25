@@ -806,9 +806,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkWinCondition(); // Kazanma koşulunu kontrol et
     }
 
-    // ... (Diğer tüm kodlar ve fonksiyonlar aynı kalacak) ...
-});
-    // --- İpucu Sistemi ---
+
     async function showHint() {
         const tempImage = new Image();
         tempImage.src = selectedImage;
