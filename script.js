@@ -14,18 +14,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameControls = document.querySelector('.game-controls');
     const gameTitle = document.getElementById('gameTitle');
 
-    let selectedCols = null; // Sütun sayısı
-    let selectedRows = null; // Satır sayısı
+    let selectedCols = null;
+    let selectedRows = null;
     let selectedCategory = null;
     let selectedImage = null;
 
-    let puzzlePieces = []; // Karıştırılmış sıradaki puzzle parçaları
-    let gameStartTime; // Zamanlayıcı başlangıç zamanı
-    let timerInterval; // Zamanlayıcı interval ID'si
-    let hintUsed = false; // İpucu kullanıldı mı?
-    let confettiInstance = null; // Konfetti örneğini saklamak için
+    let puzzlePieces = [];
+    let gameStartTime;
+    let timerInterval;
+    let hintUsed = false;
+    let confettiInstance = null;
 
-    // --- Ses Efektleri ---
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sounds = {};
 
@@ -55,13 +54,165 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Ses dosyalarını yükle
     loadSound('pieceMove', 'sounds/button-1.mp3');
     loadSound('piecePlace', 'sounds/button-2.mp3');
     loadSound('win', 'sounds/success-1.mp3');
     loadSound('hint', 'sounds/button-3.mp3');
 
-    // --- Resim kategorileri ve örnek resim URL'leri ---
+    const imageCategories = {
+        "Doğa ve Manzara": [
+            "images/dogamanzara/dogamanzara01.jpg", "images/dogamanzara/dogamanzara02.jpg",
+            "images/dogamanzara/dogamanzara03.jpg", "images/dogamanzara/dogamanzara04.jpg",
+            "images/dogamanzara/dogamanzara05.jpg", "images/dogamanzara/dogamanzara06.jpg",
+            "images/dogamanzara/dogamanzara07.jpg", "images/dogamanzara/dogamanzara08.jpg",
+            "images/dogamanzara/dogamanzara09.jpg", "images/dogamanzara/dogamanzara10.jpg",
+            "images/dogamanzara/dogamanzara11.jpg", "images/dogamanzara/dogamanzara12.jpg",
+            "images/dogamanzara/dogamanzara13.jpg", "images/dogamanzara/dogamanzara14.jpg",
+            "images/dogamanzara/dogamanzara15.jpg", "images/dogamanzara/dogamanzara16.jpg",
+            "images/dogamanzara/dogamanzara17.jpg", "images/dogamanzara/dogamanzara18.jpg",
+            "images/dogamanzara/dogamanzara19.jpg", "images/dogamanzara/dogamanzara20.jpg"
+        ],
+        "Hayvanlar": [
+            "images/hayvanlar/hayvanlar01.jpg", "images/hyvanlar/hayvanlar02.jpg",
+            "images/hayvanlar/hayvanlar03.jpg", "images/hayvanlar/hayvanlar04.jpg",
+            "images/hayvanlar/hayvanlar05.jpg", "images/hayvanlar/hayvanlar06.jpg",
+            "images/hayvanlar/hayvanlar07.jpg", "images/hayvanlar/hayvanlar08.jpg",
+            "images/hayvanlar/hayvanlar09.jpg", "images/hayvanlar/hayvanlar10.jpg",
+            "images/hayvanlar/hayvanlar11.jpg", "images/hayvanlar/hayvanlar12.jpg",
+            "images/hayvanlar/hayvanlar13.jpg", "images/hayvanlar/hayvanlar14.jpg",
+            "images/hayvanlar/hayvanlar15.jpg", "images/hayvanlar/hayvanlar16.jpg",
+            "images/hayvanlar/hayvanlar17.jpg", "images/hayvanlar/hayvanlar18.jpg",
+            "images/hayvanlar/hayvanlar19.jpg", "images/hayvanlar/hayvanlar20.jpg"
+        ],
+        "Şehirler ve Mimari": [
+            "images/sehirler/sehirler01.jpg", "images/sehirler/sehirler02.jpg",
+            "images/sehirler/sehirler03.jpg", "images/sehirler/sehirler04.jpg",
+            "images/sehirler/sehirler05.jpg", "images/sehirler/sehirler06.jpg",
+            "images/sehirler/sehirler07.jpg", "images/sehirler/sehirler08.jpg",
+            "images/sehirler/sehirler09.jpg", "images/sehirler/sehirler10.jpg",
+            "images/sehirler/sehirler11.jpg", "images/sehirler/sehirler12.jpg",
+            "images/sehirler/sehirler13.jpg", "images/sehirler/sehirler14.jpg",
+            "images/sehirler/sehirler15.jpg", "images/sehirler/sehirler16.jpg",
+            "images/sehirler/sehirler17.jpg", "images/sehirler/sehirler18.jpg",
+            "images/sehirler/sehirler19.jpg", "images/sehirler/sehirler20.jpg"
+        ],
+        "Yiyecek ve İçecek": [
+            "images/yiyecek/yiyecek01.jpg", "images/yiyecek/yiyecek02.jpg",
+            "images/yiyecek/yiyecek03.jpg", "images/yiyecek/yiyecek04.jpg",
+            "images/yiyecek/yiyecek05.jpg", "images/yiyecek/yiyecek06.jpg",
+            "images/yiyecek/yiyecek07.jpg", "images/yiyecek/yiyecek08.jpg",
+            "images/yiyecek/yiyecek09.jpg", "images/yiyecek/yiyecek10.jpg",
+            "images/yiyecek/yiyecek11.jpg", "images/yiyecek/yiyecek12.jpg",
+            "images/yiyecek/yiyecek13.jpg", "images/yiyecek/yiyecek14.jpg",
+            "images/yiyecek/yiyecek15.jpg", "images/yiyecek/yiyecek16.jpg",
+            "images/yiyecek/yiyecek17.jpg", "images/yiyecek/yiyecek18.jpg",
+            "images/yiyecek/yiyecek19.jpg", "images/yiyecek/yiyecek20.jpg"
+        ],
+        "Teknoloji": [
+            "images/teknoloji/teknoloji01.jpg", "images/teknoloji/teknoloji02.jpg",
+            "images/teknoloji/teknoloji03.jpg", "images/teknoloji/teknoloji04.jpg",
+            "images/teknoloji/teknoloji05.jpg", "images/teknoloji/teknoloji06.jpg",
+            "images/teknoloji/teknoloji07.jpg", "images/teknoloji/teknoloji08.jpg",
+            "images/teknoloji/teknoloji09.jpg", "images/teknoloji/teknoloji10.jpg",
+            "images/teknoloji/teknoloji11.jpg", "images/teknoloji/teknoloji12.jpg",
+            "images/teknoloji/teknoloji13.jpg", "images/teknoloji/teknoloji14.jpg",
+            "images/teknoloji/teknoloji15.jpg", "images/teknoloji/teknoloji16.jpg",
+            "images/teknoloji/teknoloji17.jpg", "images/teknoloji/teknoloji18.jpg",
+            "images/teknoloji/teknoloji19.jpg", "images/teknoloji/teknoloji20.jpg"
+        ],
+        "Spor": [
+            "images/spor/spor01.jpg", "images/spor/spor02.jpg",
+            "images/spor/spor03.jpg", "images/spor/spor04.jpg",
+            "images/spor/spor05.jpg", "images/spor/spor06.jpg",
+            "images/spor/spor07.jpg", "images/spor/spor08.jpg",
+            "images/spor/spor09.jpg", "images/spor/spor10.jpg",
+            "images/spor/spor11.jpg", "images/spor/spor12.jpg",
+            "images/spor/spor13.jpg", "images/spor/spor14.jpg",
+            "images/spor/spor15.jpg", "images/spor/spor16.jpg",
+            "images/spor/spor17.jpg", "images/spor/spor18.jpg",
+            "images/spor/spor19.jpg", "images/spor/spor20.jpg"
+        ],
+        "Sanat ve Kültür": [
+            "images/sanat/sanat01.jpg", "images/sanat/sanat02.jpg",
+            "images/sanat/sanat03.jpg", "images/sanat/sanat04.jpg",
+            "images/sanat/sanat05.jpg", "images/sanat/sanat06.jpg",
+            "images/sanat/sanat07.jpg", "images/sanat/sanat08.jpg",
+            "images/sanat/sanat09.jpg", "images/sanat/sanat10.jpg",
+            "images/sanat/sanat11.jpg", "images/sanat/sanat12.jpg",
+            "images/sanat/sanat13.jpg", "images/sanat/sanat14.jpg",
+            "images/sanat/sanat15.jpg", "images/sanat/sanat16.jpg",
+            "images/sanat/sanat17.jpg", "images/sanat/sanat18.jpg",
+            "images/sanat/sanat19.jpg", "images/sanat/sanat20.jpg"
+        ],
+        "Uzay ve Astronomi": [
+            "images/uzay/uzay01.jpg", "images/uzay/uzay02.jpg",
+            "images/uzay/uzay03.jpg", "images/uzay/uzay04.jpg",
+            "images/uzay/uzay05.jpg", "images/uzay/uzay06.jpg",
+            "images/uzay/uzay07.jpg", "images/uzay/uzay08.jpg",
+            "images/uzay/uzay09.jpg",țe
+
+System: <xaiArtifact artifact_id="cbbc5164-5f92-45f4-91bf-888247aa78f6" artifact_version_id="63d22a68-8ff7-4061-84e3-534c2134e919" title="script.js" contentType="text/javascript">
+document.addEventListener('DOMContentLoaded', () => {
+    const selectionScreen = document.getElementById('selectionScreen');
+    const gameBoard = document.getElementById('gameBoard');
+    const pieceOptions = document.querySelector('.piece-options');
+    const categoryOptions = document.querySelector('.category-options');
+    const startGameButton = document.getElementById('startGameButton');
+    const timerDisplay = document.getElementById('timer');
+    const hintButton = document.getElementById('hintButton');
+    const winScreen = document.getElementById('winScreen');
+    const finalTimeDisplay = document.getElementById('finalTime');
+    const playAgainButton = document.getElementById('playAgainButton');
+    const mainMenuButton = document.getElementById('mainMenuButton');
+    const mainMenuFromGameButton = document.getElementById('mainMenuFromGame');
+    const gameControls = document.querySelector('.game-controls');
+    const gameTitle = document.getElementById('gameTitle');
+
+    let selectedCols = null;
+    let selectedRows = null;
+    let selectedCategory = null;
+    let selectedImage = null;
+
+    let puzzlePieces = [];
+    let gameStartTime;
+    let timerInterval;
+    let hintUsed = false;
+    let confettiInstance = null;
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const sounds = {};
+
+    function loadSound(name, url) {
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.arrayBuffer();
+            })
+            .then(buffer => audioContext.decodeAudioData(buffer))
+            .then(decodedData => {
+                sounds[name] = decodedData;
+            })
+            .catch(e => console.error(`Ses dosyası yüklenemedi: ${name} (${url})`, e));
+    }
+
+    function playSound(name) {
+        if (sounds[name]) {
+            const source = audioContext.createBufferSource();
+            source.buffer = sounds[name];
+            source.connect(audioContext.destination);
+            source.start(0);
+        } else {
+            console.warn(`Ses dosyası yüklenmedi veya bulunamadı: ${name}`);
+        }
+    }
+
+    loadSound('pieceMove', 'sounds/button-1.mp3');
+    loadSound('piecePlace', 'sounds/button-2.mp3');
+    loadSound('win', 'sounds/success-1.mp3');
+    loadSound('hint', 'sounds/button-3.mp3');
+
     const imageCategories = {
         "Doğa ve Manzara": [
             "images/dogamanzara/dogamanzara01.jpg", "images/dogamanzara/dogamanzara02.jpg",
@@ -377,7 +528,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     };
 
-    // --- Kategorileri Yükleme Fonksiyonu ---
     function loadCategories() {
         categoryOptions.innerHTML = '';
         for (const categoryName in imageCategories) {
@@ -389,7 +539,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Başlat Butonunun Durumunu Güncelleme ---
     function updateStartButtonState() {
         if (selectedCols && selectedRows && selectedCategory) {
             startGameButton.disabled = false;
@@ -398,7 +547,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Zamanlayıcı Başlat/Durdur Fonksiyonları ---
     function startTimer() {
         gameStartTime = Date.now();
         timerInterval = setInterval(updateTimer, 1000);
@@ -451,7 +599,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStartButtonState();
     }
 
-    // --- Olay Dinleyicileri ---
     pieceOptions.addEventListener('click', (event) => {
         const target = event.target;
         if (target.classList.contains('piece-button')) {
@@ -531,7 +678,6 @@ document.addEventListener('DOMContentLoaded', () => {
         playSound('hint');
     });
 
-    // --- Puzzle Oluşturma Fonksiyonu (Sabit Oyun Alanı) ---
     async function createPuzzle(imageUrl, cols, rows) {
         gameBoard.innerHTML = '';
         puzzlePieces = [];
@@ -557,7 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < totalPieces; i++) {
             const pieceDiv = document.createElement('div');
             pieceDiv.classList.add('puzzle-piece');
-            pieceDiv.setAttribute('draggable', 'true'); // Fare için draggable özelliği
+            pieceDiv.setAttribute('draggable', 'true');
             pieceDiv.dataset.originalIndex = i;
 
             const row = Math.floor(i / cols);
@@ -587,11 +733,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         puzzlePieces.forEach(piece => gameBoard.appendChild(piece));
 
-        addDragDropListeners(); // Fare için sürükle-bırak olaylarını ekle
-        addTouchListeners();   // Dokunmatik için olayları ekle
+        addDragDropListeners();
+        addTouchListeners();
     }
 
-    // Diziyi karıştıran yardımcı fonksiyon (Fisher-Yates shuffle)
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -599,11 +744,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- FARE SÜRÜKLE-BIRAK İŞLEVSELLİĞİ ---
-    let draggedItem = null; // Sürüklenen orijinal element
+    let draggedItem = null;
 
     function addDragDropListeners() {
-        const pieces = gameBoard.querySelectorAll('.puzzle-piece'); 
+        const pieces = gameBoard.querySelectorAll('.puzzle-piece');
         pieces.forEach(piece => {
             piece.addEventListener('dragstart', dragStart);
             piece.addEventListener('dragenter', dragEnter);
@@ -616,7 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function dragStart(e) {
         draggedItem = this;
-        setTimeout(() => this.style.opacity = '0.5', 0); 
+        setTimeout(() => this.style.opacity = '0.5', 0);
         playSound('pieceMove');
     }
 
@@ -644,14 +788,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (draggedItem && draggedItem !== this) {
             swapPieces(draggedItem, this);
             playSound('piecePlace');
+            checkWinCondition();
         }
     }
 
-    // --- DOKUNMATİK İŞLEVSELLİĞİ ---
-    let currentTouchPiece = null; // Dokunulan orijinal puzzle parçası
-    let touchPieceClone = null;   // Parmağın hareket ettiği klon puzzle parçası
-    let cloneOffsetX = 0;         // Parmağın klona göre x offset'i
-    let cloneOffsetY = 0;         // Parmağın klona göre y offset'i
+    let currentTouchPiece = null;
+    let touchPieceClone = null;
+    let cloneOffsetX = 0;
+    let cloneOffsetY = 0;
 
     function addTouchListeners() {
         const pieces = gameBoard.querySelectorAll('.puzzle-piece');
@@ -756,8 +900,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const pieces = gameBoard.querySelectorAll('.puzzle-piece');
         let targetPiece = null;
 
+        console.log(`Touch coordinates: (${clientX}, ${clientY})`);
+
         pieces.forEach(piece => {
             const rect = piece.getBoundingClientRect();
+            console.log(`Piece at index ${piece.dataset.originalIndex}: left=${rect.left}, right=${rect.right}, top=${rect.top}, bottom=${rect.bottom}`);
             if (
                 clientX >= rect.left &&
                 clientX <= rect.right &&
@@ -766,6 +913,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 piece !== currentTouchPiece
             ) {
                 targetPiece = piece;
+                console.log(`Target piece found: ${piece.dataset.originalIndex}`);
             }
         });
 
@@ -780,6 +928,7 @@ document.addEventListener('DOMContentLoaded', () => {
             parent.insertBefore(piece1, piece2);
             parent.insertBefore(piece2, temp);
             temp.remove();
+            checkWinCondition();
         });
     }
 
@@ -827,85 +976,90 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
-    // --- Kazanma Koşulu Kontrolü ---
-function checkWinCondition() {
-    const currentOrderDOM = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'));
-    let isSolved = true;
+    function checkWinCondition() {
+        const currentOrderDOM = Array.from(gameBoard.querySelectorAll('.puzzle-piece'));
+        let isSolved = true;
 
-    for (let i = 0; i < currentOrderDOM.length; i++) {
-        if (parseInt(currentOrderDOM[i].dataset.originalIndex) !== i) {
-            isSolved = false;
-            break;
+        console.log('Checking win condition...');
+        console.log('Current order:', currentOrderDOM.map(piece => parseInt(piece.dataset.originalIndex)));
+
+        for (let i = 0; i < currentOrderDOM.length; i++) {
+            const pieceIndex = parseInt(currentOrderDOM[i].dataset.originalIndex);
+            if (pieceIndex !== i) {
+                isSolved = false;
+                console.log(`Mismatch at position ${i}: expected ${i}, got ${pieceIndex}`);
+                break;
+            }
+        }
+
+        if (isSolved) {
+            console.log('Puzzle solved!');
+            stopTimer();
+            playSound('win');
+
+            const confettiCanvas = document.createElement('canvas');
+            confettiCanvas.id = 'confetti-canvas';
+            confettiCanvas.style.position = 'fixed';
+            confettiCanvas.style.top = '0';
+            confettiCanvas.style.left = '0';
+            confettiCanvas.style.width = '100%';
+            confettiCanvas.style.height = '100%';
+            confettiCanvas.style.zIndex = '9999';
+            document.body.appendChild(confettiCanvas);
+
+            const confettiSettings = {
+                target: 'confetti-canvas',
+                max: 80,
+                size: 1,
+                animate: true,
+                props: ['circle', 'triangle', 'square', 'line'],
+                colors: [[165, 104, 246], [230, 61, 135], [0, 199, 228], [253, 214, 126]],
+                clock: 25,
+                start_from_zero: false,
+                decay: 0.9,
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+            confettiInstance = new ConfettiGenerator(confettiSettings);
+            confettiInstance.render();
+
+            console.log('Tebrikler! Yapbozu tamamladınız!');
+
+            const sortedPieces = Array.from(gameBoard.querySelectorAll('.puzzle-piece'))
+                .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
+
+            gameBoard.innerHTML = '';
+            sortedPieces.forEach(piece => {
+                piece.style.opacity = '1';
+                gameBoard.appendChild(piece);
+            });
+
+            gameBoard.style.gap = '0px';
+            gameBoard.style.borderColor = 'transparent';
+            gameBoard.classList.add('solved-effect');
+
+            setTimeout(() => {
+                gameBoard.classList.remove('solved-effect');
+                gameBoard.style.gap = '2px';
+                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+
+                const finalTime = timerDisplay.textContent;
+                finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
+
+                gameBoard.style.display = 'none';
+                gameControls.style.display = 'none';
+                winScreen.style.display = 'block';
+
+                if (confettiInstance) {
+                    confettiInstance.clear();
+                    confettiCanvas.remove();
+                    confettiInstance = null;
+                }
+            }, 5000);
+        } else {
+            console.log('Puzzle not solved yet.');
         }
     }
 
-    if (isSolved) {
-        stopTimer();
-        playSound('win');
-
-        const confettiCanvas = document.createElement('canvas');
-        confettiCanvas.id = 'confetti-canvas';
-        confettiCanvas.style.position = 'fixed';
-        confettiCanvas.style.top = '0';
-        confettiCanvas.style.left = '0';
-        confettiCanvas.style.width = '100%';
-        confettiCanvas.style.height = '100%';
-        confettiCanvas.style.zIndex = '9999';
-        document.body.appendChild(confettiCanvas);
-
-        const confettiSettings = { 
-            target: 'confetti-canvas',
-            max: 80, 
-            size: 1, 
-            animate: true, 
-            props: ['circle', 'triangle', 'square', 'line'], 
-            colors: [[165,104,246],[230,61,135],[0,199,228],[253,214,126]], 
-            clock: 25, 
-            start_from_zero: false, 
-            decay: 0.9, 
-            width: window.innerWidth, 
-            height: window.innerHeight 
-        };
-        confettiInstance = new ConfettiGenerator(confettiSettings);
-        confettiInstance.render();
-
-        alert('Tebrikler! Yapbozu tamamladınız!');
-
-        const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
-                             .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
-        
-        gameBoard.innerHTML = '';
-        sortedPieces.forEach(piece => {
-            piece.style.opacity = '1';
-            gameBoard.appendChild(piece);
-        });
-
-        gameBoard.style.gap = '0px'; 
-        gameBoard.style.borderColor = 'transparent';
-        gameBoard.classList.add('solved-effect');
-
-        setTimeout(() => {
-            gameBoard.classList.remove('solved-effect');
-            gameBoard.style.gap = '2px';
-            gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-
-            const finalTime = timerDisplay.textContent;
-            finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
-
-            gameBoard.style.display = 'none';
-            gameControls.style.display = 'none';
-            winScreen.style.display = 'block';
-            
-            if (confettiInstance) {
-                confettiInstance.clear();
-                confettiCanvas.remove();
-                confettiInstance = null;
-            }
-
-        }, 5000);
-    }
-}
-
-    // Sayfa yüklendiğinde kategorileri yükle
     loadCategories();
 });
