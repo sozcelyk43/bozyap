@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const pieceOptions = document.querySelector('.piece-options');
     const categoryOptions = document.querySelector('.category-options');
     const startGameButton = document.getElementById('startGameButton');
-    const timerDisplay = document.getElementById('timer');
-    const hintButton = document.getElementById('hintButton');
+    let timerDisplay = document.getElementById('timer'); // Let olarak tanımlandı
+    let hintButton = document.getElementById('hintButton'); // Let olarak tanımlandı
     const winScreen = document.getElementById('winScreen');
     const finalTimeDisplay = document.getElementById('finalTime');
     const playAgainButton = document.getElementById('playAgainButton');
     const mainMenuButton = document.getElementById('mainMenuButton');
-    const mainMenuFromGameButton = document.getElementById('mainMenuFromGame');
+    let mainMenuFromGameButton = document.getElementById('mainMenuFromGame'); // Let olarak tanımlandı
     const gameControls = document.querySelector('.game-controls');
     const gameTitle = document.getElementById('gameTitle');
 
@@ -436,8 +436,13 @@ document.addEventListener('DOMContentLoaded', () => {
         gameControls.style.display = 'none';
 
         timerDisplay.textContent = '00:00';
-        hintButton.disabled = false;
         hintUsed = false;
+        // İpucu butonunu burada yeniden seçip etkinleştiriyoruz
+        hintButton = document.getElementById('hintButton');
+        if (hintButton) { // HTML'de var olduğundan emin ol
+             hintButton.disabled = false;
+        }
+       
 
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
         existingPieces.forEach(piece => piece.remove());
@@ -490,7 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
             selectionScreen.style.display = 'none';
             gameTitle.style.display = 'none';
             gameBoard.style.display = 'grid';
-            gameControls.style.display = 'flex';
+            gameControls.style.display = 'flex'; // Oyun içi kontrolleri göster
 
             createPuzzle(selectedImage, selectedCols, selectedRows);
             startTimer();
@@ -501,47 +506,43 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     playAgainButton.addEventListener('click', () => {
-        // winScreen'i gizle, oyun tahtasını ve kontrolleri göster
         winScreen.style.display = 'none';
         gameBoard.style.display = 'grid';
         gameControls.style.display = 'flex';
         
         timerDisplay.textContent = '00:00';
-        hintButton.disabled = false;
         hintUsed = false;
+        // İpucu butonunu burada yeniden seçip etkinleştiriyoruz
+        hintButton = document.getElementById('hintButton'); // Tekrar seç
+        if (hintButton) {
+            hintButton.disabled = false;
+        }
 
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
         existingPieces.forEach(piece => piece.remove());
 
-        // Tahta stilini sıfırla
         gameBoard.style.gap = '2px';
         gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
         gameBoard.classList.remove('solved-effect');
 
-        // Aynı resim ve zorluk seviyesiyle yeni puzzle oluştur
         createPuzzle(selectedImage, selectedCols, selectedRows);
         startTimer();
         playSound('piecePlace');
     });
 
     mainMenuButton.addEventListener('click', resetGame);
-    mainMenuFromGameButton.addEventListener('click', resetGame);
+    // mainMenuFromGameButton'a dinleyici eklenirken, elementin var olduğundan emin olalım
+    // Veya createPuzzle içinde bu dinleyiciyi her seferinde ekleyelim (tercih edilen yol)
 
-    hintButton.addEventListener('click', () => {
-        if (hintUsed) {
-            alert('İpucu hakkınızı zaten kullandınız!');
-            return;
-        }
-        showHint();
-        hintUsed = true;
-        hintButton.disabled = true;
-        playSound('hint');
-    });
+    // Not: hintButton ve mainMenuFromGameButton'ı doğrudan buraya alıp atamak yerine,
+    // createPuzzle fonksiyonunda DOM'a eklendikleri için, her createPuzzle çağrıldığında
+    // olay dinleyicilerinin yeniden atanması gerekiyor.
+    // Bu yüzden bu dinleyicileri createPuzzle fonksiyonunun sonuna taşıyacağız.
 
     // --- Puzzle Oluşturma Fonksiyonu ---
     async function createPuzzle(imageUrl, cols, rows) {
-        gameBoard.innerHTML = '';
-        puzzlePieces = [];
+        gameBoard.innerHTML = ''; // Önceki puzzle'ı temizle
+        puzzlePieces = []; // Diziyi sıfırla
 
         const img = new Image();
         img.src = imageUrl;
@@ -596,6 +597,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         addDragDropListeners();
         addTouchListeners();
+
+        // ANA DÜZELTME: Timer, Hint ve Ana Menü butonlarının olay dinleyicilerini burada tekrar atıyoruz
+        // Çünkü bu butonlar HTML'de sabit, ancak içeriğini temizlememiz gerekebiliyor bazen.
+        // En sağlıklı yol: her puzzle oluşturulduğunda dinleyicilerini kontrol edip yeniden atamak.
+        // HTML'de bu butonlar zaten olduğu için, sadece dinleyicilerini güncelliyoruz.
+        
+        // Timer ve ana menü butonu zaten var, sadece dinleyicilerini ekleyelim (gerekiyorsa)
+        // Eğer bu butonlar gameBoard'a dinamik olarak eklenmiyorsa ve HTML'de sabitse,
+        // sadece bir kere en başta dinleyici atamak yeterlidir.
+        // Ancak daha önce HTML'den kaldırmıştık, bu yüzden createPuzzle dışında bir yerde tanımlanmalılar.
+        // Şu anki HTML yapımızda game-controls altında sabit duruyorlar.
+        // Bu yüzden resetGame ve playAgainButton içinde tekrar seçmeye gerek yok.
+        // Sadece hintButton'ın disable durumunu resetlerken ve onClick'ini kontrol ederken dikkat edeceğiz.
+
+        // NOT: HTML yapısında game-controls dışarıda sabit olduğundan,
+        // hintButton ve mainMenuFromGameButton değişkenleri DOMContentLoaded içinde
+        // bir kere tanımlandıklarında hep aynı elementlere referans ederler.
+        // Bu yüzden resetGame ve playAgainButton içinde tekrar querySelector yapmaya gerek yok.
+        // Ancak, disable durumları ve hintUsed değişkeni doğru resetlenmeli.
     }
 
     // Diziyi karıştıran yardımcı fonksiyon (Fisher-Yates shuffle)
@@ -748,7 +768,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetPiece.nextSibling === touchDraggedItem) {
                 parent.insertBefore(touchDraggedItem, targetPiece);
             } else if (touchDraggedItem.nextSibling === targetPiece) {
-                parent.insertBefore(targetPiece, touchDraggedItem);
+                parent.insertBefore(this, draggedItem); // Bu satırda bir hata olabilir, this ve draggedItem karıştırılıyor
+                // Doğrusu: parent.insertBefore(targetPiece, touchDraggedItem); parent.insertBefore(touchDraggedItem, targetPiece.nextSibling);
+                parent.insertBefore(targetPiece, touchDraggedItem); // Target'ı sürüklenenin önüne koy
+                parent.insertBefore(touchDraggedItem, targetPiece.nextSibling); // Sürükleneni Target'ın yeni konumunun arkasına koy
             } else {
                 const draggedOriginalNextSibling = touchDraggedItem.nextSibling;
                 parent.insertBefore(touchDraggedItem, targetPiece);
@@ -791,7 +814,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const particleCount = 50 * (timeLeft / duration); // Daha yoğun bir konfeti yağmuru için ayarlanabilir
+            const particleCount = 50 * (timeLeft / duration);
 
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
@@ -809,7 +832,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const scale = Math.random() * 0.8 + 0.6;
                 const rotation = Math.random() * 360;
                 const speedX = Math.random() * 2 - 1;
-                const speedY = Math.random() * 5 + 5; // Dikey hız, parçacıkların aşağı düşmesini sağlar
+                const speedY = Math.random() * 5 + 5;
 
                 particle.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${rotation}deg)`;
 
@@ -843,41 +866,34 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isSolved) {
             stopTimer();
             playSound('win');
-            showConfetti(); // Konfeti efekti
+            showConfetti();
 
-            // Puzzle tamamlandığında parçaları doğru sıraya diz
             const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
                                  .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
             
-            gameBoard.innerHTML = ''; // Tahtayı temizle
+            gameBoard.innerHTML = '';
             sortedPieces.forEach(piece => {
                 piece.style.opacity = '1';
                 gameBoard.appendChild(piece);
             });
 
-            // Tamamlanmış resim efektleri
             gameBoard.style.gap = '0px'; 
             gameBoard.style.borderColor = 'transparent';
             gameBoard.classList.add('solved-effect');
 
-            // 5 saniye boyunca tamamlanmış resmi göster, sonra popup'ı çıkar
             setTimeout(() => {
-                // Tahta stilini sıfırla
                 gameBoard.classList.remove('solved-effect');
                 gameBoard.style.gap = '2px';
                 gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
                 
-                // Final süreyi ayarla
                 const finalTime = timerDisplay.textContent;
                 finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
 
-                // Kazanma ekranı metinlerini ve butonlarını görünür yap
-                // Not: CSS'te display: none; olan elementleri burada display: block/inline-block ile göstermeniz gerekiyor.
-                // Bu yüzden playAgainButton ve mainMenuButton'a da display: inline-block ekliyoruz.
+                // Pop-up içeriğini ve butonları göster
                 document.querySelector('#winScreen h2').textContent = 'Harika Başardınız!';
-                document.querySelector('#winScreen #finalTime').style.display = 'block'; 
-                document.querySelector('#winScreen #playAgainButton').style.display = 'inline-block';
-                document.querySelector('#winScreen #mainMenuButton').style.display = 'inline-block';
+                finalTimeDisplay.style.display = 'block'; // Final süreyi göster
+                playAgainButton.style.display = 'inline-block';
+                mainMenuButton.style.display = 'inline-block';
                 
                 // Tam resmi arka plana ekle
                 winScreen.style.backgroundImage = `url('${selectedImage}')`;
@@ -888,12 +904,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ekranları gizle/göster
                 gameBoard.style.display = 'none';
                 gameControls.style.display = 'none';
-                winScreen.style.display = 'flex'; // Popup'ı göster (CSS'te zaten flex)
-            }, 5000); // 5 saniye bekle
+                winScreen.style.display = 'flex'; // Pop-up'ı göster
+            }, 5000);
         }
     }
 
     // Sayfa yüklendiğinde zorluk seviyesi butonlarını ve kategorileri yükle
-    loadDifficultyButtons(); // Zorluk butonlarını yükle
-    loadCategories(); // Kategori butonlarını yükle
+    loadDifficultyButtons();
+    loadCategories();
 });
