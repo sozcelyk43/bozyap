@@ -1,37 +1,3 @@
-// --- Ses Efektleri (GLOBAL KAPSAMA TAŞINDI) ---
-// Ses dosyalarınıza erişim için tarayıcınızda bir yerel sunucu çalıştırmanız gerektiğini unutmayın.
-// Örneğin: Python -m http.server
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const sounds = {};
-
-function loadSound(name, url) {
-    fetch(url)
-        .then(response => response.arrayBuffer())
-        .then(buffer => audioContext.decodeAudioData(buffer))
-        .then(decodedData => {
-            sounds[name] = decodedData;
-        })
-        .catch(e => console.error(`Ses dosyası yüklenemedi: ${name} (${url})`, e));
-}
-
-function playSound(name) {
-    if (sounds[name]) {
-        const source = audioContext.createBufferSource();
-        source.buffer = sounds[name];
-        source.connect(audioContext.destination);
-        source.start(0);
-    } else {
-        console.warn(`Ses "${name}" yüklenmemiş veya bulunamıyor.`);
-    }
-}
-
-// Ses dosyalarını yükle (Uygulama başladığında bir kere yüklenecek)
-loadSound('pieceMove', 'sounds/button-1.mp3');
-loadSound('piecePlace', 'sounds/button-2.mp3');
-loadSound('win', 'sounds/success-1.mp3');
-loadSound('hint', 'sounds/button-3.mp3');
-
-
 document.addEventListener('DOMContentLoaded', () => {
     const selectionScreen = document.getElementById('selectionScreen');
     const gameBoard = document.getElementById('gameBoard');
@@ -39,12 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const categoryOptions = document.querySelector('.category-options');
     const startGameButton = document.getElementById('startGameButton');
     const timerDisplay = document.getElementById('timer');
-    const hintButton = document.getElementById('hintButton');
+    const hintButton = document.getElementById('hintButton'); // Const olarak kalacak
     const winScreen = document.getElementById('winScreen');
     const finalTimeDisplay = document.getElementById('finalTime');
     const playAgainButton = document.getElementById('playAgainButton');
     const mainMenuButton = document.getElementById('mainMenuButton');
-    const mainMenuFromGameButton = document.getElementById('mainMenuFromGame');
+    const mainMenuFromGameButton = document.getElementById('mainMenuFromGame'); // Const olarak kalacak
     const gameControls = document.querySelector('.game-controls');
     const gameTitle = document.getElementById('gameTitle');
 
@@ -57,7 +23,27 @@ document.addEventListener('DOMContentLoaded', () => {
     let puzzlePieces = [];
     let gameStartTime;
     let timerInterval;
-    let hintUsed = false;
+    let hintUsed = false; // Her oyun başlangıcında sıfırlanacak
+
+    // --- Ses Efektleri ---
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const sounds = {};
+
+    function loadSound(name, url) {
+        fetch(url)
+            .then(response => response.arrayBuffer())
+            .then(buffer => audioContext.decodeAudioData(buffer))
+            .then(decodedData => {
+                sounds[name] = decodedData;
+            })
+            .catch(e => console.error(`Ses dosyası yüklenemedi: ${name} (${url})`, e));
+    }
+
+    // Ses dosyalarını yükle (Uygulama başladığında bir kere yüklenecek)
+    loadSound('pieceMove', 'sounds/button-1.mp3');
+    loadSound('piecePlace', 'sounds/button-2.mp3');
+    loadSound('win', 'sounds/success-1.mp3');
+    loadSound('hint', 'sounds/button-3.mp3');
 
     // --- Zorluk seviyeleri ve parça sayıları ---
     const difficultyLevels = {
@@ -386,9 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Kategorileri Yükleme Fonksiyonu ---
-    // Bu fonksiyon DOMContentLoaded içinde tanımlanmalı ve çağrılmalı
     function loadCategories() {
-        categoryOptions.innerHTML = ''; // Mevcut butonları temizle
+        categoryOptions.innerHTML = '';
         for (const categoryName in imageCategories) {
             const button = document.createElement('button');
             button.classList.add('category-button');
@@ -400,11 +385,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Zorluk seviyesi butonlarını dinamik olarak yükleme fonksiyonu ---
     function loadDifficultyButtons() {
-        pieceOptions.innerHTML = ''; // Mevcut butonları temizle
+        pieceOptions.innerHTML = '';
         for (const levelName in difficultyLevels) {
             const button = document.createElement('button');
             button.classList.add('piece-button');
-            button.textContent = levelName; // "Kolay (4x3)" gibi metin
+            button.textContent = levelName;
             const [cols, rows] = difficultyLevels[levelName];
             button.dataset.cols = cols;
             button.dataset.rows = rows;
@@ -425,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function startTimer() {
         gameStartTime = Date.now();
         timerInterval = setInterval(updateTimer, 1000);
-        updateTimer(); // Hemen güncelle
+        updateTimer();
     }
 
     function stopTimer() {
@@ -450,9 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         timerDisplay.textContent = '00:00';
         hintUsed = false;
-        // İpucu butonunu burada tekrar etkinleştiriyoruz
-        hintButton.disabled = false; // DOMContentLoaded kapsamındaki hintButton'ı kullanır
-
+        hintButton.disabled = false; // İpucu butonunu etkinleştir
 
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
         existingPieces.forEach(piece => piece.remove());
@@ -505,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
             selectionScreen.style.display = 'none';
             gameTitle.style.display = 'none';
             gameBoard.style.display = 'grid';
-            gameControls.style.display = 'flex'; // Oyun içi kontrolleri göster
+            gameControls.style.display = 'flex';
 
             createPuzzle(selectedImage, selectedCols, selectedRows);
             startTimer();
@@ -522,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         timerDisplay.textContent = '00:00';
         hintUsed = false;
-        hintButton.disabled = false; // İpucu butonunu burada etkinleştir
+        hintButton.disabled = false; // İpucu butonunu etkinleştir
 
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
         existingPieces.forEach(piece => piece.remove());
@@ -539,6 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mainMenuButton.addEventListener('click', resetGame);
     mainMenuFromGameButton.addEventListener('click', resetGame);
 
+    // DÜZELTME: hintButton için olay dinleyicisi sadece bir kere burada atanmalı
     hintButton.addEventListener('click', () => {
         if (hintUsed) {
             alert('İpucu hakkınızı zaten kullandınız!');
@@ -549,6 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hintButton.disabled = true;
         playSound('hint');
     });
+
 
     // --- Puzzle Oluşturma Fonksiyonu ---
     async function createPuzzle(imageUrl, cols, rows) {
@@ -562,8 +547,9 @@ document.addEventListener('DOMContentLoaded', () => {
         await new Promise(resolve => img.onload = resolve);
 
         const boardComputedStyle = getComputedStyle(gameBoard);
-        const boardWidth = parseFloat(boardComputedStyle.width);
-        const boardHeight = parseFloat(boardComputedStyle.height);
+        // Bu değişkenler artık puzzle parçalarının boyutunu doğrudan etkilemiyor
+        // const boardWidth = parseFloat(boardComputedStyle.width);
+        // const boardHeight = parseFloat(boardComputedStyle.height);
 
         gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
         gameBoard.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
@@ -679,6 +665,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let touchDraggedItem = null;
     let initialX, initialY;
     let currentDragTarget = null;
+    let originalPieceWidth = 0; // Orijinal parça genişliği
+    let originalPieceHeight = 0; // Orijinal parça yüksekliği
+
 
     function addTouchListeners() {
         const pieces = gameBoard.querySelectorAll('.puzzle-piece');
@@ -692,9 +681,19 @@ document.addEventListener('DOMContentLoaded', () => {
     function touchStart(e) {
         e.preventDefault();
         touchDraggedItem = this;
+        
+        // DÜZELTME: Parçanın orijinal boyutlarını kaydet
+        originalPieceWidth = touchDraggedItem.offsetWidth;
+        originalPieceHeight = touchDraggedItem.offsetHeight;
+
         touchDraggedItem.style.position = 'absolute';
         touchDraggedItem.style.zIndex = '1000';
         touchDraggedItem.style.cursor = 'grabbing';
+        
+        // DÜZELTME: Sürüklenen parçanın boyutunu manuel olarak ayarla
+        touchDraggedItem.style.width = `${originalPieceWidth}px`;
+        touchDraggedItem.style.height = `${originalPieceHeight}px`;
+
 
         const rect = touchDraggedItem.getBoundingClientRect();
         const touch = e.touches[0];
@@ -769,10 +768,14 @@ document.addEventListener('DOMContentLoaded', () => {
             playSound('piecePlace');
         } 
         
+        // DÜZELTME: Sürükleme bitince style özelliklerini sıfırla
         touchDraggedItem.style.position = '';
         touchDraggedItem.style.zIndex = '';
         touchDraggedItem.style.left = '';
         touchDraggedItem.style.top = '';
+        touchDraggedItem.style.width = ''; // Boyutu sıfırla
+        touchDraggedItem.style.height = ''; // Boyutu sıfırla
+
 
         touchDraggedItem = null;
         currentDragTarget = null;
