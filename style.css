@@ -193,51 +193,61 @@ h1 {
 }
 
 .win-screen {
-    position: absolute;
+    position: fixed; /* absolute yerine fixed */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: rgba(39, 174, 96, 0.95);
-    padding: 50px;
+    padding: 40px; /* Biraz daha az padding */
     border-radius: 20px;
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
     text-align: center;
     color: #ecf0f1;
-    z-index: 1001;
+    z-index: 2002; /* Konfetinin üzerinde olsun */
     display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* İçeriği ortala */
     animation: fadeIn 0.6s ease-out;
     border: 2px solid #2ecc71;
+    width: 90%; /* Daha esnek genişlik */
+    max-width: 500px; /* Maksimum genişlik */
 }
 
 .win-screen h2 {
-    font-size: 3.5em;
+    font-size: 2.5em; /* Biraz daha küçük başlık */
     margin-bottom: 15px;
     text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
 }
 
-.win-screen p {
+.win-screen p#finalTime {
     font-size: 1.8em;
-    margin-bottom: 25px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 20px; /* Butonlar için boşluk */
+    color: #f1c40f;
+    display: none; /* Başlangıçta gizli */
 }
 
-#finalTime {
-    font-size: 2.2em;
-    font-weight: bold;
-    margin-top: 20px;
-    color: #f1c40f;
-}
 
 #playAgainButton, #mainMenuButton {
     background-color: #3498db;
     border-color: #3498db;
-    padding: 15px 35px;
-    font-size: 1.2em;
+    padding: 12px 30px; /* Biraz daha küçük butonlar */
+    font-size: 1em;
     margin: 10px;
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
     color: #ecf0f1;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: none; /* Başlangıçta gizli */
+}
+
+#playAgainButton:hover, #mainMenuButton:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
 }
 
 .game-board.solved-effect {
