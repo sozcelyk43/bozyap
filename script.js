@@ -1,16 +1,50 @@
+// --- Ses Efektleri (GLOBAL KAPSAMA TAŞINDI) ---
+// Ses dosyalarınıza erişim için tarayıcınızda bir yerel sunucu çalıştırmanız gerektiğini unutmayın.
+// Örneğin: Python -m http.server
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const sounds = {};
+
+function loadSound(name, url) {
+    fetch(url)
+        .then(response => response.arrayBuffer())
+        .then(buffer => audioContext.decodeAudioData(buffer))
+        .then(decodedData => {
+            sounds[name] = decodedData;
+        })
+        .catch(e => console.error(`Ses dosyası yüklenemedi: ${name} (${url})`, e));
+}
+
+function playSound(name) {
+    if (sounds[name]) {
+        const source = audioContext.createBufferSource();
+        source.buffer = sounds[name];
+        source.connect(audioContext.destination);
+        source.start(0);
+    } else {
+        console.warn(`Ses "${name}" yüklenmemiş veya bulunamıyor.`);
+    }
+}
+
+// Ses dosyalarını yükle (Uygulama başladığında bir kere yüklenecek)
+loadSound('pieceMove', 'sounds/button-1.mp3');
+loadSound('piecePlace', 'sounds/button-2.mp3');
+loadSound('win', 'sounds/success-1.mp3');
+loadSound('hint', 'sounds/button-3.mp3');
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const selectionScreen = document.getElementById('selectionScreen');
     const gameBoard = document.getElementById('gameBoard');
     const pieceOptions = document.querySelector('.piece-options');
     const categoryOptions = document.querySelector('.category-options');
     const startGameButton = document.getElementById('startGameButton');
-    let timerDisplay = document.getElementById('timer'); // Let olarak tanımlandı
-    let hintButton = document.getElementById('hintButton'); // Let olarak tanımlandı
+    const timerDisplay = document.getElementById('timer');
+    const hintButton = document.getElementById('hintButton');
     const winScreen = document.getElementById('winScreen');
     const finalTimeDisplay = document.getElementById('finalTime');
     const playAgainButton = document.getElementById('playAgainButton');
     const mainMenuButton = document.getElementById('mainMenuButton');
-    let mainMenuFromGameButton = document.getElementById('mainMenuFromGame'); // Let olarak tanımlandı
+    const mainMenuFromGameButton = document.getElementById('mainMenuFromGame');
     const gameControls = document.querySelector('.game-controls');
     const gameTitle = document.getElementById('gameTitle');
 
@@ -25,28 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let timerInterval;
     let hintUsed = false;
 
-    // --- Ses Efektleri ---
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const sounds = {};
-
-    function loadSound(name, url) {
-        fetch(url)
-            .then(response => response.arrayBuffer())
-            .then(buffer => audioContext.decodeAudioData(buffer))
-            .then(decodedData => {
-                sounds[name] = decodedData;
-            })
-            .catch(e => console.error(`Ses dosyası yüklenemedi: ${name} (${url})`, e));
-    }
-
-    // Ses dosyalarını yükle (Lokal dosya yollarına dikkat edin)
-    loadSound('pieceMove', 'sounds/button-1.mp3');
-    loadSound('piecePlace', 'sounds/button-2.mp3');
-    loadSound('win', 'sounds/success-1.mp3');
-    loadSound('hint', 'sounds/button-3.mp3');
-
     // --- Zorluk seviyeleri ve parça sayıları ---
-    // Her seviye için [sütun sayısı, satır sayısı]
     const difficultyLevels = {
         "Çok Kolay (3x2)": [3, 2],
         "Kolay (4x3)": [4, 3],
@@ -373,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Kategorileri Yükleme Fonksiyonu ---
-    // Bu fonksiyon global scopeta olmalı veya DOMContentLoaded içinde tanımlanmalı
+    // Bu fonksiyon DOMContentLoaded içinde tanımlanmalı ve çağrılmalı
     function loadCategories() {
         categoryOptions.innerHTML = ''; // Mevcut butonları temizle
         for (const categoryName in imageCategories) {
@@ -437,12 +450,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         timerDisplay.textContent = '00:00';
         hintUsed = false;
-        // İpucu butonunu burada yeniden seçip etkinleştiriyoruz
-        hintButton = document.getElementById('hintButton');
-        if (hintButton) { // HTML'de var olduğundan emin ol
-             hintButton.disabled = false;
-        }
-       
+        // İpucu butonunu burada tekrar etkinleştiriyoruz
+        hintButton.disabled = false; // DOMContentLoaded kapsamındaki hintButton'ı kullanır
+
 
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
         existingPieces.forEach(piece => piece.remove());
@@ -512,11 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         timerDisplay.textContent = '00:00';
         hintUsed = false;
-        // İpucu butonunu burada yeniden seçip etkinleştiriyoruz
-        hintButton = document.getElementById('hintButton'); // Tekrar seç
-        if (hintButton) {
-            hintButton.disabled = false;
-        }
+        hintButton.disabled = false; // İpucu butonunu burada etkinleştir
 
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
         existingPieces.forEach(piece => piece.remove());
@@ -531,18 +537,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     mainMenuButton.addEventListener('click', resetGame);
-    // mainMenuFromGameButton'a dinleyici eklenirken, elementin var olduğundan emin olalım
-    // Veya createPuzzle içinde bu dinleyiciyi her seferinde ekleyelim (tercih edilen yol)
+    mainMenuFromGameButton.addEventListener('click', resetGame);
 
-    // Not: hintButton ve mainMenuFromGameButton'ı doğrudan buraya alıp atamak yerine,
-    // createPuzzle fonksiyonunda DOM'a eklendikleri için, her createPuzzle çağrıldığında
-    // olay dinleyicilerinin yeniden atanması gerekiyor.
-    // Bu yüzden bu dinleyicileri createPuzzle fonksiyonunun sonuna taşıyacağız.
+    hintButton.addEventListener('click', () => {
+        if (hintUsed) {
+            alert('İpucu hakkınızı zaten kullandınız!');
+            return;
+        }
+        showHint();
+        hintUsed = true;
+        hintButton.disabled = true;
+        playSound('hint');
+    });
 
     // --- Puzzle Oluşturma Fonksiyonu ---
     async function createPuzzle(imageUrl, cols, rows) {
-        gameBoard.innerHTML = ''; // Önceki puzzle'ı temizle
-        puzzlePieces = []; // Diziyi sıfırla
+        gameBoard.innerHTML = '';
+        puzzlePieces = [];
 
         const img = new Image();
         img.src = imageUrl;
@@ -597,25 +608,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         addDragDropListeners();
         addTouchListeners();
-
-        // ANA DÜZELTME: Timer, Hint ve Ana Menü butonlarının olay dinleyicilerini burada tekrar atıyoruz
-        // Çünkü bu butonlar HTML'de sabit, ancak içeriğini temizlememiz gerekebiliyor bazen.
-        // En sağlıklı yol: her puzzle oluşturulduğunda dinleyicilerini kontrol edip yeniden atamak.
-        // HTML'de bu butonlar zaten olduğu için, sadece dinleyicilerini güncelliyoruz.
-        
-        // Timer ve ana menü butonu zaten var, sadece dinleyicilerini ekleyelim (gerekiyorsa)
-        // Eğer bu butonlar gameBoard'a dinamik olarak eklenmiyorsa ve HTML'de sabitse,
-        // sadece bir kere en başta dinleyici atamak yeterlidir.
-        // Ancak daha önce HTML'den kaldırmıştık, bu yüzden createPuzzle dışında bir yerde tanımlanmalılar.
-        // Şu anki HTML yapımızda game-controls altında sabit duruyorlar.
-        // Bu yüzden resetGame ve playAgainButton içinde tekrar seçmeye gerek yok.
-        // Sadece hintButton'ın disable durumunu resetlerken ve onClick'ini kontrol ederken dikkat edeceğiz.
-
-        // NOT: HTML yapısında game-controls dışarıda sabit olduğundan,
-        // hintButton ve mainMenuFromGameButton değişkenleri DOMContentLoaded içinde
-        // bir kere tanımlandıklarında hep aynı elementlere referans ederler.
-        // Bu yüzden resetGame ve playAgainButton içinde tekrar querySelector yapmaya gerek yok.
-        // Ancak, disable durumları ve hintUsed değişkeni doğru resetlenmeli.
     }
 
     // Diziyi karıştıran yardımcı fonksiyon (Fisher-Yates shuffle)
@@ -768,10 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetPiece.nextSibling === touchDraggedItem) {
                 parent.insertBefore(touchDraggedItem, targetPiece);
             } else if (touchDraggedItem.nextSibling === targetPiece) {
-                parent.insertBefore(this, draggedItem); // Bu satırda bir hata olabilir, this ve draggedItem karıştırılıyor
-                // Doğrusu: parent.insertBefore(targetPiece, touchDraggedItem); parent.insertBefore(touchDraggedItem, targetPiece.nextSibling);
-                parent.insertBefore(targetPiece, touchDraggedItem); // Target'ı sürüklenenin önüne koy
-                parent.insertBefore(touchDraggedItem, targetPiece.nextSibling); // Sürükleneni Target'ın yeni konumunun arkasına koy
+                parent.insertBefore(targetPiece, touchDraggedItem);
             } else {
                 const draggedOriginalNextSibling = touchDraggedItem.nextSibling;
                 parent.insertBefore(touchDraggedItem, targetPiece);
@@ -889,22 +878,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const finalTime = timerDisplay.textContent;
                 finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
 
-                // Pop-up içeriğini ve butonları göster
                 document.querySelector('#winScreen h2').textContent = 'Harika Başardınız!';
-                finalTimeDisplay.style.display = 'block'; // Final süreyi göster
+                finalTimeDisplay.style.display = 'block';
                 playAgainButton.style.display = 'inline-block';
                 mainMenuButton.style.display = 'inline-block';
                 
-                // Tam resmi arka plana ekle
                 winScreen.style.backgroundImage = `url('${selectedImage}')`;
                 winScreen.style.backgroundSize = 'contain';
                 winScreen.style.backgroundRepeat = 'no-repeat';
                 winScreen.style.backgroundPosition = 'center';
 
-                // Ekranları gizle/göster
                 gameBoard.style.display = 'none';
                 gameControls.style.display = 'none';
-                winScreen.style.display = 'flex'; // Pop-up'ı göster
+                winScreen.style.display = 'flex';
             }, 5000);
         }
     }
