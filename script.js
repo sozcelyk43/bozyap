@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Zorluk seviyeleri ve parça sayıları ---
     // Her seviye için [sütun sayısı, satır sayısı]
-    const difficultyLevels = {
+  const difficultyLevels = {
+        "Çok Kolay (3x2)": [3, 2],    // Yeni seviye: 6 parça
         "Kolay (4x3)": [4, 3],       // 12 parça
         "Orta (6x4)": [6, 4],       // 24 parça
         "Zor (8x6)": [8, 6],        // 48 parça
