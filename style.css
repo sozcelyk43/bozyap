@@ -149,15 +149,17 @@ h1 {
 
 .puzzle-piece[style*="position: absolute"] {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    /* ÖNEMLİ DEĞİŞİKLİK: scale veya max-width/height kaldırıldı */
-    /* Transformu JS yönetecek, burada ek transform olmasın */
-    transform: none !important; /* Herhangi bir CSS transformunu geçersiz kılar */
-    /* max-width ve max-height değerlerini de kaldırabilirsiniz */
-    /* max-width: none; */
-    /* max-height: none; */
-    transition: none; /* Bu, parçanın sürüklenirken ani büyümesini önler */
+    /* TRANSFORM: scale(1.05) veya transform: none !important; yerine */
+    /* Hiçbir transform değeri olmasın veya sadece hafif bir scale ekleyin, */
+    /* ancak mobil kayma sorunu oluyorsa kaldırmak en iyisi */
+    /* transform: scale(1.02);  // İsteğe bağlı: hafif bir büyüme efekti için */
+    transition: none; /* Bu satır KALSIN, ani geçişleri önler */
+
+    /* Mobil sürükleme esnasında parçanın boyutunu kontrol etmek için */
+    /* Sadece konumlandırma için absolute kullanıyoruz, boyutu otomatik ayarlanmalı */
+    /* max-width: 150px;  // Eğer parça çok büyüyorsa bu gibi bir değer denenebilir */
+    /* max-height: 150px; // Ancak dikkatli kullanılmalı, parçanın oranını bozabilir */
 }
-/* ... (Diğer CSS kodları değişmeden kalacak) ... */
 
 .game-controls {
     display: none;
