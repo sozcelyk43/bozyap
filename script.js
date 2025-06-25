@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Zorluk seviyeleri ve parça sayıları ---
     // Her seviye için [sütun sayısı, satır sayısı]
-  const difficultyLevels = {
+    const difficultyLevels = {
         "Çok Kolay (3x2)": [3, 2],    // Yeni seviye: 6 parça
         "Kolay (4x3)": [4, 3],       // 12 parça
         "Orta (6x4)": [6, 4],       // 24 parça
@@ -663,7 +663,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Mobil Dokunmatik İşlevselliği ---
     let touchDraggedItem = null;
     let initialX, initialY;
-    let currentDragTarget = null; // Dokunma ile sürüklemede hedef parça
+    let currentDragTarget = null;
 
     function addTouchListeners() {
         const pieces = gameBoard.querySelectorAll('.puzzle-piece');
@@ -704,7 +704,6 @@ document.addEventListener('DOMContentLoaded', () => {
         touchDraggedItem.style.left = `${touch.clientX - initialX - boardRect.left}px`;
         touchDraggedItem.style.top = `${touch.clientY - initialY - boardRect.top}px`;
 
-        // Hedef parçayı bulma ve vurgulama (touch dragover benzeri)
         const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
         let potentialTarget = null;
         for (let i = 0; i < elementsAtPoint.length; i++) {
@@ -728,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!touchDraggedItem) return;
 
         touchDraggedItem.style.cursor = 'grab';
-        if (currentDragTarget) currentDragTarget.classList.remove('drag-over'); // Vurguyu temizle
+        if (currentDragTarget) currentDragTarget.classList.remove('drag-over');
 
         const touch = e.changedTouches[0];
         const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
@@ -761,56 +760,12 @@ document.addEventListener('DOMContentLoaded', () => {
         touchDraggedItem.style.top = '';
 
         touchDraggedItem = null;
-        currentDragTarget = null; // Hedef parçayı sıfırla
+        currentDragTarget = null;
         checkWinCondition();
     }
 
-    // --- İpucu Sistemi ---
-    async function showHint() {
-        const tempImage = new Image();
-        tempImage.src = selectedImage;
-        tempImage.crossOrigin = "Anonymous";
-
-        await new Promise(resolve => tempImage.onload = resolve);
-
-        const hintOverlay = document.createElement('div');
-        hintOverlay.style.position = 'fixed';
-        hintOverlay.style.top = '0';
-        hintOverlay.style.left = '0';
-        hintOverlay.style.width = '100%';
-        hintOverlay.style.height = '100%';
-        hintOverlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-        hintOverlay.style.zIndex = '2000';
-        hintOverlay.style.display = 'flex';
-        hintOverlay.style.justifyContent = 'center';
-        hintOverlay.style.alignItems = 'center';
-        hintOverlay.style.opacity = '0';
-        hintOverlay.style.transition = 'opacity 0.5s ease-in-out';
-
-        const hintImg = document.createElement('img');
-        hintImg.src = selectedImage;
-        hintImg.style.maxWidth = '90%';
-        hintImg.style.maxHeight = '90%';
-        hintImg.style.objectFit = 'contain';
-        hintImg.style.borderRadius = '10px';
-        hintImg.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.5)';
-        
-        hintOverlay.appendChild(hintImg);
-        document.body.appendChild(hintOverlay);
-
-        setTimeout(() => {
-            hintOverlay.style.opacity = '1';
-        }, 50);
-
-        setTimeout(() => {
-            hintOverlay.style.opacity = '0';
-            hintOverlay.addEventListener('transitionend', () => {
-                hintOverlay.remove();
-            }, { once: true });
-        }, 3000);
-    }
-
-function showConfetti() {
+    // --- Konfeti Efekti Fonksiyonu ---
+    function showConfetti() {
         const confettiContainer = document.createElement('div');
         confettiContainer.style.position = 'fixed';
         confettiContainer.style.top = '0';
@@ -833,16 +788,14 @@ function showConfetti() {
                 return;
             }
 
-            const particleCount = 50 * (timeLeft / duration);
-
-            // Daha yoğun bir konfeti yağmuru için particleCount'u artırabilirsiniz
+            const particleCount = 50 * (timeLeft / duration); // Daha yoğun bir konfeti yağmuru için ayarlanabilir
 
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
                 particle.style.position = 'absolute';
                 particle.style.width = '10px';
                 particle.style.height = '10px';
-                particle.style.backgroundColor = colors[[Math.floor(Math.random() * colors.length)]];
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 particle.style.borderRadius = '50%';
 
                 const x = Math.random() * window.innerWidth;
@@ -853,7 +806,7 @@ function showConfetti() {
                 const scale = Math.random() * 0.8 + 0.6;
                 const rotation = Math.random() * 360;
                 const speedX = Math.random() * 2 - 1;
-                const speedY = Math.random() * 5 + 5;
+                const speedY = Math.random() * 5 + 5; // Dikey hız, parçacıkların aşağı düşmesini sağlar
 
                 particle.style.transform = `translate(-50%, -50%) scale(${scale}) rotate(${rotation}deg)`;
 
@@ -871,12 +824,14 @@ function showConfetti() {
             requestAnimationFrame(frame);
         })();
     }
+
+
     // --- Kazanma Koşulu Kontrolü ---
     function checkWinCondition() {
         const currentOrderDOM = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'));
         let isSolved = true;
         for (let i = 0; i < currentOrderDOM.length; i++) {
-            if (parseInt(currentOrderDOM[[i]].dataset.originalIndex) !== i) {
+            if (parseInt(currentOrderDOM[i].dataset.originalIndex) !== i) {
                 isSolved = false;
                 break;
             }
@@ -885,43 +840,46 @@ function showConfetti() {
         if (isSolved) {
             stopTimer();
             playSound('win');
-
-            // Konfeti Efekti Fonksiyonunu Çağır
-            showConfetti();
+            showConfetti(); // Konfeti efekti
 
             const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
-                .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
-
+                                 .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
+            
             gameBoard.innerHTML = '';
             sortedPieces.forEach(piece => {
                 piece.style.opacity = '1';
                 gameBoard.appendChild(piece);
             });
 
-            gameBoard.style.gap = '0px';
+            gameBoard.style.gap = '0px'; 
             gameBoard.style.borderColor = 'transparent';
             gameBoard.classList.add('solved-effect');
 
-            const finalTime = timerDisplay.textContent;
-            finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
+            // 5 saniye boyunca tamamlanmış resmi göster, sonra popup'ı çıkar
+            setTimeout(() => {
+                gameBoard.classList.remove('solved-effect');
+                gameBoard.style.gap = '2px';
+                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                
+                const finalTime = timerDisplay.textContent;
+                finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
 
-            // Kazanma Ekranını Güncelle ve Göster
-            document.querySelector('#winScreen h2').textContent = 'Harika Başardınız!';
-            document.querySelector('#winScreen #finalTime').style.display = 'block'; // Süreyi göster
-            document.querySelector('#winScreen #playAgainButton').style.display = 'inline-block';
-            document.querySelector('#winScreen #mainMenuButton').style.display = 'inline-block';
+                // Kazanma ekranını güncelle
+                document.querySelector('#winScreen h2').textContent = 'Harika Başardınız!';
+                document.querySelector('#winScreen #finalTime').style.display = 'block'; // Süreyi göster
+                document.querySelector('#winScreen #playAgainButton').style.display = 'inline-block';
+                document.querySelector('#winScreen #mainMenuButton').style.display = 'inline-block';
+                
+                // Tam resmi arka plana ekle
+                winScreen.style.backgroundImage = `url('${selectedImage}')`;
+                winScreen.style.backgroundSize = 'contain';
+                winScreen.style.backgroundRepeat = 'no-repeat';
+                winScreen.style.backgroundPosition = 'center';
 
-            // Tam resmi arka plana ekle (isteğe bağlı, sadece görsel bir ipucu)
-            winScreen.style.backgroundImage = `url('${selectedImage}')`;
-            winScreen.style.backgroundSize = 'contain';
-            winScreen.style.backgroundRepeat = 'no-repeat';
-            winScreen.style.backgroundPosition = 'center';
-
-            gameBoard.style.display = 'none';
-            gameControls.style.display = 'none';
-            winScreen.style.display = 'flex'; // Flex yaparak içerikleri düzenle
-            winScreen.style.flexDirection = 'column';
-            winScreen.style.alignItems = 'center';
+                gameBoard.style.display = 'none';
+                gameControls.style.display = 'none';
+                winScreen.style.display = 'flex'; // Popup'ı göster
+            }, 5000); // 5 saniye bekle
         }
     }
 
