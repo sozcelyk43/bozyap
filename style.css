@@ -3,10 +3,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: 100vh; /* Ekran yüksekliğini kapla */
     margin: 0;
-    background: linear-gradient(135deg, #2c3e50, #34495e, #1abc9c, #2980b9);
-    color: #ecf0f1;
+    background: linear-gradient(135deg, #2c3e50, #34495e, #1abc9c, #2980b9); /* Daha koyu ve kurumsal tonlarda gradient */
+    color: #ecf0f1; /* Açık gri metin rengi */
     overflow-x: hidden; /* YATAY KAYDIRMAYI KESİNLİKLE ENGELLE */
     overflow-y: auto; /* Dikey kaydırmaya varsayılan olarak izin ver */
 }
@@ -15,7 +15,7 @@ body {
     background-color: rgba(44, 62, 80, 0.9);
     padding: 20px 15px; /* Genel padding */
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /* Derinlik efekti */
     text-align: center;
     backdrop-filter: blur(5px);
     border: 1px solid rgba(189, 195, 199, 0.5);
@@ -145,10 +145,12 @@ h1 {
     border-color: #f1c40f;
 }
 
+/* Mobil için sürükle-bırakta parça hareketini kolaylaştırmak için ek styling */
 .puzzle-piece[style*="position: absolute"] {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    transform: scale(1.08);
-    transition: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); /* Gölge biraz azaltıldı */
+    transform: scale(1.05); /* Mobil için daha küçük bir büyüme oranı */
+    transition: none; /* Pozisyon değişimi anında olsun */
+    z-index: 1000; /* En üste çıksın */
 }
 
 .game-controls {
@@ -182,7 +184,7 @@ h1 {
     padding: 12px 30px;
     font-size: 1.1em;
     color: #ecf0f1;
-    border-radius: 10px;
+    border-radius: 10px; /* Kıvrım daha belirgin */
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
@@ -276,11 +278,11 @@ h1 {
 }
 
 /* MOBİL UYUMLULUK VE KÜÇÜK EKRAN DÜZENLEMESİ */
-@media (max-width: 800px) {
+@media (max-width: 800px) { /* Medya sorgusu eşik değeri 800px */
     .game-container {
         padding: 15px 10px;
         max-width: 98vw;
-        min-height: 550px;
+        min-height: 550px; /* Mobil için min-height ayarı */
     }
     h1 {
         font-size: 2em;
@@ -360,7 +362,7 @@ h1 {
 @media (max-width: 420px) {
     .game-container {
         padding: 10px 5px;
-        min-height: 500px;
+        min-height: 500px; /* Ekstra küçük mobil için min-height */
     }
     h1 {
         font-size: 1.4em;
