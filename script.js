@@ -769,35 +769,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (targetPiece) {
-            // İki puzzle parçasının DOM'daki yerini güvenli bir şekilde değiştirme
+            // İki puzzle parçasının DOM'daki yerini güvenli bir şekilde değiştirme (replaceChild yöntemi)
             const parent = gameBoard; // gameBoard, tüm puzzle parçalarının ebeveyni
             
-            // dragged: sürüklenen parça (currentTouchPiece)
-            // target: bırakılan yerdeki parça (targetPiece)
-
-            // 1. target'ın hemen sonraki kardeşini kaydet (target, DOM'da taşınmadan önce)
-            const targetNextSibling = targetPiece.nextSibling;
-
-            // 2. dragged'ı target'ın yerine koy
-            parent.insertBefore(currentTouchPiece, targetPiece);
-
-            // 3. target'ı dragged'ın orijinal yerine koy
-            // Eğer dragged, target'ın hemen önündeyse, targetNextSibling yanlış olurdu.
-            // Bu yüzden daha genel bir swap mantığı kullanalım:
+            // Sürüklenen parçanın orijinal konumundaki referansını al
+            const originalDraggedReference = currentTouchPiece.nextSibling === targetPiece ? targetPiece : currentTouchPiece.nextSibling;
             
-            // Eğer sürüklenen parça, hedefin hemen önündeyse (sürükleme yönüne göre)
-            if (targetPiece.parentNode === parent && targetPiece.nextSibling === currentTouchPiece) {
-                 parent.insertBefore(targetPiece, currentTouchPiece); // Sürükleneni hedefin yerine, hedefi de sürüklenenin eski yerine koy
-            } else {
-                // Diğer durumlarda (uzak takas)
-                const temp = document.createElement('div'); // Geçici bir yer tutucu
-                parent.insertBefore(temp, currentTouchPiece); // Sürüklenenin yerine geçiciyi koy
-                
-                parent.insertBefore(currentTouchPiece, targetPiece); // Sürükleneni hedefin yerine koy
-                parent.insertBefore(targetPiece, temp); // Hedefi geçicinin yerine koy
-                
-                temp.remove(); // Geçiciyi kaldır
+            // Hedef parçanın orijinal konumundaki referansını al
+            const originalTargetReference = targetPiece.nextSibling === currentTouchPiece ? currentTouchPiece : targetPiece.nextSibling;
+
+            // Önemli: replaceChild kullanmadan önce elemanların parentNode'larını kontrol etmek iyidir
+            // Veya daha basit bir swap fonksiyonu kullanabiliriz:
+            function swapElements(elm1, elm2) {
+                const parent1 = elm1.parentNode;
+                const parent2 = elm2.parentNode;
+
+                if (!parent1 || !parent2) return; // Geçerli ebeveyn yoksa takas yapma
+
+                const nextSibling1 = elm1.nextSibling; // elm1'in sonraki kardeşini kaydet
+                const nextSibling2 = elm2.nextSibling; // elm2'nin sonraki kardeşini kaydet
+
+                // elm2'yi elm1'in yerine koy
+                parent1.insertBefore(elm2, nextSibling1);
+
+                // elm1'i elm2'nin yerine koy
+                parent2.insertBefore(elm1, nextSibling2);
             }
+
+            swapElements(currentTouchPiece, targetPiece);
 
             playSound('piecePlace');
         } 
@@ -807,6 +806,8 @@ document.addEventListener('DOMContentLoaded', () => {
         checkWinCondition(); // Kazanma koşulunu kontrol et
     }
 
+    // ... (Diğer tüm kodlar ve fonksiyonlar aynı kalacak) ...
+});
     // --- İpucu Sistemi ---
     async function showHint() {
         const tempImage = new Image();
