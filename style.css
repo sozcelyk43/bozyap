@@ -131,8 +131,8 @@ h1 {
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    /* Orijinal parçada transition olmamalı, opacity anında değişmeli */
-    /* transform veya transition ile ilgili diğer tanımlamaları kaldırın */
+    /* ÖNEMLİ: Burada herhangi bir 'transition' veya 'transform' kuralı OLMAMALIDIR. */
+    /* Bu özellikler JS tarafından dinamik olarak kontrol ediliyor ve çakışma yaratabilir. */
 }
 
 .puzzle-piece img {
@@ -318,7 +318,7 @@ h1 {
     }
     .hint-button, #mainMenuFromGame {
         padding: 8px 15px;
-        font-size: 0.9em;
+        font-size: 0.8em;
         width: 100%;
         box-sizing: border-box;
     }
