@@ -140,15 +140,13 @@ h1 {
 
 .puzzle-piece[style*="position: absolute"] {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    /* Buradaki transform: scale veya benzeri bir büyütme varsa kaldırın. */
-    /* Örneğin: transform: none;  */
-    /* Veya: transform: translate(var(--_x), var(--_y));  JS'ten gelen translate ile çakışmaması için */
-    transition: none; /* Bu satır ani geçişleri önler, kalsın. */
-    
-    /* Eğer parçalar çok büyüyorsa ve yukarıdaki düzeltmeler işe yaramazsa, 
-       bu max-width/height'ı deneyebilirsiniz, ancak oranları bozmamaya dikkat edin. */
-    /* max-width: 150px; */
-    /* max-height: 150px; */
+    /* Burayı tamamen kaldırın veya scale(1) yapın */
+    /* transform: scale(1.05); /* gibi bir değer varsa kaldırın */
+    transform: scale(1); /* Parçanın sürüklenirken orijinal boyutta kalmasını sağlar */
+    transition: none; /* Bu kalsın, ani geçişleri önler */
+    /* max-width ve max-height değerlerini de kaldırın veya yorum satırı yapın */
+    /* max-width: none; */
+    /* max-height: none; */
 }
 
 .game-controls {
