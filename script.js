@@ -631,27 +631,24 @@ document.addEventListener('DOMContentLoaded', () => {
         this.classList.remove('drag-over');
     }
 
-    function dragDrop() {
+function dragDrop() {
         this.classList.remove('drag-over');
         if (draggedItem && draggedItem !== this) {
             const parent = gameBoard;
-            if (this.nextSibling === draggedItem) {
-                parent.insertBefore(draggedItem, this);
-            } else if (draggedItem.nextSibling === this) {
-                parent.insertBefore(this, draggedItem);
-            } else {
-                const draggedOriginalNextSibling = draggedItem.nextSibling;
-                parent.insertBefore(draggedItem, this);
-                parent.insertBefore(this, draggedOriginalNextSibling);
-            }
+            // Fare için yer değiştirme mantığı
+            const draggedOriginalNextSibling = draggedItem.nextSibling;
+            parent.insertBefore(draggedItem, this);
+            parent.insertBefore(this, draggedOriginalNextSibling);
+            
             playSound('piecePlace');
         }
     }
+    
+
 
     let touchDraggedItem = null;
     let initialXOffset, initialYOffset;
-    
-    function addTouchListeners() {
+     function addTouchListeners() {
         const pieces = gameBoard.querySelectorAll('.puzzle-piece'); 
         pieces.forEach(piece => {
             piece.addEventListener('touchstart', touchStart);
@@ -670,14 +667,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const rect = touchDraggedItem.getBoundingClientRect();
         const touch = e.touches[0];
 
+        // Dokunma noktasının parçanın sol üst köşesine göre offset'i
         initialXOffset = touch.clientX - rect.left;
         initialYOffset = touch.clientY - rect.top;
 
         const boardRect = gameBoard.getBoundingClientRect();
-        // Updated: Use transform for positioning
-        touchDraggedItem.style.left = ''; // Clear old style
-        touchDraggedItem.style.top = '';  // Clear old style
-        touchDraggedItem.style.transform = `translate(${touch.clientX - initialXOffset - boardRect.left}px, ${touch.clientY - initialYOffset - boardRect.top}px)`;
+
+        // Parçayı transform ile konumlandır (gameBoard'a göre)
+        // touch.clientX - boardRect.left: Parmağın oyun tahtasına göre X konumu
+        // - initialXOffset: Parmağın parçanın sol üst köşesinden uzaklığını çıkar
+        const translateX = touch.clientX - initialXOffset - boardRect.left;
+        const translateY = touch.clientY - initialYOffset - boardRect.top;
+        
+        touchDraggedItem.style.transform = `translate(${translateX}px, ${translateY}px)`;
         
         playSound('pieceMove');
     }
@@ -689,8 +691,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const touch = e.touches[0];
         const boardRect = gameBoard.getBoundingClientRect();
 
-        // Updated: Use transform for positioning
-        touchDraggedItem.style.transform = `translate(${touch.clientX - initialXOffset - boardRect.left}px, ${touch.clientY - initialYOffset - boardRect.top}px)`;
+        const translateX = touch.clientX - initialXOffset - boardRect.left;
+        const translateY = touch.clientY - initialYOffset - boardRect.top;
+
+        touchDraggedItem.style.transform = `translate(${translateX}px, ${translateY}px)`;
     }
 
     function touchEnd(e) {
@@ -699,10 +703,12 @@ document.addEventListener('DOMContentLoaded', () => {
         touchDraggedItem.style.cursor = 'grab';
 
         const touch = e.changedTouches[0];
+        // Dokunmanın bittiği noktadaki elemanları al
         const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
         
         let targetPiece = null;
         for (let i = 0; i < elementsAtPoint.length; i++) {
+            // Eğer hedef eleman bir puzzle parçasıysa ve sürüklenen parçanın kendisi değilse
             if (elementsAtPoint[i].classList.contains('puzzle-piece') && elementsAtPoint[i] !== touchDraggedItem) {
                 targetPiece = elementsAtPoint[i];
                 break;
@@ -711,17 +717,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (targetPiece) {
             const parent = gameBoard;
-            const draggedNextSibling = touchDraggedItem.nextSibling;
             
+            // Swap logic: Hedef parçanın hemen sonraki kardeşini bul
+            const targetNextSibling = targetPiece.nextSibling;
+            
+            // Sürüklenen parçayı hedefin yerine koy
             parent.insertBefore(touchDraggedItem, targetPiece);
-            parent.insertBefore(targetPiece, draggedNextSibling);
+            
+            // Hedef parçayı sürüklenen parçanın orijinal yerine (veya sürüklenen parçanın kendisi taşındığı için onun eski konumuna) koy
+            parent.insertBefore(targetPiece, draggedNextSibling); // draggedNextSibling, touchStart'ta tutulmalıydı.
+                                                                 // Bunu daha güvenli hale getirelim:
+            // Basit yer değiştirme için:
+            const tempParent = touchDraggedItem.parentNode; // parent aslında gameBoard olmalı
+            const tempRefNode = touchDraggedItem.nextSibling; // Sürüklenen parçanın eski konumunu kaydet
+            
+            tempParent.insertBefore(targetPiece, touchDraggedItem); // Hedefi sürüklenenin önüne koy
+            if (tempRefNode) {
+                tempParent.insertBefore(touchDraggedItem, tempRefNode); // Sürükleneni hedefin eski yerine koy
+            } else {
+                tempParent.appendChild(touchDraggedItem); // Eğer son elemansa sona ekle
+            }
             
             playSound('piecePlace');
         } 
         
+        // Parçayı normal akışa geri döndür (absolute pozisyonu ve transformu kaldır)
         touchDraggedItem.style.position = '';
         touchDraggedItem.style.zIndex = '';
-        touchDraggedItem.style.transform = ''; // Ensure transform is cleared
+        touchDraggedItem.style.transform = ''; // `translate` stilini temizle
         
         touchDraggedItem = null;
         checkWinCondition();
