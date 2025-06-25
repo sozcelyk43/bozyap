@@ -760,8 +760,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Parçayı normal akışa geri döndür (absolute pozisyonu kaldır)
         touchDraggedItem.style.position = '';
         touchDraggedItem.style.zIndex = '';
-        touchDraggedItem.style.left = '';
-        touchDraggedItem.style.top = '';
+        touchDraggedItem.style.transform = `translate(${touch.clientX - initialXOffset - boardRect.left}px, ${touch.clientY - initialYOffset - boardRect.top}px)`;
+
 
         touchDraggedItem = null;
         checkWinCondition();
