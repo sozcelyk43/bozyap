@@ -26,8 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let confettiInstance = null; // Konfetti örneğini saklamak için
 
     // --- Ses Efektleri ---
-    // NOT: Bu ses dosyalarını indirip projenizin "sounds" klasörüne koyduğunuzdan emin olun.
-    // Örneğin: BozYapOyunu/sounds/button-1.mp3
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sounds = {};
 
@@ -57,17 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Ses dosyalarını yükle (Örnek URL'ler - bunları kendi lokal dosyalarınızla değiştirin)
     loadSound('pieceMove', 'sounds/button-1.mp3');
     loadSound('piecePlace', 'sounds/button-2.mp3');
     loadSound('win', 'sounds/success-1.mp3');
     loadSound('hint', 'sounds/button-3.mp3');
 
-
-    // --- Resim kategorileri ve örnek resim URL'leri (Lokal dosya yolları ve çocuk temasına uygun örnekler) ---
-    // NOT: Bu dosya yollarının, projenizin kök dizinindeki 'images' klasörünün altındaki
-    // ilgili alt klasörlere (örn. 'dogamanzara', 'hayvanlar', vs.) ve resim adlarına
-    // tam olarak uyması gerekmektedir. Lütfen bu resimleri projenize indirdiğinizden emin olun!
+    // --- Resim kategorileri ve örnek resim URL'leri ---
     const imageCategories = {
         "Doğa ve Manzara": [
             "images/dogamanzara/dogamanzara01.jpg", "images/dogamanzara/dogamanzara02.jpg",
@@ -383,9 +376,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ]
     };
 
-    // --- Kategorileri Yükleme Fonksiyonu ---
     function loadCategories() {
-        categoryOptions.innerHTML = ''; // Mevcut butonları temizle
+        categoryOptions.innerHTML = '';
         for (const categoryName in imageCategories) {
             const button = document.createElement('button');
             button.classList.add('category-button');
@@ -395,7 +387,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Başlat Butonunun Durumunu Güncelleme ---
     function updateStartButtonState() {
         if (selectedCols && selectedRows && selectedCategory) {
             startGameButton.disabled = false;
@@ -404,11 +395,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Zamanlayıcı Başlat/Durdur Fonksiyonları ---
     function startTimer() {
         gameStartTime = Date.now();
         timerInterval = setInterval(updateTimer, 1000);
-        updateTimer(); // Hemen güncelle
+        updateTimer();
     }
 
     function stopTimer() {
@@ -426,28 +416,25 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetGame() {
         stopTimer();
         if (confettiInstance) {
-            confettiInstance.clear(); // Konfettiyi temizle
-            confettiInstance = null; // Konfetti örneğini sıfırla
+            confettiInstance.clear();
+            confettiInstance = null;
         }
         selectionScreen.style.display = 'block';
-        gameTitle.style.display = 'block'; // Başlığı tekrar göster
+        gameTitle.style.display = 'block';
         gameBoard.style.display = 'none';
         winScreen.style.display = 'none';
-        gameControls.style.display = 'none'; // Oyun içi kontrolleri gizle
+        gameControls.style.display = 'none';
 
-        timerDisplay.textContent = '00:00'; // Zamanlayıcıyı sıfırla
-        hintButton.disabled = false; // İpucu butonunu etkinleştir
+        timerDisplay.textContent = '00:00';
+        hintButton.disabled = false;
         hintUsed = false;
 
-        // Puzzle parçalarını temizle
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
         existingPieces.forEach(piece => piece.remove());
 
-        // Oyun tahtasının stilini başlangıç durumuna getir
         gameBoard.style.gap = '2px';
         gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
         gameBoard.classList.remove('solved-effect');
-
 
         selectedCols = null;
         selectedRows = null;
@@ -460,15 +447,13 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStartButtonState();
     }
 
-
-    // --- Olay Dinleyicileri ---
     pieceOptions.addEventListener('click', (event) => {
         const target = event.target;
         if (target.classList.contains('piece-button')) {
             document.querySelectorAll('.piece-button').forEach(btn => btn.classList.remove('selected'));
             target.classList.add('selected');
-            selectedCols = parseInt(target.dataset.cols);   // Sütun sayısını al
-            selectedRows = parseInt(target.dataset.rows);   // Satır sayısını al
+            selectedCols = parseInt(target.dataset.cols);
+            selectedRows = parseInt(target.dataset.rows);
             updateStartButtonState();
             playSound('piecePlace');
         }
@@ -490,9 +475,9 @@ document.addEventListener('DOMContentLoaded', () => {
     startGameButton.addEventListener('click', () => {
         if (selectedCols && selectedRows && selectedCategory && selectedImage) {
             selectionScreen.style.display = 'none';
-            gameTitle.style.display = 'none'; // Başlığı gizle
+            gameTitle.style.display = 'none';
             gameBoard.style.display = 'grid';
-            gameControls.style.display = 'flex'; // Kontrolleri göster
+            gameControls.style.display = 'flex';
 
             createPuzzle(selectedImage, selectedCols, selectedRows);
             startTimer();
@@ -503,33 +488,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     playAgainButton.addEventListener('click', () => {
-        winScreen.style.display = 'none'; // Kazanma ekranını gizle
-        gameBoard.style.display = 'grid'; // Oyun tahtasını göster
-        gameControls.style.display = 'flex'; // Kontrolleri göster
+        winScreen.style.display = 'none';
+        gameBoard.style.display = 'grid';
+        gameControls.style.display = 'flex';
         
-        timerDisplay.textContent = '00:00'; // Zamanlayıcıyı sıfırla
-        hintButton.disabled = false; // İpucu butonunu etkinleştir
+        timerDisplay.textContent = '00:00';
+        hintButton.disabled = false;
         hintUsed = false;
         if (confettiInstance) {
-            confettiInstance.clear(); // Konfettiyi temizle
-            confettiInstance = null; // Konfetti örneğini sıfırla
+            confettiInstance.clear();
+            confettiInstance = null;
         }
 
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
-        existingPieces.forEach(piece => piece.remove()); // Eski parçaları temizle
+        existingPieces.forEach(piece => piece.remove());
 
-        // Oyun tahtasının stilini başlangıç durumuna getir
         gameBoard.style.gap = '2px';
         gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
         gameBoard.classList.remove('solved-effect');
 
-        createPuzzle(selectedImage, selectedCols, selectedRows); // Aynı resim ve zorluk seviyesiyle yeni puzzle oluştur
-        startTimer(); // Zamanlayıcıyı başlat
+        createPuzzle(selectedImage, selectedCols, selectedRows);
+        startTimer();
         playSound('piecePlace');
     });
 
-    mainMenuButton.addEventListener('click', resetGame); // Ana menüye dön
-    mainMenuFromGameButton.addEventListener('click', resetGame); // Oyun içi ana menüye dön
+    mainMenuButton.addEventListener('click', resetGame);
+    mainMenuFromGameButton.addEventListener('click', resetGame);
 
     hintButton.addEventListener('click', () => {
         if (hintUsed) {
@@ -539,36 +523,32 @@ document.addEventListener('DOMContentLoaded', () => {
         showHint();
         hintUsed = true;
         hintButton.disabled = true;
-        playSound('hint'); // İpucu sesi
+        playSound('hint');
     });
 
-    // --- Puzzle Oluşturma Fonksiyonu (Sabit Oyun Alanı) ---
-    async function createPuzzle(imageUrl, cols, rows) { // cols ve rows parametrelerini alıyoruz
-        gameBoard.innerHTML = ''; // Önceki puzzle'ı temizle
-        puzzlePieces = []; // Diziyi sıfırla
+    async function createPuzzle(imageUrl, cols, rows) {
+        gameBoard.innerHTML = '';
+        puzzlePieces = [];
 
         const img = new Image();
         img.src = imageUrl;
-        img.crossOrigin = "Anonymous"; // CORS hatasını önlemek için (eğer dışarıdan çekiyorsanız)
+        img.crossOrigin = "Anonymous";
 
-        await new Promise(resolve => img.onload = resolve); // Resmin yüklenmesini bekle
+        await new Promise(resolve => img.onload = resolve);
 
-        // gameBoard'un CSS'teki sabit boyutlarını kullanacağız
         const boardComputedStyle = getComputedStyle(gameBoard);
         const boardWidth = parseFloat(boardComputedStyle.width);
         const boardHeight = parseFloat(boardComputedStyle.height);
 
-        // Grid şablonlarını doğrudan cols ve rows ile ayarla
         gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
         gameBoard.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-        // Orijinal resimden kesilecek parça boyutları
         const pieceWidthOriginal = img.width / cols;
         const pieceHeightOriginal = img.height / rows;
 
-        const totalPieces = cols * rows; // Toplam parça sayısı
+        const totalPieces = cols * rows;
 
-        for (let i = 0; i < totalPieces; i++) { // totalPieces'ı kullan
+        for (let i = 0; i < totalPieces; i++) {
             const pieceDiv = document.createElement('div');
             pieceDiv.classList.add('puzzle-piece');
             pieceDiv.setAttribute('draggable', 'true');
@@ -578,15 +558,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const col = i % cols;
 
             const canvas = document.createElement('canvas');
-            canvas.width = pieceWidthOriginal; // Canvas'ın kendi boyutu (resmin kesilecek parçası kadar)
+            canvas.width = pieceWidthOriginal;
             canvas.height = pieceHeightOriginal;
             const ctx = canvas.getContext('2d');
 
             ctx.drawImage(img,
-                col * pieceWidthOriginal, row * pieceHeightOriginal, // Resmin kaynak koordinatları ve boyutları
+                col * pieceWidthOriginal, row * pieceHeightOriginal,
                 pieceWidthOriginal, pieceHeightOriginal,
                 0, 0,
-                pieceWidthOriginal, pieceHeightOriginal // Canvas'ta çizim boyutları
+                pieceWidthOriginal, pieceHeightOriginal
             );
 
             const pieceImage = document.createElement('img');
@@ -605,7 +585,6 @@ document.addEventListener('DOMContentLoaded', () => {
         addTouchListeners();
     }
 
-    // Diziyi karıştıran yardımcı fonksiyon (Fisher-Yates shuffle)
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -613,11 +592,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Sürükle-Bırak İşlevselliği (Fare) ---
     let draggedItem = null;
 
     function addDragDropListeners() {
-        // gameBoard içinde oluştukları için tekrar seçilmesi lazım
         const pieces = gameBoard.querySelectorAll('.puzzle-piece'); 
         pieces.forEach(piece => {
             piece.addEventListener('dragstart', dragStart);
@@ -658,13 +635,11 @@ document.addEventListener('DOMContentLoaded', () => {
         this.classList.remove('drag-over');
         if (draggedItem && draggedItem !== this) {
             const parent = gameBoard;
-            // Parçaların DOM'daki yerini değiştirmek için daha sağlam yöntem
-            // draggedItem'ı hedef öğenin önüne veya arkasına ekleyerek yer değiştirme sağlanır
-            if (this.nextSibling === draggedItem) { // Hedef parça sürüklenen parçanın hemen sağındaysa
+            if (this.nextSibling === draggedItem) {
                 parent.insertBefore(draggedItem, this);
-            } else if (draggedItem.nextSibling === this) { // Sürüklenen parça hedef parçanın hemen sağındaysa
+            } else if (draggedItem.nextSibling === this) {
                 parent.insertBefore(this, draggedItem);
-            } else { // Aralarında başka parçalar varsa, geçici referans ile yer değiştirme
+            } else {
                 const draggedOriginalNextSibling = draggedItem.nextSibling;
                 parent.insertBefore(draggedItem, this);
                 parent.insertBefore(this, draggedOriginalNextSibling);
@@ -673,40 +648,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Mobil Dokunmatik İşlevselliği ---
     let touchDraggedItem = null;
-    let initialXOffset, initialYOffset; // Dokunma başlangıç noktasının parçaya göre offset'i
+    let initialXOffset, initialYOffset;
     
     function addTouchListeners() {
-        // gameBoard içinde oluştukları için tekrar seçilmesi lazım
         const pieces = gameBoard.querySelectorAll('.puzzle-piece'); 
         pieces.forEach(piece => {
             piece.addEventListener('touchstart', touchStart);
             piece.addEventListener('touchmove', touchMove);
             piece.addEventListener('touchend', touchEnd);
-            // touchcancel da eklenebilir, dokunma kesildiğinde
-            // piece.addEventListener('touchcancel', touchEnd); 
         });
     }
 
     function touchStart(e) {
-        e.preventDefault(); // Varsayılan kaydırma vb. engelle
+        e.preventDefault();
         touchDraggedItem = this;
-        touchDraggedItem.style.position = 'absolute'; // Parçayı akıştan çıkar
-        touchDraggedItem.style.zIndex = '1000'; // En üste getir (sürüklenirken)
-        touchDraggedItem.style.cursor = 'grabbing'; // İmleç stilini değiştir
+        touchDraggedItem.style.position = 'absolute';
+        touchDraggedItem.style.zIndex = '1000';
+        touchDraggedItem.style.cursor = 'grabbing';
 
-        const rect = touchDraggedItem.getBoundingClientRect(); // Parçanın viewport'a göre konumu
-        const touch = e.touches[0]; // İlk dokunma noktası
+        const rect = touchDraggedItem.getBoundingClientRect();
+        const touch = e.touches[0];
 
-        // Dokunma noktasının parçanın sol üst köşesine olan offset'ini hesapla
         initialXOffset = touch.clientX - rect.left;
         initialYOffset = touch.clientY - rect.top;
 
-        // Parçayı hemen dokunma pozisyonuna göre konumlandır (gameBoard'a göre)
         const boardRect = gameBoard.getBoundingClientRect();
-        touchDraggedItem.style.left = `${touch.clientX - initialXOffset - boardRect.left}px`;
-        touchDraggedItem.style.top = `${touch.clientY - initialYOffset - boardRect.top}px`;
+        // Updated: Use transform for positioning
+        touchDraggedItem.style.left = ''; // Clear old style
+        touchDraggedItem.style.top = '';  // Clear old style
+        touchDraggedItem.style.transform = `translate(${touch.clientX - initialXOffset - boardRect.left}px, ${touch.clientY - initialYOffset - boardRect.top}px)`;
         
         playSound('pieceMove');
     }
@@ -718,23 +689,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const touch = e.touches[0];
         const boardRect = gameBoard.getBoundingClientRect();
 
-        // Parçayı dokunma hareketine göre güncelle (gameBoard'a göre)
-        touchDraggedItem.style.left = `${touch.clientX - initialXOffset - boardRect.left}px`;
-        touchDraggedItem.style.top = `${touch.clientY - initialYOffset - boardRect.top}px`;
+        // Updated: Use transform for positioning
+        touchDraggedItem.style.transform = `translate(${touch.clientX - initialXOffset - boardRect.left}px, ${touch.clientY - initialYOffset - boardRect.top}px)`;
     }
 
-      function touchEnd(e) {
+    function touchEnd(e) {
         if (!touchDraggedItem) return;
 
-        touchDraggedItem.style.cursor = 'grab'; // İmleç stilini geri al
+        touchDraggedItem.style.cursor = 'grab';
 
-        const touch = e.changedTouches[0]; // Biten dokunma noktası
-        // Bırakılan yerdeki elementi bulmak için elementsFromPoint kullanılır
+        const touch = e.changedTouches[0];
         const elementsAtPoint = document.elementsFromPoint(touch.clientX, touch.clientY);
         
         let targetPiece = null;
         for (let i = 0; i < elementsAtPoint.length; i++) {
-            // Sadece puzzle-piece sınıfına sahip ve sürüklenen parçanın kendisi olmayan bir hedef ara
             if (elementsAtPoint[i].classList.contains('puzzle-piece') && elementsAtPoint[i] !== touchDraggedItem) {
                 targetPiece = elementsAtPoint[i];
                 break;
@@ -743,35 +711,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (targetPiece) {
             const parent = gameBoard;
-            // Daha güvenli ve tutarlı bir yer değiştirme:
-            // Sürüklenen parçanın hemen sonraki kardeşini sakla
             const draggedNextSibling = touchDraggedItem.nextSibling;
             
-            // Sürüklenen parçayı hedefin yerine koy
             parent.insertBefore(touchDraggedItem, targetPiece);
-            
-            // Hedef parçayı sürüklenen parçanın eski yerine (sakladığımız yere) koy
-            // Eğer draggedNextSibling null ise (sürüklenen parça en sondaysa), appendChild ile sona ekler
             parent.insertBefore(targetPiece, draggedNextSibling);
             
             playSound('piecePlace');
         } 
         
-        // Parçayı normal akışa geri döndür (absolute pozisyonu kaldır)
         touchDraggedItem.style.position = '';
         touchDraggedItem.style.zIndex = '';
-touchDraggedItem.style.transform = '';
-
+        touchDraggedItem.style.transform = ''; // Ensure transform is cleared
+        
         touchDraggedItem = null;
         checkWinCondition();
     }
-    // --- İpucu Sistemi ---
+
     async function showHint() {
         const tempImage = new Image();
         tempImage.src = selectedImage;
         tempImage.crossOrigin = "Anonymous";
 
-        // HATA DÜZELTMESİ: 'img' yerine 'tempImage' kullanılmalı
         await new Promise(resolve => tempImage.onload = resolve);
 
         const hintOverlay = document.createElement('div');
@@ -805,13 +765,12 @@ touchDraggedItem.style.transform = '';
 
         setTimeout(() => {
             hintOverlay.style.opacity = '0';
-            // Geçiş tamamlandığında overlay'i kaldır
             hintOverlay.addEventListener('transitionend', () => {
                 hintOverlay.remove();
             }, { once: true });
-        }, 3000); // 3 saniye sonra ipucunu gizle
+        }, 3000);
     }
-    // --- Kazanma Koşulu Kontrolü ---
+
     function checkWinCondition() {
         const currentOrderDOM = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'));
         let isSolved = true;
@@ -823,11 +782,9 @@ touchDraggedItem.style.transform = '';
         }
 
         if (isSolved) {
-            stopTimer(); // Zamanlayıcıyı durdur
-            playSound('win'); // Kazanma sesi çal
+            stopTimer();
+            playSound('win');
 
-            // Konfetti efektini başlat
-            // Konfetti için bir canvas elementi oluştur ve body'ye ekle
             const confettiCanvas = document.createElement('canvas');
             confettiCanvas.id = 'confetti-canvas';
             confettiCanvas.style.position = 'fixed';
@@ -835,11 +792,11 @@ touchDraggedItem.style.transform = '';
             confettiCanvas.style.left = '0';
             confettiCanvas.style.width = '100%';
             confettiCanvas.style.height = '100%';
-            confettiCanvas.style.zIndex = '9999'; // Diğer her şeyin üzerinde olsun
+            confettiCanvas.style.zIndex = '9999';
             document.body.appendChild(confettiCanvas);
 
             const confettiSettings = { 
-                target: 'confetti-canvas', // Canvas id'sini hedef olarak veriyoruz
+                target: 'confetti-canvas',
                 max: 80, 
                 size: 1, 
                 animate: true, 
@@ -854,49 +811,42 @@ touchDraggedItem.style.transform = '';
             confettiInstance = new ConfettiGenerator(confettiSettings);
             confettiInstance.render();
 
-            alert('Tebrikler! Yapbozu tamamladınız!'); // Uyarı mesajı
+            alert('Tebrikler! Yapbozu tamamladınız!');
 
-            // TÜM PARÇALARI DOĞRU SIRADA GÖSTERME VE EFEKT
             const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
                                  .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
             
-            gameBoard.innerHTML = ''; // Önceki tüm parçaları temizle
+            gameBoard.innerHTML = '';
             sortedPieces.forEach(piece => {
                 piece.style.opacity = '1';
                 gameBoard.appendChild(piece);
             });
 
-            // Puzzle'ın bitmiş halini tam gösterirken aradaki boşlukları kaldır
             gameBoard.style.gap = '0px'; 
-            gameBoard.style.borderColor = 'transparent'; // Çerçeveyi de gizle
-
-            // Oyun tahtasına geçici bir "tamamlandı" efekti ekle
+            gameBoard.style.borderColor = 'transparent';
             gameBoard.classList.add('solved-effect');
 
             setTimeout(() => {
-                // 5 saniye sonra efektleri kaldır ve pop-up'ı göster
                 gameBoard.classList.remove('solved-effect');
-                gameBoard.style.gap = '2px'; // Boşlukları geri getir
-                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)'; // Çerçeveyi geri getir
+                gameBoard.style.gap = '2px';
+                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
 
                 const finalTime = timerDisplay.textContent;
                 finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
 
                 gameBoard.style.display = 'none';
-                gameControls.style.display = 'none'; // Kontrolleri gizle
-                winScreen.style.display = 'block'; // Kazanma ekranını göster
+                gameControls.style.display = 'none';
+                winScreen.style.display = 'block';
                 
-                // Konfettiyi durdur ve canvas'ı kaldır
                 if (confettiInstance) {
                     confettiInstance.clear();
                     confettiInstance = null;
-                    confettiCanvas.remove(); // Canvas elementini DOM'dan kaldır
+                    confettiCanvas.remove();
                 }
 
-            }, 5000); // 5 saniye bekle
+            }, 5000);
         }
     }
 
-    // Sayfa yüklendiğinde kategorileri yükle
     loadCategories();
 });
