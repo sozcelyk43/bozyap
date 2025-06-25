@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSound('hint', 'sounds/button-3.mp3');
 
     // --- Zorluk seviyeleri ve parça sayıları ---
+    // Her seviye için [sütun sayısı, satır sayısı]
     const difficultyLevels = {
         "Çok Kolay (3x2)": [3, 2],
         "Kolay (4x3)": [4, 3],
@@ -500,6 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     playAgainButton.addEventListener('click', () => {
+        // winScreen'i gizle, oyun tahtasını ve kontrolleri göster
         winScreen.style.display = 'none';
         gameBoard.style.display = 'grid';
         gameControls.style.display = 'flex';
@@ -511,10 +513,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
         existingPieces.forEach(piece => piece.remove());
 
+        // Tahta stilini sıfırla
         gameBoard.style.gap = '2px';
         gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
         gameBoard.classList.remove('solved-effect');
 
+        // Aynı resim ve zorluk seviyesiyle yeni puzzle oluştur
         createPuzzle(selectedImage, selectedCols, selectedRows);
         startTimer();
         playSound('piecePlace');
@@ -841,15 +845,17 @@ document.addEventListener('DOMContentLoaded', () => {
             playSound('win');
             showConfetti(); // Konfeti efekti
 
+            // Puzzle tamamlandığında parçaları doğru sıraya diz
             const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
                                  .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
             
-            gameBoard.innerHTML = '';
+            gameBoard.innerHTML = ''; // Tahtayı temizle
             sortedPieces.forEach(piece => {
                 piece.style.opacity = '1';
                 gameBoard.appendChild(piece);
             });
 
+            // Tamamlanmış resim efektleri
             gameBoard.style.gap = '0px'; 
             gameBoard.style.borderColor = 'transparent';
             gameBoard.classList.add('solved-effect');
@@ -866,10 +872,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
 
                 // Kazanma ekranı metinlerini ve butonlarını görünür yap
+                // Not: CSS'te display: none; olan elementleri burada display: block/inline-block ile göstermeniz gerekiyor.
+                // Bu yüzden playAgainButton ve mainMenuButton'a da display: inline-block ekliyoruz.
                 document.querySelector('#winScreen h2').textContent = 'Harika Başardınız!';
-                finalTimeDisplay.style.display = 'block'; // Final süreyi göster
-                playAgainButton.style.display = 'inline-block';
-                mainMenuButton.style.display = 'inline-block';
+                document.querySelector('#winScreen #finalTime').style.display = 'block'; 
+                document.querySelector('#winScreen #playAgainButton').style.display = 'inline-block';
+                document.querySelector('#winScreen #mainMenuButton').style.display = 'inline-block';
                 
                 // Tam resmi arka plana ekle
                 winScreen.style.backgroundImage = `url('${selectedImage}')`;
@@ -880,7 +888,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ekranları gizle/göster
                 gameBoard.style.display = 'none';
                 gameControls.style.display = 'none';
-                winScreen.style.display = 'flex'; // Popup'ı göster
+                winScreen.style.display = 'flex'; // Popup'ı göster (CSS'te zaten flex)
             }, 5000); // 5 saniye bekle
         }
     }
