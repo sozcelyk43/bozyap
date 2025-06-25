@@ -53,10 +53,10 @@ h1 {
     margin-bottom: 20px;
 }
 
+/* --- Butonların Ortak Stilleri --- */
 .piece-button, .category-button {
     background-color: rgba(52, 73, 94, 0.8);
     color: #ecf0f1;
-    border: 2px solid #3498db;
     padding: 10px 15px;
     border-radius: 10px;
     font-size: 1em;
@@ -69,21 +69,60 @@ h1 {
     box-sizing: border-box;
     text-align: center;
     line-height: 1.2;
+    font-weight: bold; /* Yazıları biraz daha belirgin yapalım */
 }
 
-.piece-button:hover, .category-button:hover, #startGameButton:not(:disabled):hover,
-#playAgainButton:hover, #mainMenuButton:hover, .hint-button:not(:disabled):hover,
-#mainMenuFromGame:hover {
-    background-color: #3498db;
+/* --- Zorluk Seviyesi Butonları (Mavi Tema) --- */
+.piece-button {
+    border: 2px solid #3498db; /* Mavi çerçeve */
+}
+
+.piece-button:hover {
+    background-color: #3498db; /* Mavi hover efekti */
     transform: translateY(-4px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
-.piece-button.selected, .category-button.selected {
-    background-color: #27ae60;
+.piece-button.selected {
+    background-color: #27ae60; /* Seçildiğinde Yeşil */
     border-color: #27ae60;
-    font-weight: bold;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+
+/* --- Resim Kategorisi Butonları (Turkuaz / Sarı Tema) --- */
+.category-button {
+    border: 2px solid #1abc9c; /* Turkuaz çerçeve */
+}
+
+.category-button:hover {
+    background-color: #1abc9c; /* Turkuaz hover efekti */
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.category-button.selected {
+    background-color: #f1c40f; /* Seçildiğinde Sarı */
+    border-color: #f1c40f;
+    color: #2c3e50; /* Sarı arka plan üzerinde koyu metin daha okunaklı olur */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+
+/* --- Diğer Butonlar için Hover Efekti (Genel Mavi Tema) --- */
+#startGameButton:not(:disabled):hover,
+#playAgainButton:hover, 
+#mainMenuButton:hover, 
+.hint-button:not(:disabled):hover,
+#mainMenuFromGame:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Ana "Tekrar Oyna" ve "Ana Menü" butonlarının hover rengini mavi yapalım */
+#playAgainButton:hover, 
+#mainMenuButton:hover {
+    background-color: #3498db;
 }
 
 #startGameButton {
@@ -116,7 +155,6 @@ h1 {
     background-color: rgba(44, 62, 80, 0.6);
     position: relative;
     display: none; /* JS tarafından gösterilecek/gizlenecek */
-
     max-width: 800px;
     width: 100%;
     aspect-ratio: 4 / 3;
@@ -391,5 +429,5 @@ footer {
     z-index: 100; /* Diğer elementlerin arkasında kalması için */
     backdrop-filter: blur(3px); /* Arka planla uyum için hafif bulanıklık efekti */
     border-top: 1px solid rgba(189, 195, 199, 0.2); /* Üstte ince bir ayırıcı çizgi */
-    display: none;
+    display: none; /* FOOTER'I VARSAYILAN OLARAK GİZLE */
 }
