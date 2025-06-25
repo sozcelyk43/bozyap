@@ -149,15 +149,14 @@ h1 {
 
 .puzzle-piece[style*="position: absolute"] {
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    /* TRANSFORM DEĞERİNİ AZALTILDI VEYA KALDIRILDI */
-    transform: scale(1.05); /* Örneğin 1.08 yerine 1.05 daha az büyüme sağlar */
-    /* Veya tamamen kaldırılabilir: transform: none; */
-    /* Veya gerekirse sabit bir max-width/max-height verilebilir */
-    max-width: 150px; /* Belirli bir maksimum genişlik */
-    max-height: 150px; /* Belirli bir maksimum yükseklik */
-    transition: none; /* Animasyonu iptal et */
+    /* ÖNEMLİ DEĞİŞİKLİK: scale veya max-width/height kaldırıldı */
+    /* Transformu JS yönetecek, burada ek transform olmasın */
+    transform: none !important; /* Herhangi bir CSS transformunu geçersiz kılar */
+    /* max-width ve max-height değerlerini de kaldırabilirsiniz */
+    /* max-width: none; */
+    /* max-height: none; */
+    transition: none; /* Bu, parçanın sürüklenirken ani büyümesini önler */
 }
-
 /* ... (Diğer CSS kodları değişmeden kalacak) ... */
 
 .game-controls {
