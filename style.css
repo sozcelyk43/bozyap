@@ -391,4 +391,5 @@ footer {
     z-index: 100; /* Diğer elementlerin arkasında kalması için */
     backdrop-filter: blur(3px); /* Arka planla uyum için hafif bulanıklık efekti */
     border-top: 1px solid rgba(189, 195, 199, 0.2); /* Üstte ince bir ayırıcı çizgi */
+    display: none;
 }
