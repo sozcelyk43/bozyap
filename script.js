@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameControls = document.querySelector('.game-controls'); // Kontrol butonlarını içeren div
     const gameTitle = document.getElementById('gameTitle'); // Başlık elementi
 
-
     let selectedCols = null; // Sütun sayısı
     let selectedRows = null; // Satır sayısı
     let selectedCategory = null;
@@ -428,6 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
         stopTimer();
         if (confettiInstance) {
             confettiInstance.clear(); // Konfettiyi temizle
+            confettiInstance = null; // Konfetti örneğini sıfırla
         }
         selectionScreen.style.display = 'block';
         gameTitle.style.display = 'block'; // Başlığı tekrar göster
@@ -512,6 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hintUsed = false;
         if (confettiInstance) {
             confettiInstance.clear(); // Konfettiyi temizle
+            confettiInstance = null; // Konfetti örneğini sıfırla
         }
 
         const existingPieces = gameBoard.querySelectorAll('.puzzle-piece');
@@ -744,11 +745,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const parent = gameBoard;
             // Swap DOM elements (fare sürükle-bırak mantığına benzer)
             // Daha güvenli bir yer değiştirme için geçici bir placeholder kullanabiliriz
-            const tempPlaceholder = document.createElement('div');
-            parent.insertBefore(tempPlaceholder, targetPiece); // Hedefin yerine placeholder koy
-            parent.insertBefore(targetPiece, touchDraggedItem); // Hedefi sürüklenen parçanın yerine koy
-            parent.insertBefore(touchDraggedItem, tempPlaceholder); // Sürüklenen parçayı placeholder'ın yerine koy
-            tempPlaceholder.remove(); // Placeholder'ı kaldır
+            const draggedOriginalNextSibling = touchDraggedItem.nextSibling;
+            parent.insertBefore(touchDraggedItem, targetPiece);
+            parent.insertBefore(targetPiece, draggedOriginalNextSibling);
             
             playSound('piecePlace');
         } 
@@ -769,7 +768,8 @@ document.addEventListener('DOMContentLoaded', () => {
         tempImage.src = selectedImage;
         tempImage.crossOrigin = "Anonymous";
 
-        await new Promise(resolve => img.onload = resolve); // Resmin yüklenmesini bekle
+        // `img` yerine `tempImage` nesnesinin yüklenmesini bekliyoruz
+        await new Promise(resolve => tempImage.onload = resolve);
 
         const hintOverlay = document.createElement('div');
         hintOverlay.style.position = 'fixed';
@@ -826,7 +826,30 @@ document.addEventListener('DOMContentLoaded', () => {
             playSound('win'); // Kazanma sesi çal
 
             // Konfetti efektini başlat
-            const confettiSettings = { target: 'gameBoard', max: 80, size: 1, animate: true, props: ['circle', 'triangle', 'square', 'line'], colors: [[165,104,246],[230,61,135],[0,199,228],[253,214,126]], clock: 25, start_from_zero: false, decay: 0.9, width: window.innerWidth, height: window.innerHeight };
+            // Konfetti için bir canvas elementi oluştur ve body'ye ekle
+            const confettiCanvas = document.createElement('canvas');
+            confettiCanvas.id = 'confetti-canvas';
+            confettiCanvas.style.position = 'fixed';
+            confettiCanvas.style.top = '0';
+            confettiCanvas.style.left = '0';
+            confettiCanvas.style.width = '100%';
+            confettiCanvas.style.height = '100%';
+            confettiCanvas.style.zIndex = '9999'; // Diğer her şeyin üzerinde olsun
+            document.body.appendChild(confettiCanvas);
+
+            const confettiSettings = { 
+                target: 'confetti-canvas', // Canvas id'sini hedef olarak veriyoruz
+                max: 80, 
+                size: 1, 
+                animate: true, 
+                props: ['circle', 'triangle', 'square', 'line'], 
+                colors: [[165,104,246],[230,61,135],[0,199,228],[253,214,126]], 
+                clock: 25, 
+                start_from_zero: false, 
+                decay: 0.9, 
+                width: window.innerWidth, 
+                height: window.innerHeight 
+            };
             confettiInstance = new ConfettiGenerator(confettiSettings);
             confettiInstance.render();
 
@@ -862,9 +885,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 gameControls.style.display = 'none'; // Kontrolleri gizle
                 winScreen.style.display = 'block'; // Kazanma ekranını göster
                 
-                // Konfettiyi durdur
+                // Konfettiyi durdur ve canvas'ı kaldır
                 if (confettiInstance) {
                     confettiInstance.clear();
+                    confettiInstance = null;
+                    confettiCanvas.remove(); // Canvas elementini DOM'dan kaldır
                 }
 
             }, 5000); // 5 saniye bekle
