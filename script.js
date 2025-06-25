@@ -151,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
             "images/uzay/uzay07.jpg", "images/uzay/uzay08.jpg",
             "images/uzay/uzay09.jpg",țe
 
-System: <xaiArtifact artifact_id="cbbc5164-5f92-45f4-91bf-888247aa78f6" artifact_version_id="63d22a68-8ff7-4061-84e3-534c2134e919" title="script.js" contentType="text/javascript">
 document.addEventListener('DOMContentLoaded', () => {
     const selectionScreen = document.getElementById('selectionScreen');
     const gameBoard = document.getElementById('gameBoard');
