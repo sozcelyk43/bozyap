@@ -828,20 +828,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Kazanma Koşulu Kontrolü ---
-    function checkWinCondition() {
+       function checkWinCondition() {
         const currentOrderDOM = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'));
         let isSolved = true;
+
+        // Kontrol ve Hata Ayıklama için Konsol Çıktıları
+        // console.log("Oyun tahtasındaki parçaların mevcut sırası (originalIndex):");
+        // currentOrderDOM.forEach((piece, index) => {
+        //     console.log(`DOM Sırası: ${index}, OriginalIndex: ${parseInt(piece.dataset.originalIndex)}`);
+        // });
+
         for (let i = 0; i < currentOrderDOM.length; i++) {
+            // Eğer DOM'daki elemanın sırası (i), dataset'indeki orijinal sırasına eşit değilse
             if (parseInt(currentOrderDOM[i].dataset.originalIndex) !== i) {
                 isSolved = false;
-                break;
+                // console.log(`Yanlış yerleşim: DOM Sırası ${i} -> OriginalIndex ${currentOrderDOM[i].dataset.originalIndex}`);
+                break; // Hata bulunduğunda döngüyü sonlandır
             }
         }
 
-        if (isSolved) {
-            stopTimer();
-            playSound('win');
+        // console.log("isSolved durumu: " + isSolved); // Kazanma durumu hakkında bilgi
 
+        if (isSolved) {
+            stopTimer(); // Zamanlayıcıyı durdur
+            playSound('win'); // Kazanma sesi çal
+
+            // Konfetti efektini başlatmak için canvas oluştur ve ekle
             const confettiCanvas = document.createElement('canvas');
             confettiCanvas.id = 'confetti-canvas';
             confettiCanvas.style.position = 'fixed';
@@ -849,11 +861,11 @@ document.addEventListener('DOMContentLoaded', () => {
             confettiCanvas.style.left = '0';
             confettiCanvas.style.width = '100%';
             confettiCanvas.style.height = '100%';
-            confettiCanvas.style.zIndex = '9999';
+            confettiCanvas.style.zIndex = '9999'; // En üstte olmalı
             document.body.appendChild(confettiCanvas);
 
             const confettiSettings = { 
-                target: 'confetti-canvas',
+                target: 'confetti-canvas', // Canvas id'sini hedef olarak veriyoruz
                 max: 80, 
                 size: 1, 
                 animate: true, 
@@ -868,43 +880,49 @@ document.addEventListener('DOMContentLoaded', () => {
             confettiInstance = new ConfettiGenerator(confettiSettings);
             confettiInstance.render();
 
-            alert('Tebrikler! Yapbozu tamamladınız!');
+            alert('Tebrikler! Yapbozu tamamladınız!'); // Uyarı mesajı
 
+            // TÜM PARÇALARI DOĞRU SIRADA GÖSTERME VE EFEKT
+            // Mevcut parçaları orijinal indexlerine göre sırala
             const sortedPieces = Array.from(gameBoard.children).filter(el => el.classList.contains('puzzle-piece'))
                                  .sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex));
             
-            gameBoard.innerHTML = '';
+            gameBoard.innerHTML = ''; // Önceki tüm parçaları temizle
             sortedPieces.forEach(piece => {
-                piece.style.opacity = '1';
-                gameBoard.appendChild(piece);
+                piece.style.opacity = '1'; // Tüm parçaları tam görünür yap
+                gameBoard.appendChild(piece); // Sıralanmış parçaları tahtaya ekle
             });
 
-            gameBoard.style.gap = '0px';
-            gameBoard.style.borderColor = 'transparent';
+            // Puzzle'ın bitmiş halini tam gösterirken aradaki boşlukları kaldır
+            gameBoard.style.gap = '0px'; 
+            gameBoard.style.borderColor = 'transparent'; // Çerçeveyi de gizle
+
+            // Oyun tahtasına geçici bir "tamamlandı" efekti ekle
             gameBoard.classList.add('solved-effect');
 
             setTimeout(() => {
+                // 5 saniye sonra efektleri kaldır ve pop-up'ı göster
                 gameBoard.classList.remove('solved-effect');
-                gameBoard.style.gap = '2px';
-                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                gameBoard.style.gap = '2px'; // Boşlukları geri getir
+                gameBoard.style.borderColor = 'rgba(255, 255, 255, 0.5)'; // Çerçeveyi geri getir
 
                 const finalTime = timerDisplay.textContent;
                 finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
 
-                gameBoard.style.display = 'none';
-                gameControls.style.display = 'none';
-                winScreen.style.display = 'block';
+                gameBoard.style.display = 'none'; // Oyun tahtasını gizle
+                gameControls.style.display = 'none'; // Kontrolleri gizle
+                winScreen.style.display = 'block'; // Kazanma ekranını göster
                 
+                // Konfettiyi durdur ve canvas'ı kaldır
                 if (confettiInstance) {
                     confettiInstance.clear();
-                    confettiCanvas.remove();
-                    confettiInstance = null;
+                    confettiCanvas.remove(); // Canvas elementini DOM'dan kaldır
+                    confettiInstance = null; // Konfetti örneğini sıfırla
                 }
 
-            }, 5000);
+            }, 5000); // 5 saniye bekle
         }
     }
-
     // Sayfa yüklendiğinde kategorileri yükle
     loadCategories();
 });
