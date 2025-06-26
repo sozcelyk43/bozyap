@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // *** DÜZELTİLMİŞ PC/FARE FONKSİYONLARI ***
 
     // 1. Kilitli bir parçanın sürüklenmesini BAŞLATMASINI engeller.
-    function dragStart() {
+   function dragStart() {
         if (this.classList.contains('locked')) {
             return;
         }
@@ -318,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
             playSound('piecePlace');
         }
     }
-
     // *** DÜZELTİLMİŞ FONKSİYONLAR BURADA BİTİYOR ***
 
     function dragEnd() {
