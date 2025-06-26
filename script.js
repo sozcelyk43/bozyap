@@ -297,11 +297,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function dragOver(e) { e.preventDefault(); }
-    function dragEnter(e) { e.preventDefault(); this.classList.add('drag-over'); }
-    function dragLeave() { this.classList.remove('drag-over'); }
+ function dragEnter(e) {
+        e.preventDefault();
+        // YENİ KONTROL: Eğer üzerine gelinen parça kilitliyse, "drag-over" efektini gösterme.
+        if (this.classList.contains('locked')) {
+            return;
+        }
+        this.classList.add('drag-over');
+    }    function dragLeave() { this.classList.remove('drag-over'); }
 
-    function dragDrop() {
+     function dragDrop() {
         this.classList.remove('drag-over');
+        
+        // YENİ KONTROL: Eğer parça kilitli bir parçanın üzerine bırakılıyorsa, işlemi iptal et.
+        if (this.classList.contains('locked')) {
+            return;
+        }
+
         if (draggedItem && draggedItem !== this) {
             swapPieces(draggedItem, this);
             playSound('piecePlace');
