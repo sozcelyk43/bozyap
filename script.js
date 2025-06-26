@@ -286,8 +286,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // *** DÜZELTİLMİŞ FONKSİYONLAR BURADA BAŞLIYOR ***
 
+    // *** DÜZELTİLMİŞ PC/FARE FONKSİYONLARI ***
+
+    // 1. Kilitli bir parçanın sürüklenmesini BAŞLATMASINI engeller.
     function dragStart() {
-        // Kilitli bir parçanın sürüklenmesini engelle
         if (this.classList.contains('locked')) {
             return;
         }
@@ -296,18 +298,18 @@ document.addEventListener('DOMContentLoaded', () => {
         playSound('pieceMove');
     }
 
+    // 2. Sürüklerken imlecin kilitli bir parçanın ÜZERİNE GELME efektini engeller.
     function dragEnter(e) {
         e.preventDefault();
-        // Kilitli bir parçanın üzerine gelme efektini engelle
         if (this.classList.contains('locked')) {
             return;
         }
         this.classList.add('drag-over');
     }
 
+    // 3. Bir parçanın kilitli bir parçanın üzerine BIRAKILMASINI engeller. (En önemlisi bu)
     function dragDrop() {
         this.classList.remove('drag-over');
-        // Kilitli bir parçanın üzerine bırakılmasını engelle
         if (this.classList.contains('locked')) {
             return;
         }
