@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainMenuFromGameButton = document.getElementById('mainMenuFromGame');
     const gameControls = document.querySelector('.game-controls');
     const gameTitle = document.getElementById('gameTitle');
-    const footer = document.querySelector('footer'); // Footer elementini seç
+    const footer = document.querySelector('footer');
 
     let selectedCols = null;
     let selectedRows = null;
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         puzzlePieces.forEach(piece => gameBoard.appendChild(piece));
         addDragDropListeners();
         addTouchListeners();
-        updatePieceState(); // Puzzle oluşturulduğunda doğru yerde olanları kilitle
+        updatePieceState();
     }
 
     function shuffleArray(array) {
@@ -284,12 +284,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // *** DÜZELTİLMİŞ FONKSİYONLAR BURADA BAŞLIYOR ***
+
     function dragStart() {
-        if (this.classList.contains('locked')) return; // Kilitli parçayı taşıma
+        // Kilitli bir parçanın sürüklenmesini engelle
+        if (this.classList.contains('locked')) {
+            return;
+        }
         draggedItem = this;
         setTimeout(() => this.style.opacity = '0.5', 0);
         playSound('pieceMove');
     }
+
+    function dragEnter(e) {
+        e.preventDefault();
+        // Kilitli bir parçanın üzerine gelme efektini engelle
+        if (this.classList.contains('locked')) {
+            return;
+        }
+        this.classList.add('drag-over');
+    }
+
+    function dragDrop() {
+        this.classList.remove('drag-over');
+        // Kilitli bir parçanın üzerine bırakılmasını engelle
+        if (this.classList.contains('locked')) {
+            return;
+        }
+        if (draggedItem && draggedItem !== this) {
+            swapPieces(draggedItem, this);
+            playSound('piecePlace');
+        }
+    }
+
+    // *** DÜZELTİLMİŞ FONKSİYONLAR BURADA BİTİYOR ***
 
     function dragEnd() {
         this.style.opacity = '1';
@@ -297,28 +325,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function dragOver(e) { e.preventDefault(); }
- function dragEnter(e) {
-        e.preventDefault();
-        // YENİ KONTROL: Eğer üzerine gelinen parça kilitliyse, "drag-over" efektini gösterme.
-        if (this.classList.contains('locked')) {
-            return;
-        }
-        this.classList.add('drag-over');
-    }    function dragLeave() { this.classList.remove('drag-over'); }
-
-     function dragDrop() {
-        this.classList.remove('drag-over');
-        
-        // YENİ KONTROL: Eğer parça kilitli bir parçanın üzerine bırakılıyorsa, işlemi iptal et.
-        if (this.classList.contains('locked')) {
-            return;
-        }
-
-        if (draggedItem && draggedItem !== this) {
-            swapPieces(draggedItem, this);
-            playSound('piecePlace');
-        }
-    }
+    
+    function dragLeave() { this.classList.remove('drag-over'); }
 
     let currentTouchPiece = null;
     let touchPieceClone = null;
@@ -336,7 +344,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function touchStart(e) {
-        if (this.classList.contains('locked')) return; // Kilitli parçayı taşıma
+        // Kilitli parçanın dokunmayla hareketini engelle
+        if (this.classList.contains('locked')) return;
         if (e.touches.length !== 1) return;
         e.preventDefault();
         currentTouchPiece = this;
@@ -370,6 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
         touchPieceClone.style.top = `${touch.clientY - cloneOffsetY}px`;
         const targetPiece = findTargetPiece(touch.clientX, touch.clientY);
         document.querySelectorAll('.puzzle-piece').forEach(piece => piece.classList.remove('drag-over'));
+        // Kilitli parçanın üzerine gelme efektini engelle
         if (targetPiece && targetPiece !== currentTouchPiece && !targetPiece.classList.contains('locked')) {
             targetPiece.classList.add('drag-over');
         }
@@ -385,6 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.puzzle-piece').forEach(piece => piece.classList.remove('drag-over'));
         const touch = e.changedTouches[0];
         const targetPiece = findTargetPiece(touch.clientX, touch.clientY);
+        // Kilitli bir parçanın üzerine bırakılmasını engelle
         if (targetPiece && targetPiece !== currentTouchPiece && !targetPiece.classList.contains('locked')) {
             swapPieces(currentTouchPiece, targetPiece);
             playSound('piecePlace');
@@ -403,7 +414,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return targetPiece;
     }
     
-    // YENİ: Parçaların durumunu kontrol edip doğru yerdekileri kilitleyen fonksiyon
     function updatePieceState() {
         const currentPieces = Array.from(gameBoard.querySelectorAll('.puzzle-piece'));
         currentPieces.forEach((piece, index) => {
@@ -423,8 +433,8 @@ document.addEventListener('DOMContentLoaded', () => {
             parent.insertBefore(piece2, temp);
             temp.remove();
             
-            updatePieceState(); // Değişim sonrası parçaların durumunu kontrol et
-            checkWinCondition(); // Kazanma durumunu kontrol et
+            updatePieceState();
+            checkWinCondition();
         });
     }
 
