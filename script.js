@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     startGameButton.addEventListener('click', () => {
         if (selectedCols && selectedRows && selectedCategory && selectedImage) {
-            footer.style.display = 'none'; // Oyuna başlarken footer'ı gizle
+            footer.style.display = 'none';
             selectionScreen.style.display = 'none';
             gameTitle.style.display = 'none';
             gameBoard.style.display = 'grid';
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function restartPuzzle() {
-        footer.style.display = 'none'; // Tekrar oynarken footer'ı gizli tut
+        footer.style.display = 'none';
         winScreen.style.display = 'none';
         gameBoard.style.display = 'grid';
         gameControls.style.display = 'flex';
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetGame() {
-        footer.style.display = 'block'; // Ana menüye dönerken footer'ı göster
+        footer.style.display = 'block';
         stopTimer();
         if (confettiInstance) {
             confettiInstance.clear();
@@ -260,6 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
         puzzlePieces.forEach(piece => gameBoard.appendChild(piece));
         addDragDropListeners();
         addTouchListeners();
+        updatePieceState(); // Puzzle oluşturulduğunda doğru yerde olanları kilitle
     }
 
     function shuffleArray(array) {
@@ -284,6 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function dragStart() {
+        if (this.classList.contains('locked')) return; // Kilitli parçayı taşıma
         draggedItem = this;
         setTimeout(() => this.style.opacity = '0.5', 0);
         playSound('pieceMove');
@@ -292,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function dragEnd() {
         this.style.opacity = '1';
         document.querySelectorAll('.puzzle-piece').forEach(p => p.classList.remove('drag-over'));
-        checkWinCondition();
     }
 
     function dragOver(e) { e.preventDefault(); }
@@ -323,6 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function touchStart(e) {
+        if (this.classList.contains('locked')) return; // Kilitli parçayı taşıma
         if (e.touches.length !== 1) return;
         e.preventDefault();
         currentTouchPiece = this;
@@ -356,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
         touchPieceClone.style.top = `${touch.clientY - cloneOffsetY}px`;
         const targetPiece = findTargetPiece(touch.clientX, touch.clientY);
         document.querySelectorAll('.puzzle-piece').forEach(piece => piece.classList.remove('drag-over'));
-        if (targetPiece && targetPiece !== currentTouchPiece) {
+        if (targetPiece && targetPiece !== currentTouchPiece && !targetPiece.classList.contains('locked')) {
             targetPiece.classList.add('drag-over');
         }
     }
@@ -371,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.puzzle-piece').forEach(piece => piece.classList.remove('drag-over'));
         const touch = e.changedTouches[0];
         const targetPiece = findTargetPiece(touch.clientX, touch.clientY);
-        if (targetPiece && targetPiece !== currentTouchPiece) {
+        if (targetPiece && targetPiece !== currentTouchPiece && !targetPiece.classList.contains('locked')) {
             swapPieces(currentTouchPiece, targetPiece);
             playSound('piecePlace');
         }
@@ -388,6 +390,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return targetPiece;
     }
+    
+    // YENİ: Parçaların durumunu kontrol edip doğru yerdekileri kilitleyen fonksiyon
+    function updatePieceState() {
+        const currentPieces = Array.from(gameBoard.querySelectorAll('.puzzle-piece'));
+        currentPieces.forEach((piece, index) => {
+            if (parseInt(piece.dataset.originalIndex) === index) {
+                piece.classList.add('locked');
+                piece.setAttribute('draggable', 'false');
+            }
+        });
+    }
 
     function swapPieces(piece1, piece2) {
         requestAnimationFrame(() => {
@@ -397,7 +410,9 @@ document.addEventListener('DOMContentLoaded', () => {
             parent.insertBefore(piece1, piece2);
             parent.insertBefore(piece2, temp);
             temp.remove();
-            checkWinCondition();
+            
+            updatePieceState(); // Değişim sonrası parçaların durumunu kontrol et
+            checkWinCondition(); // Kazanma durumunu kontrol et
         });
     }
 
@@ -476,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    footer.style.display = 'block'; // Sayfa ilk yüklendiğinde footer'ı göster
+    footer.style.display = 'block';
     loadCategories();
     updatePieceOptions();
 });
