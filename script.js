@@ -284,13 +284,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // *** DÜZELTİLMİŞ FONKSİYONLAR BURADA BAŞLIYOR ***
-
-    // *** DÜZELTİLMİŞ PC/FARE FONKSİYONLARI ***
-
-    // 1. Kilitli bir parçanın sürüklenmesini BAŞLATMASINI engeller.
-   function dragStart() {
+    // ================================================================
+    // *** PC / FARE İÇİN KESİN DÜZELTME BURADA ***
+    // ================================================================
+    
+    // `e` parametresi eklendi ve `e.preventDefault()` çağrıldı.
+    function dragStart(e) { 
         if (this.classList.contains('locked')) {
+            // Sürükleme olayını varsayılan olarak engelle. Bu en güçlü yöntemdir.
+            e.preventDefault(); 
             return;
         }
         draggedItem = this;
@@ -298,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
         playSound('pieceMove');
     }
 
-    // 2. Sürüklerken imlecin kilitli bir parçanın ÜZERİNE GELME efektini engeller.
     function dragEnter(e) {
         e.preventDefault();
         if (this.classList.contains('locked')) {
@@ -307,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
         this.classList.add('drag-over');
     }
 
-    // 3. Bir parçanın kilitli bir parçanın üzerine BIRAKILMASINI engeller. (En önemlisi bu)
     function dragDrop() {
         this.classList.remove('drag-over');
         if (this.classList.contains('locked')) {
@@ -318,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
             playSound('piecePlace');
         }
     }
-    // *** DÜZELTİLMİŞ FONKSİYONLAR BURADA BİTİYOR ***
 
     function dragEnd() {
         this.style.opacity = '1';
@@ -328,6 +327,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function dragOver(e) { e.preventDefault(); }
     
     function dragLeave() { this.classList.remove('drag-over'); }
+
+    // ================================================================
+    // *** DOKUNMATİK EKRAN FONKSİYONLARI (ZATEN DOĞRU ÇALIŞIYOR) ***
+    // ================================================================
 
     let currentTouchPiece = null;
     let touchPieceClone = null;
@@ -345,7 +348,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function touchStart(e) {
-        // Kilitli parçanın dokunmayla hareketini engelle
         if (this.classList.contains('locked')) return;
         if (e.touches.length !== 1) return;
         e.preventDefault();
@@ -380,7 +382,6 @@ document.addEventListener('DOMContentLoaded', () => {
         touchPieceClone.style.top = `${touch.clientY - cloneOffsetY}px`;
         const targetPiece = findTargetPiece(touch.clientX, touch.clientY);
         document.querySelectorAll('.puzzle-piece').forEach(piece => piece.classList.remove('drag-over'));
-        // Kilitli parçanın üzerine gelme efektini engelle
         if (targetPiece && targetPiece !== currentTouchPiece && !targetPiece.classList.contains('locked')) {
             targetPiece.classList.add('drag-over');
         }
@@ -396,7 +397,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.puzzle-piece').forEach(piece => piece.classList.remove('drag-over'));
         const touch = e.changedTouches[0];
         const targetPiece = findTargetPiece(touch.clientX, touch.clientY);
-        // Kilitli bir parçanın üzerine bırakılmasını engelle
         if (targetPiece && targetPiece !== currentTouchPiece && !targetPiece.classList.contains('locked')) {
             swapPieces(currentTouchPiece, targetPiece);
             playSound('piecePlace');
