@@ -56,16 +56,25 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSound('win', 'sounds/success-1.mp3');
     loadSound('hint', 'sounds/button-3.mp3');
 
-    function loadCategories() {
+        function loadCategories() {
         categoryOptions.innerHTML = '';
         for (const categoryName in imageCategories) {
             const button = document.createElement('button');
             button.classList.add('category-button');
             button.textContent = categoryName;
             button.dataset.category = categoryName;
+
+            // *** YENİ EKLENEN KONTROL ***
+            // Kategoriye ait resim listesi (dizi) boş mu diye kontrol et.
+            if (imageCategories[categoryName].length === 0) {
+                button.disabled = true; // Butonu HTML olarak pasif yap (tıklanamaz).
+                // Not: Pasif butonlar için ayrı bir stil ekleyeceğiz.
+            }
+
             categoryOptions.appendChild(button);
         }
     }
+
 
     function updatePieceOptions() {
         pieceOptions.innerHTML = '';
