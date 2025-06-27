@@ -402,6 +402,19 @@ h1 {
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+.category-button:disabled {
+    background-color: rgba(44, 62, 80, 0.5); /* Daha soluk bir arkaplan */
+    border-color: #7f8c8d; /* Daha soluk bir kenarlık */
+    color: #95a5a6;        /* Daha soluk bir metin rengi */
+    cursor: not-allowed;   /* "İzin verilmiyor" imleci */
+}
+
+.category-button:disabled:hover {
+    transform: none; /* Yerinden oynamasın */
+    box-shadow: none; /* Gölgesi olmasın */
+}
+
     .category-button {
         flex: 1 1 31%;
     }
