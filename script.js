@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const selectionScreen = document.getElementById('selectionScreen');
+    const loadingOverlay = document.getElementById('loadingOverlay');
     const gameBoard = document.getElementById('gameBoard');
     const pieceOptions = document.querySelector('.piece-options');
     const categoryOptions = document.querySelector('.category-options');
@@ -120,20 +121,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    startGameButton.addEventListener('click', () => {
-        if (selectedCols && selectedRows && selectedCategory && selectedImage) {
-            footer.style.display = 'none';
-            selectionScreen.style.display = 'none';
-            gameTitle.style.display = 'none';
-            gameBoard.style.display = 'grid';
-            gameControls.style.display = 'flex';
-            createPuzzle(selectedImage, selectedCols, selectedRows);
-            startTimer();
-            playSound('piecePlace');
-        } else {
-            alert('Lütfen zorluk seviyesi ve resim kategorisi seçin!');
-        }
-    });
+startGameButton.addEventListener('click', async () => { // Fonksiyonu async yap
+    if (selectedCols && selectedRows && selectedCategory) {
+        // Önce oyun alanını görünür yap
+        selectionScreen.style.display = 'none';
+        gameTitle.style.display = 'none';
+        gameBoard.style.display = 'grid';
+        gameControls.style.display = 'flex';
+        footer.style.display = 'none';
+
+        // Yükleme ekranını göster
+        loadingOverlay.style.display = 'flex';
+
+        // Rastgele bir resim URL'si seç
+        const imagesInSelectedCategory = imageCategories[selectedCategory];
+        selectedImage = imagesInSelectedCategory[Math.floor(Math.random() * imagesInSelectedCategory.length)];
+
+        // Resmin ve puzzle'ın tamamen oluşturulmasını BEKLE
+        await createPuzzle(selectedImage, selectedCols, selectedRows);
+
+        // Her şey hazır olunca yükleme ekranını gizle
+        loadingOverlay.style.display = 'none';
+
+        // VE ŞİMDİ SÜREYİ BAŞLAT
+        startTimer();
+        playSound('piecePlace');
+    } else {
+        alert('Lütfen zorluk seviyesi ve resim kategorisi seçin!');
+    }
+});
 
     playAgainButton.addEventListener('click', () => {
         restartPuzzle();
