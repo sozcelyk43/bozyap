@@ -11,15 +11,11 @@
 <body>
     <div class="game-container">
         <h1 id="gameTitle">Boz Yap</h1>
+        
         <div class="selection-screen" id="selectionScreen">
             <p>Zorluk Seviyesi Seçin:</p>
             <div class="piece-options">
-                <button class="piece-button" data-cols="4" data-rows="3">Kolay (4x3)</button>
-                <button class="piece-button" data-cols="8" data-rows="6">Orta (8x6)</button>
-                <button class="piece-button" data-cols="12" data-rows="9">Zor (12x9)</button>
-                <button class="piece-button" data-cols="16" data-rows="12">Çok Zor (16x12)</button>
-                <button class="piece-button" data-cols="20" data-rows="15">İmkansız (20x15)</button>
-            </div>
+                </div>
 
             <p>Resim Kategorisi Seçin:</p>
             <div class="category-options">
@@ -27,18 +23,19 @@
             <button id="startGameButton" disabled>Oyuna Başla</button>
         </div>
 
-        <div class="game-board" id="gameBoard">
-            </div>
+        <div class="game-board" id="gameBoard"></div>
 
         <div class="game-controls">
             <div id="timer" class="timer">00:00</div>
             <button id="hintButton" class="hint-button">İpucu Al</button>
             <button id="mainMenuFromGame" class="hint-button">Ana Menüye Dön</button>
         </div>
+        
         <div class="loading-overlay" id="loadingOverlay">
             <div class="spinner"></div>
             <p>Yapboz Hazırlanıyor...</p>
         </div>
+
         <div class="win-screen" id="winScreen">
             <h2>Tebrikler!</h2>
             <p>Yapbozu başarıyla tamamladınız!</p>
@@ -52,6 +49,5 @@
 
     <script src="image-data.js"></script>
     <script src="script.js"></script>
-    
 </body>
 </html>
