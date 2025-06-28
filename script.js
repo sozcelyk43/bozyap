@@ -51,23 +51,53 @@ const difficulties = [
     loadSound('hint', 'sounds/button-3.mp3');
 
     // === GÖRSEL ARAYÜZ OLUŞTURMA ===
-    function createDifficultyButtons() {
-        pieceOptionsContainer.innerHTML = '';
-        difficulties.forEach(level => {
-            const button = document.createElement('button');
-            button.classList.add('level-button');
-            button.textContent = `${level.name} (${level.pieces})`;
-            button.addEventListener('click', () => {
-                selectedDifficulty = level;
-                document.querySelectorAll('.level-button').forEach(btn => btn.classList.remove('selected'));
-                button.classList.add('selected');
-                checkSelections();
-                playSound('piecePlace');
-            });
-            pieceOptionsContainer.appendChild(button);
-        });
-    }
+    // script.js dosyasındaki bu fonksiyonu güncelleyin
 
+function createDifficultyButtons() {
+    pieceOptionsContainer.innerHTML = '';
+
+    // Izgara ikonunu oluşturan yardımcı bir fonksiyon
+    const createGridIcon = (level) => {
+        const iconContainer = document.createElement('div');
+        iconContainer.classList.add('difficulty-icon');
+        iconContainer.style.gridTemplateColumns = `repeat(${level.cols}, 1fr)`;
+        iconContainer.style.gridTemplateRows = `repeat(${level.rows}, 1fr)`;
+        
+        // Genişlik ve yüksekliği orana göre ayarla (daha estetik görünmesi için)
+        iconContainer.style.width = `${level.cols * 4}px`;
+        iconContainer.style.height = `${level.rows * 4}px`;
+
+        const totalCells = level.cols * level.rows;
+        for (let i = 0; i < totalCells; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('grid-cell');
+            iconContainer.appendChild(cell);
+        }
+        return iconContainer;
+    };
+
+    difficulties.forEach(level => {
+        const button = document.createElement('button');
+        button.classList.add('level-button');
+
+        // İkonu ve metni oluştur
+        const icon = createGridIcon(level);
+        const text = document.createTextNode(level.name);
+
+        // Butonun içine önce ikonu, sonra metni ekle
+        button.appendChild(icon);
+        button.appendChild(text);
+        
+        button.addEventListener('click', () => {
+            selectedDifficulty = level;
+            document.querySelectorAll('.level-button').forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            checkSelections();
+            playSound('piecePlace');
+        });
+        pieceOptionsContainer.appendChild(button);
+    });
+}
     function createCategoryCards() {
         categoryOptionsContainer.innerHTML = '';
         for (const categoryName in imageCategories) {
