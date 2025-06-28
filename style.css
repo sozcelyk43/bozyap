@@ -55,12 +55,15 @@ h1 {
     background-color: rgba(52, 73, 94, 0.8);
     color: #ecf0f1;
     border: 2px solid #3498db;
-    padding: 12px 20px;
+    padding: 10px 15px;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.25s ease;
     font-size: 1em;
     font-weight: bold;
+    display: flex; /* İkon ve yazıyı yan yana getirmek için */
+    align-items: center; /* Dikey olarak ortala */
+    gap: 10px; /* İkon ile yazı arasına boşluk koy */
 }
 
 .level-button:hover {
@@ -75,6 +78,20 @@ h1 {
     color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 4px 20px rgba(39, 174, 96, 0.5);
+}
+.difficulty-icon {
+    display: grid;
+    width: 28px; /* İkon boyutu */
+    height: 21px; /* İkon boyutu */
+    gap: 2px;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 2px;
+    border-radius: 3px;
+}
+
+.difficulty-icon .grid-cell {
+    background-color: #ecf0f1;
+    border-radius: 1px;
 }
 
 /* YENİ KATEGORİ KARTLARI */
