@@ -1,7 +1,22 @@
 /* GENEL STİLLER */
-body {font-family: 'Helvetica Neue', 'Arial', sans-serif;display: flex;justify-content: center;align-items: flex-start;min-height: 100vh;margin: 0;
-    padding: 20px 0;background: linear-gradient(135deg, #2c3e50, #34495e);color: #ecf0f1;overflow-y: auto;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
-.game-container {background-color: rgba(44, 62, 80, 0.85);padding: 20px;
+body {
+    font-family: 'Helvetica Neue', 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 15px 0; /* Dikey padding azaltıldı */
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: #ecf0f1;
+    overflow-y: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.game-container {
+    background-color: rgba(44, 62, 80, 0.85);
+    padding: 15px; /* Padding azaltıldı */
     border-radius: 20px;
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
     text-align: center;
@@ -15,16 +30,16 @@ body {font-family: 'Helvetica Neue', 'Arial', sans-serif;display: flex;justify-c
 
 h1 {
     margin-top: 0;
-    margin-bottom: 10px; /* Boşluk azaltıldı */
-    font-size: 2.5em; /* Boyut küçültüldü */
+    margin-bottom: 5px;
+    font-size: 2.2em; /* PC İÇİN EKSTRA KÜÇÜLTME */
     font-weight: bold;
     color: #fff;
     text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
 .selection-screen p {
-    font-size: 1.2em;
-    margin: 15px 0 10px 0; /* Dikey marjlar azaltıldı */
+    font-size: 1.1em; /* PC İÇİN EKSTRA KÜÇÜLTME */
+    margin: 15px 0 10px 0;
     color: #bdc3c7;
     font-weight: 500;
 }
@@ -35,22 +50,23 @@ h1 {
     justify-content: center;
     gap: 10px;
     flex-wrap: wrap;
-    margin-bottom: 15px; /* Alt boşluk azaltıldı */
+    margin-bottom: 15px;
 }
 
 .level-button {
     background-color: rgba(52, 73, 94, 0.8);
     color: #ecf0f1;
     border: 2px solid #3498db;
-    padding: 10px 18px; /* Padding ayarlandı */
-    border-radius: 12px;
+    padding: 8px 15px; /* PC İÇİN EKSTRA KÜÇÜLTME */
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.25s ease;
-    font-size: 0.9em; /* Boyut küçültüldü */
+    font-size: 0.85em; /* PC İÇİN EKSTRA KÜÇÜLTME */
     font-weight: bold;
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0; /* MOBİLDE KAYDIRMA İÇİN */
 }
 
 .level-button:hover {
@@ -69,7 +85,7 @@ h1 {
 
 .difficulty-icon {
     display: grid;
-    gap: 2px;
+    gap: 1.5px; /* PC İÇİN EKSTRA KÜÇÜLTME */
     background-color: rgba(0, 0, 0, 0.2);
     padding: 2px;
     border-radius: 3px;
@@ -85,17 +101,17 @@ h1 {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px; /* Kartlar arası boşluk azaltıldı */
+    gap: 10px; /* PC İÇİN EKSTRA KÜÇÜLTME */
     margin-top: 10px;
 }
 
 .category-card {
     background-color: rgba(236, 240, 241, 0.1);
     border: 2px solid transparent;
-    border-radius: 10px; /* Köşeler daha az yuvarlak */
-    padding: 6px; /* İç boşluk azaltıldı */
-    width: 120px; /* Genişlik küçültüldü */
-    height: 125px; /* Yükseklik küçültüldü */
+    border-radius: 10px;
+    padding: 5px; /* PC İÇİN EKSTRA KÜÇÜLTME */
+    width: 110px; /* PC İÇİN EKSTRA KÜÇÜLTME */
+    height: 115px; /* PC İÇİN EKSTRA KÜÇÜLTME */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -131,15 +147,15 @@ h1 {
 
 .category-card img {
     width: 100%;
-    height: 80px; /* Resim yüksekliği azaltıldı */
+    height: 75px; /* PC İÇİN EKSTRA KÜÇÜLTME */
     object-fit: cover;
-    border-radius: 6px; /* Köşeler daha az yuvarlak */
-    margin-bottom: 5px; /* Alt boşluk azaltıldı */
+    border-radius: 6px;
+    margin-bottom: 5px;
 }
 
 .category-card span {
     font-weight: bold;
-    font-size: 0.8em; /* Yazı boyutu küçültüldü */
+    font-size: 0.75em; /* PC İÇİN EKSTRA KÜÇÜLTME */
     color: #fff;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
 }
@@ -149,13 +165,13 @@ h1 {
     background: linear-gradient(45deg, #27ae60, #2ecc71);
     color: #fff;
     border: none;
-    padding: 12px 35px; /* Dikey padding azaltıldı */
-    font-size: 1.2em; /* Boyut küçültüldü */
+    padding: 10px 30px; /* PC İÇİN EKSTRA KÜÇÜLTME */
+    font-size: 1.1em; /* PC İÇİN EKSTRA KÜÇÜLTME */
     font-weight: bold;
     border-radius: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-top: 20px; /* Üst boşluk azaltıldı */
+    margin-top: 20px; /* PC İÇİN EKSTRA KÜÇÜLTME */
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -169,6 +185,69 @@ h1 {
     cursor: not-allowed;
     box-shadow: none;
 }
+
+/* === MOBİL İÇİN YENİ DÜZENLEMELER === */
+@media (max-width: 800px) {
+    body {
+        padding: 0;
+    }
+    .game-container {
+        width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+        padding: 15px 10px;
+    }
+    
+    /* İSTEK: Zorluk seviyeleri tek satırda ve kaydırılabilir olsun */
+    .piece-options {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 5px;
+        -webkit-overflow-scrolling: touch; /* iOS için akıcı kaydırma */
+        scrollbar-width: thin; /* Firefox için */
+    }
+    /* Webkit tarayıcılar için scrollbar stili */
+    .piece-options::-webkit-scrollbar {
+        height: 5px;
+    }
+    .piece-options::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.2);
+    }
+    .piece-options::-webkit-scrollbar-thumb {
+        background: #3498db;
+        border-radius: 10px;
+    }
+
+    /* İSTEK: Kategoriler her satırda 4 tane olsun */
+    .category-options {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 4 Sütunlu Izgara */
+        gap: 10px;
+    }
+    .category-card {
+        width: auto; /* Genişlik ızgaraya göre ayarlanacak */
+        height: 100px; /* Mobil için yükseklik */
+    }
+    .category-card img {
+        height: 60px; /* Mobil için resim yüksekliği */
+    }
+    .category-card span {
+        font-size: 0.7em;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 { font-size: 1.8em; }
+    .selection-screen p { font-size: 1em; }
+    
+    /* Daha küçük telefonlarda 3 sütun daha iyi görünebilir */
+    .category-options {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+}
+
 
 /* --- DİĞER EKRANLAR VE ELEMENTLER (DEĞİŞİKLİK YOK) --- */
 #gameBoard { display: grid; gap: 2px; margin: 10px auto; border: 2px solid rgba(189, 195, 199, 0.5); border-radius: 10px; overflow: hidden; background-color: rgba(44, 62, 80, 0.6); position: relative; display: none; max-width: 800px; width: 100%; aspect-ratio: 4 / 3; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); }
