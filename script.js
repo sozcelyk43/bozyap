@@ -21,19 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // === OYUN DEĞİŞKENLERİ ===
     let selectedDifficulty = null;
     let selectedCategory = null;
-    let selectedImageURL = null; // Sadece restart için
+    let selectedImageURL = null;
     let puzzlePieces = [];
     let gameStartTime;
     let timerInterval;
     let hintUsed = false;
     let confettiInstance = null;
 
-const difficulties = [
-        { name: 'Çok Kolay', pieces: '3x2', cols: 3, rows: 2, icon: '🧩' },
-        { name: 'Kolay', pieces: '4x3', cols: 4, rows: 3, icon: '🧩🧩' },
-        { name: 'Orta', pieces: '5x4', cols: 5, rows: 4, icon: '🧩🧩🧩' },
-        { name: 'Zor', pieces: '6x4', cols: 6, rows: 4, icon: '🧩🧩🧩🧩' },
-        { name: 'Çok Zor', pieces: '7x5', cols: 7, rows: 5, icon: '🧩🧩🧩🧩🧩' }
+    const difficulties = [
+        { name: 'Çok Kolay', pieces: '3x2', cols: 3, rows: 2 },
+        { name: 'Kolay', pieces: '4x3', cols: 4, rows: 3 },
+        { name: 'Orta', pieces: '5x4', cols: 5, rows: 4 },
+        { name: 'Zor', pieces: '6x4', cols: 6, rows: 4 },
+        { name: 'Çok Zor', pieces: '7x5', cols: 7, rows: 5 }
     ];
 
     // === SES FONKSİYONLARI ===
@@ -51,53 +51,41 @@ const difficulties = [
     loadSound('hint', 'sounds/button-3.mp3');
 
     // === GÖRSEL ARAYÜZ OLUŞTURMA ===
-    // script.js dosyasındaki bu fonksiyonu güncelleyin
-
-function createDifficultyButtons() {
-    pieceOptionsContainer.innerHTML = '';
-
-    // Izgara ikonunu oluşturan yardımcı bir fonksiyon
-    const createGridIcon = (level) => {
-        const iconContainer = document.createElement('div');
-        iconContainer.classList.add('difficulty-icon');
-        iconContainer.style.gridTemplateColumns = `repeat(${level.cols}, 1fr)`;
-        iconContainer.style.gridTemplateRows = `repeat(${level.rows}, 1fr)`;
-        
-        // Genişlik ve yüksekliği orana göre ayarla (daha estetik görünmesi için)
-        iconContainer.style.width = `${level.cols * 4}px`;
-        iconContainer.style.height = `${level.rows * 4}px`;
-
-        const totalCells = level.cols * level.rows;
-        for (let i = 0; i < totalCells; i++) {
-            const cell = document.createElement('div');
-            cell.classList.add('grid-cell');
-            iconContainer.appendChild(cell);
-        }
-        return iconContainer;
-    };
-
-    difficulties.forEach(level => {
-        const button = document.createElement('button');
-        button.classList.add('level-button');
-
-        // İkonu ve metni oluştur
-        const icon = createGridIcon(level);
-        const text = document.createTextNode(level.name);
-
-        // Butonun içine önce ikonu, sonra metni ekle
-        button.appendChild(icon);
-        button.appendChild(text);
-        
-        button.addEventListener('click', () => {
-            selectedDifficulty = level;
-            document.querySelectorAll('.level-button').forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-            checkSelections();
-            playSound('piecePlace');
+    function createDifficultyButtons() {
+        pieceOptionsContainer.innerHTML = '';
+        const createGridIcon = (level) => {
+            const iconContainer = document.createElement('div');
+            iconContainer.classList.add('difficulty-icon');
+            iconContainer.style.gridTemplateColumns = `repeat(${level.cols}, 1fr)`;
+            iconContainer.style.gridTemplateRows = `repeat(${level.rows}, 1fr)`;
+            iconContainer.style.width = `${level.cols * 4}px`;
+            iconContainer.style.height = `${level.rows * 4}px`;
+            const totalCells = level.cols * level.rows;
+            for (let i = 0; i < totalCells; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('grid-cell');
+                iconContainer.appendChild(cell);
+            }
+            return iconContainer;
+        };
+        difficulties.forEach(level => {
+            const button = document.createElement('button');
+            button.classList.add('level-button');
+            const icon = createGridIcon(level);
+            const text = document.createTextNode(level.name);
+            button.appendChild(icon);
+            button.appendChild(text);
+            button.addEventListener('click', () => {
+                selectedDifficulty = level;
+                document.querySelectorAll('.level-button').forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+                checkSelections();
+                playSound('piecePlace');
+            });
+            pieceOptionsContainer.appendChild(button);
         });
-        pieceOptionsContainer.appendChild(button);
-    });
-}
+    }
+
     function createCategoryCards() {
         categoryOptionsContainer.innerHTML = '';
         for (const categoryName in imageCategories) {
@@ -165,7 +153,7 @@ function createDifficultyButtons() {
             }
             setupAndStartGame(selectedImageURL, selectedDifficulty.cols, selectedDifficulty.rows);
         } else {
-            resetGame(); // Eğer bir sebepten ötürü bilgi yoksa ana menüye dön
+            resetGame();
         }
     }
 
@@ -190,28 +178,10 @@ function createDifficultyButtons() {
         checkSelections();
     }
     
-    playAgainButton.addEventListener('click', () => {
-        playSound('piecePlace');
-        restartPuzzle();
-    });
-
-    mainMenuButton.addEventListener('click', () => {
-        playSound('piecePlace');
-        resetGame();
-    });
-
-    mainMenuFromGameButton.addEventListener('click', () => {
-        playSound('piecePlace');
-        resetGame();
-    });
-
-    hintButton.addEventListener('click', () => {
-        if (hintUsed || !selectedImageURL) return;
-        playSound('hint');
-        showHint();
-        hintUsed = true;
-        hintButton.disabled = true;
-    });
+    playAgainButton.addEventListener('click', () => { playSound('piecePlace'); restartPuzzle(); });
+    mainMenuButton.addEventListener('click', () => { playSound('piecePlace'); resetGame(); });
+    mainMenuFromGameButton.addEventListener('click', () => { playSound('piecePlace'); resetGame(); });
+    hintButton.addEventListener('click', () => { if (hintUsed || !selectedImageURL) return; playSound('hint'); showHint(); hintUsed = true; hintButton.disabled = true; });
 
     // === ZAMANLAYICI FONKSİYONLARI ===
     function startTimer() { gameStartTime = Date.now(); timerInterval = setInterval(updateTimer, 1000); updateTimer(); }
@@ -226,10 +196,7 @@ function createDifficultyButtons() {
         img.src = imageUrl;
         img.crossOrigin = "Anonymous";
         try {
-            await new Promise((resolve, reject) => {
-                img.onload = resolve;
-                img.onerror = reject;
-            });
+            await new Promise((resolve, reject) => { img.onload = resolve; img.onerror = reject; });
         } catch (e) {
             console.error("Resim yüklenemedi:", imageUrl, e);
             alert("Yapboz resmi yüklenirken bir hata oluştu. Lütfen başka bir kategori deneyin veya internet bağlantınızı kontrol edin.");
@@ -261,7 +228,6 @@ function createDifficultyButtons() {
             pieceDiv.appendChild(pieceImage);
             puzzlePieces.push(pieceDiv);
         }
-
         shuffleArray(puzzlePieces);
         puzzlePieces.forEach(piece => gameBoard.appendChild(piece));
         addDragDropListeners();
@@ -271,7 +237,7 @@ function createDifficultyButtons() {
     
     function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
     
-    // === SÜRÜKLE-BIRAK VE DOKUNMATİK FONKSİYONLAR ===
+    // === SÜRÜKLE-BIRAK VE DOKUNMATİK FONKSİYONLAR (DÜZELTİLMİŞ) ===
     let draggedItem = null;
     function addDragDropListeners() {
         const pieces = gameBoard.querySelectorAll('.puzzle-piece');
@@ -285,14 +251,13 @@ function createDifficultyButtons() {
         });
     }
     function dragStart(e) { if (this.classList.contains('locked')) { e.preventDefault(); return; } draggedItem = this; setTimeout(() => this.style.opacity = '0.5', 0); playSound('pieceMove'); }
-    function dragEnter(e) { e.preventDefault(); if (this.classList.contains('locked')) return; this.classList.add('drag-over'); }
+    function dragEnter(e) { e.preventDefault(); if (this.classList.contains('locked') || this === draggedItem) return; this.classList.add('drag-over'); }
     function dragLeave() { this.classList.remove('drag-over'); }
     function dragOver(e) { e.preventDefault(); }
-    function dragEnd() { this.style.opacity = '1'; }
+    function dragEnd() { this.style.opacity = '1'; draggedItem = null; document.querySelectorAll('.puzzle-piece').forEach(p => p.classList.remove('drag-over')); }
     function dragDrop() { if (this.classList.contains('locked')) return; this.classList.remove('drag-over'); if (draggedItem && draggedItem !== this) { swapPieces(draggedItem, this); } }
     
     let currentTouchPiece = null;
-    let touchPieceClone = null;
     function addTouchListeners() {
         const pieces = gameBoard.querySelectorAll('.puzzle-piece');
         pieces.forEach(piece => {
@@ -302,10 +267,11 @@ function createDifficultyButtons() {
         });
     }
     function touchStart(e) { if (this.classList.contains('locked')) return; if (e.touches.length !== 1) return; e.preventDefault(); currentTouchPiece = this; currentTouchPiece.style.opacity = '0.4'; playSound('pieceMove'); }
-    function touchMove(e) { if (!currentTouchPiece) return; e.preventDefault(); }
+    function touchMove(e) { if (!currentTouchPiece) return; e.preventDefault(); const touch = e.touches[0]; const targetElement = document.elementFromPoint(touch.clientX, touch.clientY); document.querySelectorAll('.puzzle-piece').forEach(p => p.classList.remove('drag-over')); if (targetElement && targetElement.classList.contains('puzzle-piece') && !targetElement.classList.contains('locked') && targetElement !== currentTouchPiece) { targetElement.classList.add('drag-over'); } }
     function touchEnd(e) {
         if (!currentTouchPiece) return;
         currentTouchPiece.style.opacity = '1';
+        document.querySelectorAll('.puzzle-piece').forEach(p => p.classList.remove('drag-over'));
         const touch = e.changedTouches[0];
         const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
         if (targetElement && targetElement.classList.contains('puzzle-piece') && targetElement !== currentTouchPiece && !targetElement.classList.contains('locked')) {
@@ -317,26 +283,16 @@ function createDifficultyButtons() {
     // === OYUN DURUMU KONTROL FONKSİYONLARI ===
     function updatePieceState() {
         const currentPieces = Array.from(gameBoard.querySelectorAll('.puzzle-piece'));
-        currentPieces.forEach((piece, index) => {
-            if (parseInt(piece.dataset.originalIndex) === index) {
-                piece.classList.add('locked');
-                piece.draggable = false;
-            }
-        });
+        currentPieces.forEach((piece, index) => { if (parseInt(piece.dataset.originalIndex) === index) { piece.classList.add('locked'); piece.draggable = false; }});
     }
-    function swapPieces(p1, p2) {
-        const parent = p1.parentNode;
-        const p2Next = p2.nextSibling;
-        if (p2Next === p1) {
-            parent.insertBefore(p1, p2);
-        } else {
-            parent.insertBefore(p2, p1);
-            if (p2Next) {
-                parent.insertBefore(p1, p2Next);
-            } else {
-                parent.appendChild(p1);
-            }
-        }
+
+    function swapPieces(piece1, piece2) {
+        const parent = piece1.parentNode;
+        const temp = document.createElement('div');
+        parent.insertBefore(temp, piece1);
+        parent.insertBefore(piece1, piece2);
+        parent.insertBefore(piece2, temp);
+        temp.remove();
         playSound('piecePlace');
         updatePieceState();
         checkWinCondition();
@@ -367,7 +323,7 @@ function createDifficultyButtons() {
             confettiCanvas.id = 'confetti-canvas';
             Object.assign(confettiCanvas.style, { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999, pointerEvents: 'none' });
             document.body.appendChild(confettiCanvas);
-            confettiInstance = new ConfettiGenerator({ target: 'confetti-canvas' });
+            confettiInstance = new ConfettiGenerator({ target: 'confetti-canvas', max: 120, size: 1.2 });
             confettiInstance.render();
 
             setTimeout(() => {
@@ -375,7 +331,7 @@ function createDifficultyButtons() {
                 gameControls.style.display = 'none';
                 finalTimeDisplay.textContent = `Tamamlama Süreniz: ${timerDisplay.textContent}`;
                 winScreen.style.display = 'block';
-            }, 2000);
+            }, 2500);
         }
     }
 
