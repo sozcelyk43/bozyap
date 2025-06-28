@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // === DOM ELEMENTLERİNİ SEÇME ===
     const selectionScreen = document.getElementById('selectionScreen');
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const gameBoard = document.getElementById('gameBoard');
-    const pieceOptions = document.querySelector('.piece-options');
-    const categoryOptions = document.querySelector('.category-options');
+    const gameContainer = document.querySelector('.game-container');
+    const pieceOptionsContainer = document.querySelector('.piece-options');
+    const categoryOptionsContainer = document.querySelector('.category-options');
     const startGameButton = document.getElementById('startGameButton');
+    const gameBoard = document.getElementById('gameBoard');
+    const gameControls = document.querySelector('.game-controls');
     const timerDisplay = document.getElementById('timer');
     const hintButton = document.getElementById('hintButton');
     const winScreen = document.getElementById('winScreen');
@@ -12,291 +14,235 @@ document.addEventListener('DOMContentLoaded', () => {
     const playAgainButton = document.getElementById('playAgainButton');
     const mainMenuButton = document.getElementById('mainMenuButton');
     const mainMenuFromGameButton = document.getElementById('mainMenuFromGame');
-    const gameControls = document.querySelector('.game-controls');
+    const loadingOverlay = document.getElementById('loadingOverlay');
     const gameTitle = document.getElementById('gameTitle');
     const footer = document.querySelector('footer');
 
-    let selectedCols = null;
-    let selectedRows = null;
+    // === OYUN DEĞİŞKENLERİ ===
+    let selectedDifficulty = null;
     let selectedCategory = null;
-    let selectedImage = null;
+    let selectedImageURL = null; // Sadece restart için
     let puzzlePieces = [];
     let gameStartTime;
     let timerInterval;
     let hintUsed = false;
     let confettiInstance = null;
+
+    const difficulties = [
+        { name: 'Çok Kolay', pieces: '3x2', cols: 3, rows: 2 },
+        { name: 'Kolay', pieces: '4x3', cols: 4, rows: 3 },
+        { name: 'Orta', pieces: '5x4', cols: 5, rows: 4 },
+        { name: 'Zor', pieces: '6x4', cols: 6, rows: 4 },
+        { name: 'Çok Zor', pieces: '7x5', cols: 7, rows: 5 }
+    ];
+
+    // === SES FONKSİYONLARI ===
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sounds = {};
-
     function loadSound(name, url) {
-        fetch(url)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.arrayBuffer();
-            })
-            .then(buffer => audioContext.decodeAudioData(buffer))
-            .then(decodedData => { sounds[name] = decodedData; })
-            .catch(e => console.error(`Ses dosyası yüklenemedi: ${name} (${url})`, e));
+        fetch(url).then(response => { if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); } return response.arrayBuffer(); }).then(buffer => audioContext.decodeAudioData(buffer)).then(decodedData => { sounds[name] = decodedData; }).catch(e => console.error(`Ses dosyası yüklenemedi: ${name} (${url})`, e));
     }
-
     function playSound(name) {
-        if (sounds[name]) {
-            const source = audioContext.createBufferSource();
-            source.buffer = sounds[name];
-            source.connect(audioContext.destination);
-            source.start(0);
-        } else {
-            console.warn(`Ses dosyası yüklenmedi veya bulunamadı: ${name}`);
-        }
+        if (sounds[name]) { const source = audioContext.createBufferSource(); source.buffer = sounds[name]; source.connect(audioContext.destination); source.start(0); }
     }
-
     loadSound('pieceMove', 'sounds/button-1.mp3');
     loadSound('piecePlace', 'sounds/button-2.mp3');
     loadSound('win', 'sounds/success-1.mp3');
     loadSound('hint', 'sounds/button-3.mp3');
 
-        function loadCategories() {
-        categoryOptions.innerHTML = '';
-        for (const categoryName in imageCategories) {
+    // === GÖRSEL ARAYÜZ OLUŞTURMA ===
+    function createDifficultyButtons() {
+        pieceOptionsContainer.innerHTML = '';
+        difficulties.forEach(level => {
             const button = document.createElement('button');
-            button.classList.add('category-button');
-            button.textContent = categoryName;
-            button.dataset.category = categoryName;
-
-            // *** YENİ EKLENEN KONTROL ***
-            // Kategoriye ait resim listesi (dizi) boş mu diye kontrol et.
-            if (imageCategories[categoryName].length === 0) {
-                button.disabled = true; // Butonu HTML olarak pasif yap (tıklanamaz).
-                // Not: Pasif butonlar için ayrı bir stil ekleyeceğiz.
-            }
-
-            categoryOptions.appendChild(button);
-        }
-    }
-
-
-    function updatePieceOptions() {
-        pieceOptions.innerHTML = '';
-        const pieceConfigs = [
-            { name: 'Çok Kolay (3x2)', cols: 3, rows: 2 },
-            { name: 'Kolay (4x3)', cols: 4, rows: 3 },
-            { name: 'Orta (5x4)', cols: 5, rows: 4 },
-            { name: 'Zor (6x4)', cols: 6, rows: 4 },
-            { name: 'Çok Zor (7x5)', cols: 7, rows: 5 }
-        ];
-        pieceConfigs.forEach(config => {
-            const button = document.createElement('button');
-            button.classList.add('piece-button');
-            button.textContent = config.name;
-            button.dataset.cols = config.cols;
-            button.dataset.rows = config.rows;
-            pieceOptions.appendChild(button);
+            button.classList.add('level-button');
+            button.textContent = `${level.name} (${level.pieces})`;
+            button.addEventListener('click', () => {
+                selectedDifficulty = level;
+                document.querySelectorAll('.level-button').forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+                checkSelections();
+                playSound('piecePlace');
+            });
+            pieceOptionsContainer.appendChild(button);
         });
     }
 
-    pieceOptions.addEventListener('click', (event) => {
-        const target = event.target;
-        if (target.classList.contains('piece-button')) {
-            document.querySelectorAll('.piece-button').forEach(btn => btn.classList.remove('selected'));
-            target.classList.add('selected');
-            selectedCols = parseInt(target.dataset.cols);
-            selectedRows = parseInt(target.dataset.rows);
-            updateStartButtonState();
-            playSound('piecePlace');
+    function createCategoryCards() {
+        categoryOptionsContainer.innerHTML = '';
+        for (const categoryName in imageCategories) {
+            const categoryData = imageCategories[categoryName];
+            const card = document.createElement('button');
+            card.classList.add('category-card');
+            const img = document.createElement('img');
+            img.src = categoryData.kapakResmi;
+            img.alt = categoryName;
+            img.loading = 'lazy';
+            const span = document.createElement('span');
+            span.textContent = categoryName;
+            card.appendChild(img);
+            card.appendChild(span);
+            if (!categoryData.resimListesi || categoryData.resimListesi.length === 0) {
+                card.disabled = true;
+            }
+            card.addEventListener('click', () => {
+                if (card.disabled) return;
+                selectedCategory = categoryName;
+                document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                checkSelections();
+                playSound('piecePlace');
+            });
+            categoryOptionsContainer.appendChild(card);
         }
-    });
+    }
 
-    categoryOptions.addEventListener('click', (event) => {
-        const target = event.target;
-        if (target.classList.contains('category-button')) {
-            document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('selected'));
-            target.classList.add('selected');
-            selectedCategory = target.dataset.category;
-            const imagesInSelectedCategory = imageCategories[selectedCategory];
-            selectedImage = imagesInSelectedCategory[Math.floor(Math.random() * imagesInSelectedCategory.length)];
-            updateStartButtonState();
-            playSound('piecePlace');
-        }
-    });
+    function checkSelections() {
+        startGameButton.disabled = !(selectedDifficulty && selectedCategory);
+    }
 
-startGameButton.addEventListener('click', async () => { // Fonksiyonu async yap
-    if (selectedCols && selectedRows && selectedCategory) {
-        // Önce oyun alanını görünür yap
+    // === OYUN BAŞLATMA VE YÖNETİMİ ===
+    startGameButton.addEventListener('click', async () => {
+        if (!selectedDifficulty || !selectedCategory) return;
+        const category = imageCategories[selectedCategory];
+        const imageList = category.resimListesi;
+        selectedImageURL = imageList[Math.floor(Math.random() * imageList.length)];
+        await setupAndStartGame(selectedImageURL, selectedDifficulty.cols, selectedDifficulty.rows);
+    });
+    
+    async function setupAndStartGame(imageUrl, cols, rows) {
         selectionScreen.style.display = 'none';
         gameTitle.style.display = 'none';
         gameBoard.style.display = 'grid';
         gameControls.style.display = 'flex';
         footer.style.display = 'none';
-
-        // Yükleme ekranını göster
         loadingOverlay.style.display = 'flex';
-
-        // Rastgele bir resim URL'si seç
-        const imagesInSelectedCategory = imageCategories[selectedCategory];
-        selectedImage = imagesInSelectedCategory[Math.floor(Math.random() * imagesInSelectedCategory.length)];
-
-        // Resmin ve puzzle'ın tamamen oluşturulmasını BEKLE
-        await createPuzzle(selectedImage, selectedCols, selectedRows);
-
-        // Her şey hazır olunca yükleme ekranını gizle
+        await createPuzzle(imageUrl, cols, rows);
         loadingOverlay.style.display = 'none';
-
-        // VE ŞİMDİ SÜREYİ BAŞLAT
         startTimer();
-        playSound('piecePlace');
-    } else {
-        alert('Lütfen zorluk seviyesi ve resim kategorisi seçin!');
     }
-});
-
-    playAgainButton.addEventListener('click', () => {
-        restartPuzzle();
-        playSound('piecePlace');
-    });
-
-    mainMenuButton.addEventListener('click', () => {
-        resetGame();
-        playSound('piecePlace');
-    });
-
-    mainMenuFromGameButton.addEventListener('click', () => {
-        resetGame();
-        playSound('piecePlace');
-    });
-
-    hintButton.addEventListener('click', () => {
-        if (hintUsed) {
-            alert('İpucu hakkınızı zaten kullandınız!');
-            return;
-        }
-        showHint();
-        hintUsed = true;
-        hintButton.disabled = true;
-        playSound('hint');
-    });
 
     function restartPuzzle() {
-        footer.style.display = 'none';
-        winScreen.style.display = 'none';
-        gameBoard.style.display = 'grid';
-        gameControls.style.display = 'flex';
-        timerDisplay.textContent = '00:00';
-        hintButton.disabled = false;
-        hintUsed = false;
-        if (confettiInstance) {
-            confettiInstance.clear();
-            const confettiCanvas = document.getElementById('confetti-canvas');
-            if (confettiCanvas) confettiCanvas.remove();
-            confettiInstance = null;
+        if (selectedImageURL && selectedDifficulty) {
+            winScreen.style.display = 'none';
+            gameBoard.innerHTML = '';
+            hintUsed = false;
+            hintButton.disabled = false;
+            if (confettiInstance) {
+                confettiInstance.clear();
+                document.getElementById('confetti-canvas')?.remove();
+                confettiInstance = null;
+            }
+            setupAndStartGame(selectedImageURL, selectedDifficulty.cols, selectedDifficulty.rows);
+        } else {
+            resetGame(); // Eğer bir sebepten ötürü bilgi yoksa ana menüye dön
         }
-        gameBoard.innerHTML = '';
-        gameBoard.style.gap = '2px';
-        gameBoard.style.borderColor = 'rgba(189, 195, 199, 0.5)';
-        gameBoard.classList.remove('solved-effect');
-        createPuzzle(selectedImage, selectedCols, selectedRows);
-        startTimer();
     }
 
     function resetGame() {
-        footer.style.display = 'block';
         stopTimer();
-        if (confettiInstance) {
-            confettiInstance.clear();
-            const confettiCanvas = document.getElementById('confetti-canvas');
-            if (confettiCanvas) confettiCanvas.remove();
-            confettiInstance = null;
-        }
+        if (confettiInstance) { confettiInstance.clear(); document.getElementById('confetti-canvas')?.remove(); confettiInstance = null; }
         selectionScreen.style.display = 'block';
         gameTitle.style.display = 'block';
         gameBoard.style.display = 'none';
         winScreen.style.display = 'none';
         gameControls.style.display = 'none';
+        footer.style.display = 'block';
         timerDisplay.textContent = '00:00';
         hintButton.disabled = false;
         hintUsed = false;
         gameBoard.innerHTML = '';
-        gameBoard.style.gap = '2px';
-        gameBoard.style.borderColor = 'rgba(189, 195, 199, 0.5)';
-        gameBoard.classList.remove('solved-effect');
-        selectedCols = null;
-        selectedRows = null;
+        selectedDifficulty = null;
         selectedCategory = null;
-        selectedImage = null;
+        selectedImageURL = null;
         puzzlePieces = [];
-        document.querySelectorAll('.piece-button, .category-button').forEach(btn => btn.classList.remove('selected'));
-        updateStartButtonState();
+        document.querySelectorAll('.level-button, .category-card').forEach(btn => btn.classList.remove('selected'));
+        checkSelections();
     }
+    
+    playAgainButton.addEventListener('click', () => {
+        playSound('piecePlace');
+        restartPuzzle();
+    });
 
-    function updateStartButtonState() {
-        startGameButton.disabled = !(selectedCols && selectedRows && selectedCategory);
-    }
+    mainMenuButton.addEventListener('click', () => {
+        playSound('piecePlace');
+        resetGame();
+    });
 
-    function startTimer() {
-        gameStartTime = Date.now();
-        timerInterval = setInterval(updateTimer, 1000);
-        updateTimer();
-    }
+    mainMenuFromGameButton.addEventListener('click', () => {
+        playSound('piecePlace');
+        resetGame();
+    });
 
-    function stopTimer() {
-        clearInterval(timerInterval);
-    }
+    hintButton.addEventListener('click', () => {
+        if (hintUsed || !selectedImageURL) return;
+        playSound('hint');
+        showHint();
+        hintUsed = true;
+        hintButton.disabled = true;
+    });
 
-    function updateTimer() {
-        const elapsedTime = Date.now() - gameStartTime;
-        const totalSeconds = Math.floor(elapsedTime / 1000);
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }
+    // === ZAMANLAYICI FONKSİYONLARI ===
+    function startTimer() { gameStartTime = Date.now(); timerInterval = setInterval(updateTimer, 1000); updateTimer(); }
+    function stopTimer() { clearInterval(timerInterval); }
+    function updateTimer() { const elapsed = Date.now() - gameStartTime; const totalSeconds = Math.floor(elapsed / 1000); const minutes = Math.floor(totalSeconds / 60); const seconds = totalSeconds % 60; timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`; }
 
+    // === PUZZLE OLUŞTURMA VE OYNANIŞ MANTIĞI ===
     async function createPuzzle(imageUrl, cols, rows) {
         gameBoard.innerHTML = '';
         puzzlePieces = [];
         const img = new Image();
         img.src = imageUrl;
         img.crossOrigin = "Anonymous";
-        await new Promise(resolve => img.onload = resolve);
+        try {
+            await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+            });
+        } catch (e) {
+            console.error("Resim yüklenemedi:", imageUrl, e);
+            alert("Yapboz resmi yüklenirken bir hata oluştu. Lütfen başka bir kategori deneyin veya internet bağlantınızı kontrol edin.");
+            loadingOverlay.style.display = 'none';
+            resetGame();
+            return;
+        }
+        
         gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
         gameBoard.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-        const pieceWidthOriginal = img.width / cols;
-        const pieceHeightOriginal = img.height / rows;
-        const totalPieces = cols * rows;
-        for (let i = 0; i < totalPieces; i++) {
+        const pieceWidth = img.width / cols;
+        const pieceHeight = img.height / rows;
+        
+        for (let i = 0; i < cols * rows; i++) {
             const pieceDiv = document.createElement('div');
             pieceDiv.classList.add('puzzle-piece');
-            pieceDiv.setAttribute('draggable', 'true');
+            pieceDiv.draggable = true;
             pieceDiv.dataset.originalIndex = i;
             const row = Math.floor(i / cols);
             const col = i % cols;
             const canvas = document.createElement('canvas');
-            canvas.width = pieceWidthOriginal;
-            canvas.height = pieceHeightOriginal;
+            canvas.width = pieceWidth;
+            canvas.height = pieceHeight;
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, col * pieceWidthOriginal, row * pieceHeightOriginal, pieceWidthOriginal, pieceHeightOriginal, 0, 0, pieceWidthOriginal, pieceHeightOriginal);
+            ctx.drawImage(img, col * pieceWidth, row * pieceHeight, pieceWidth, pieceHeight, 0, 0, pieceWidth, pieceHeight);
             const pieceImage = document.createElement('img');
             pieceImage.src = canvas.toDataURL();
             pieceImage.alt = `Puzzle Piece ${i}`;
             pieceDiv.appendChild(pieceImage);
             puzzlePieces.push(pieceDiv);
         }
+
         shuffleArray(puzzlePieces);
         puzzlePieces.forEach(piece => gameBoard.appendChild(piece));
         addDragDropListeners();
         addTouchListeners();
         updatePieceState();
     }
-
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
+    
+    function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } }
+    
+    // === SÜRÜKLE-BIRAK VE DOKUNMATİK FONKSİYONLAR ===
     let draggedItem = null;
-
     function addDragDropListeners() {
         const pieces = gameBoard.querySelectorAll('.puzzle-piece');
         pieces.forEach(piece => {
@@ -308,238 +254,108 @@ startGameButton.addEventListener('click', async () => { // Fonksiyonu async yap
             piece.addEventListener('dragend', dragEnd);
         });
     }
-
-    // ================================================================
-    // *** PC / FARE İÇİN KESİN DÜZELTME BURADA ***
-    // ================================================================
-    
-    // `e` parametresi eklendi ve `e.preventDefault()` çağrıldı.
-    function dragStart(e) { 
-        if (this.classList.contains('locked')) {
-            // Sürükleme olayını varsayılan olarak engelle. Bu en güçlü yöntemdir.
-            e.preventDefault(); 
-            return;
-        }
-        draggedItem = this;
-        setTimeout(() => this.style.opacity = '0.5', 0);
-        playSound('pieceMove');
-    }
-
-    function dragEnter(e) {
-        e.preventDefault();
-        if (this.classList.contains('locked')) {
-            return;
-        }
-        this.classList.add('drag-over');
-    }
-
-    function dragDrop() {
-        this.classList.remove('drag-over');
-        if (this.classList.contains('locked')) {
-            return;
-        }
-        if (draggedItem && draggedItem !== this) {
-            swapPieces(draggedItem, this);
-            playSound('piecePlace');
-        }
-    }
-
-    function dragEnd() {
-        this.style.opacity = '1';
-        document.querySelectorAll('.puzzle-piece').forEach(p => p.classList.remove('drag-over'));
-    }
-
-    function dragOver(e) { e.preventDefault(); }
-    
+    function dragStart(e) { if (this.classList.contains('locked')) { e.preventDefault(); return; } draggedItem = this; setTimeout(() => this.style.opacity = '0.5', 0); playSound('pieceMove'); }
+    function dragEnter(e) { e.preventDefault(); if (this.classList.contains('locked')) return; this.classList.add('drag-over'); }
     function dragLeave() { this.classList.remove('drag-over'); }
-
-    // ================================================================
-    // *** DOKUNMATİK EKRAN FONKSİYONLARI (ZATEN DOĞRU ÇALIŞIYOR) ***
-    // ================================================================
-
+    function dragOver(e) { e.preventDefault(); }
+    function dragEnd() { this.style.opacity = '1'; }
+    function dragDrop() { if (this.classList.contains('locked')) return; this.classList.remove('drag-over'); if (draggedItem && draggedItem !== this) { swapPieces(draggedItem, this); } }
+    
     let currentTouchPiece = null;
     let touchPieceClone = null;
-    let cloneOffsetX = 0;
-    let cloneOffsetY = 0;
-
     function addTouchListeners() {
         const pieces = gameBoard.querySelectorAll('.puzzle-piece');
         pieces.forEach(piece => {
             piece.addEventListener('touchstart', touchStart, { passive: false });
             piece.addEventListener('touchmove', touchMove, { passive: false });
             piece.addEventListener('touchend', touchEnd, { passive: false });
-            piece.addEventListener('touchcancel', touchEnd, { passive: false });
         });
     }
-
-    function touchStart(e) {
-        if (this.classList.contains('locked')) return;
-        if (e.touches.length !== 1) return;
-        e.preventDefault();
-        currentTouchPiece = this;
-        currentTouchPiece.style.opacity = '0.4';
-        currentTouchPiece.style.pointerEvents = 'none';
-        touchPieceClone = currentTouchPiece.cloneNode(true);
-        Object.assign(touchPieceClone.style, {
-            position: 'fixed', zIndex: '1001', opacity: '1', pointerEvents: 'none',
-            width: currentTouchPiece.offsetWidth + 'px', height: currentTouchPiece.offsetHeight + 'px',
-            borderRadius: getComputedStyle(currentTouchPiece).borderRadius, boxShadow: getComputedStyle(currentTouchPiece).boxShadow,
-            border: getComputedStyle(currentTouchPiece).border, backgroundColor: getComputedStyle(currentTouchPiece).backgroundColor,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'scale(1.05)'
-        });
-        const imgInClone = touchPieceClone.querySelector('img');
-        if (imgInClone) { Object.assign(imgInClone.style, { width: '100%', height: '100%', objectFit: 'fill' }); }
-        document.body.appendChild(touchPieceClone);
-        const touch = e.touches[0];
-        const rect = currentTouchPiece.getBoundingClientRect();
-        cloneOffsetX = touch.clientX - rect.left;
-        cloneOffsetY = touch.clientY - rect.top;
-        touchPieceClone.style.left = `${touch.clientX - cloneOffsetX}px`;
-        touchPieceClone.style.top = `${touch.clientY - cloneOffsetY}px`;
-        playSound('pieceMove');
-    }
-
-    function touchMove(e) {
-        if (!touchPieceClone || !currentTouchPiece || e.touches.length !== 1) return;
-        e.preventDefault();
-        const touch = e.touches[0];
-        touchPieceClone.style.left = `${touch.clientX - cloneOffsetX}px`;
-        touchPieceClone.style.top = `${touch.clientY - cloneOffsetY}px`;
-        const targetPiece = findTargetPiece(touch.clientX, touch.clientY);
-        document.querySelectorAll('.puzzle-piece').forEach(piece => piece.classList.remove('drag-over'));
-        if (targetPiece && targetPiece !== currentTouchPiece && !targetPiece.classList.contains('locked')) {
-            targetPiece.classList.add('drag-over');
-        }
-    }
-
+    function touchStart(e) { if (this.classList.contains('locked')) return; if (e.touches.length !== 1) return; e.preventDefault(); currentTouchPiece = this; currentTouchPiece.style.opacity = '0.4'; playSound('pieceMove'); }
+    function touchMove(e) { if (!currentTouchPiece) return; e.preventDefault(); }
     function touchEnd(e) {
-        if (!currentTouchPiece || !touchPieceClone) return;
-        e.preventDefault();
-        touchPieceClone.remove();
-        touchPieceClone = null;
+        if (!currentTouchPiece) return;
         currentTouchPiece.style.opacity = '1';
-        currentTouchPiece.style.pointerEvents = 'auto';
-        document.querySelectorAll('.puzzle-piece').forEach(piece => piece.classList.remove('drag-over'));
         const touch = e.changedTouches[0];
-        const targetPiece = findTargetPiece(touch.clientX, touch.clientY);
-        if (targetPiece && targetPiece !== currentTouchPiece && !targetPiece.classList.contains('locked')) {
-            swapPieces(currentTouchPiece, targetPiece);
-            playSound('piecePlace');
+        const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+        if (targetElement && targetElement.classList.contains('puzzle-piece') && targetElement !== currentTouchPiece && !targetElement.classList.contains('locked')) {
+            swapPieces(currentTouchPiece, targetElement);
         }
         currentTouchPiece = null;
     }
 
-    function findTargetPiece(clientX, clientY) {
-        let targetPiece = null;
-        gameBoard.querySelectorAll('.puzzle-piece').forEach(piece => {
-            const rect = piece.getBoundingClientRect();
-            if (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom && piece !== currentTouchPiece) {
-                targetPiece = piece;
-            }
-        });
-        return targetPiece;
-    }
-    
+    // === OYUN DURUMU KONTROL FONKSİYONLARI ===
     function updatePieceState() {
         const currentPieces = Array.from(gameBoard.querySelectorAll('.puzzle-piece'));
         currentPieces.forEach((piece, index) => {
             if (parseInt(piece.dataset.originalIndex) === index) {
                 piece.classList.add('locked');
-                piece.setAttribute('draggable', 'false');
+                piece.draggable = false;
             }
         });
     }
-
-    function swapPieces(piece1, piece2) {
-        requestAnimationFrame(() => {
-            const parent = gameBoard;
-            const temp = document.createElement('div');
-            parent.insertBefore(temp, piece1);
-            parent.insertBefore(piece1, piece2);
-            parent.insertBefore(piece2, temp);
-            temp.remove();
-            
-            updatePieceState();
-            checkWinCondition();
-        });
-    }
-
-    async function showHint() {
-        const tempImage = new Image();
-        tempImage.src = selectedImage;
-        tempImage.crossOrigin = "Anonymous";
-        await new Promise(resolve => tempImage.onload = resolve);
-        const hintOverlay = document.createElement('div');
-        Object.assign(hintOverlay.style, {
-            position: 'fixed', top: '0', left: '0', width: '100%', height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)', zIndex: '2000', display: 'flex',
-            justifyContent: 'center', alignItems: 'center', opacity: '0', transition: 'opacity 0.5s ease-in-out'
-        });
-        const hintImg = document.createElement('img');
-        hintImg.src = selectedImage;
-        Object.assign(hintImg.style, {
-            maxWidth: '90%', maxHeight: '90%', objectFit: 'contain',
-            borderRadius: '10px', boxShadow: '0 0 20px rgba(255, 255, 255, 0.5)'
-        });
-        hintOverlay.appendChild(hintImg);
-        document.body.appendChild(hintOverlay);
-        setTimeout(() => hintOverlay.style.opacity = '1', 50);
-        setTimeout(() => {
-            hintOverlay.style.opacity = '0';
-            hintOverlay.addEventListener('transitionend', () => hintOverlay.remove(), { once: true });
-        }, 3000);
-    }
-
-    function checkWinCondition() {
-        const currentOrderDOM = Array.from(gameBoard.querySelectorAll('.puzzle-piece'));
-        let isSolved = true;
-        for (let i = 0; i < currentOrderDOM.length; i++) {
-            if (parseInt(currentOrderDOM[i].dataset.originalIndex) !== i) {
-                isSolved = false;
-                break;
+    function swapPieces(p1, p2) {
+        const parent = p1.parentNode;
+        const p2Next = p2.nextSibling;
+        if (p2Next === p1) {
+            parent.insertBefore(p1, p2);
+        } else {
+            parent.insertBefore(p2, p1);
+            if (p2Next) {
+                parent.insertBefore(p1, p2Next);
+            } else {
+                parent.appendChild(p1);
             }
         }
+        playSound('piecePlace');
+        updatePieceState();
+        checkWinCondition();
+    }
+    
+    async function showHint() {
+        const hintOverlay = document.createElement('div');
+        Object.assign(hintOverlay.style, { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 2000, display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: 0, transition: 'opacity 0.5s' });
+        const hintImg = document.createElement('img');
+        hintImg.src = selectedImageURL;
+        Object.assign(hintImg.style, { maxWidth: '90%', maxHeight: '90%', borderRadius: '10px', boxShadow: '0 0 30px rgba(255,255,255,0.5)' });
+        hintOverlay.appendChild(hintImg);
+        document.body.appendChild(hintOverlay);
+        setTimeout(() => hintOverlay.style.opacity = 1, 50);
+        setTimeout(() => { hintOverlay.style.opacity = 0; hintOverlay.addEventListener('transitionend', () => hintOverlay.remove()); }, 3000);
+    }
+    
+    function checkWinCondition() {
+        const currentOrderDOM = Array.from(gameBoard.querySelectorAll('.puzzle-piece'));
+        const isSolved = currentOrderDOM.every((piece, index) => parseInt(piece.dataset.originalIndex) === index);
+        
         if (isSolved) {
             stopTimer();
             playSound('win');
+            gameBoard.classList.add('solved-effect');
+            
             const confettiCanvas = document.createElement('canvas');
             confettiCanvas.id = 'confetti-canvas';
-            Object.assign(confettiCanvas.style, {
-                position: 'fixed', top: '0', left: '0', width: '100%',
-                height: '100%', zIndex: '9999', pointerEvents: 'none'
-            });
+            Object.assign(confettiCanvas.style, { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 9999, pointerEvents: 'none' });
             document.body.appendChild(confettiCanvas);
-            const confettiSettings = {
-                target: 'confetti-canvas', max: 80, size: 1, animate: true,
-                props: ['circle', 'triangle', 'square', 'line'],
-                colors: [[165, 104, 246], [230, 61, 135], [0, 199, 228], [253, 214, 126]],
-                clock: 25, start_from_zero: false, decay: 0.9,
-                width: window.innerWidth, height: window.innerHeight
-            };
-            confettiInstance = new ConfettiGenerator(confettiSettings);
+            confettiInstance = new ConfettiGenerator({ target: 'confetti-canvas' });
             confettiInstance.render();
-            gameBoard.innerHTML = '';
-            puzzlePieces.sort((a, b) => parseInt(a.dataset.originalIndex) - parseInt(b.dataset.originalIndex))
-                .forEach(piece => gameBoard.appendChild(piece));
-            gameBoard.style.gap = '0px';
-            gameBoard.style.borderColor = 'transparent';
-            gameBoard.classList.add('solved-effect');
+
             setTimeout(() => {
-                const finalTime = timerDisplay.textContent;
-                finalTimeDisplay.textContent = `Tamamlama Süreniz: ${finalTime}`;
                 gameBoard.style.display = 'none';
                 gameControls.style.display = 'none';
-                if (confettiInstance) {
-                    confettiInstance.clear();
-                    confettiCanvas.remove();
-                    confettiInstance = null;
-                }
+                finalTimeDisplay.textContent = `Tamamlama Süreniz: ${timerDisplay.textContent}`;
                 winScreen.style.display = 'block';
-            }, 6000);
+            }, 2000);
         }
     }
 
-    footer.style.display = 'block';
-    loadCategories();
-    updatePieceOptions();
+    // === UYGULAMAYI BAŞLATMA ===
+    function initialize() {
+        createDifficultyButtons();
+        createCategoryCards();
+        checkSelections();
+        footer.style.display = 'block';
+    }
+
+    initialize();
 });
