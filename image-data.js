@@ -1,320 +1,94 @@
 const imageCategories = {
-    "Doğa ve Manzara": [
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara20.jpg"
-    ],
-    "Hayvanlar": [
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar20.jpg"
-    ],
-   
-   
-  
-
-    "Araçlar": [
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/araclar/araclar20.jpg"
-    ],
-    "Bitkiler ve Çiçekler": [
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler20.jpg"
-    ],
-    "Deniz Yaşamı": [
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/deniz/deniz20.jpg"
-    ],
-    
- 
-    "Hobiler": [
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler20.jpg"
-    ],
-    
-   
-    "Bilim": [
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/bilim/bilim20.jpg"
-    ],
-    "Kişiler ve Portreler": [
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler20.jpg"
-    ],
-    "Kış Manzaraları": [
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari20.jpg"
-    ],
-    "Fantastik ve Hayali": [
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik20.jpg"
-    ],
-  
-    "Çizgi Filmler": [
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler20.jpg"
-    ],
-   
-    "Meyveler ve Sebzeler": [
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze20.jpg"
-    ],
-    "Masallar": [
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/masallar/masallar20.jpg"
-    ],
-    "Meslekler": [
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler01.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler02.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler03.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler04.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler05.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler06.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler07.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler08.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler09.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler10.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler11.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler12.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler13.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler14.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler15.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler16.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler17.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler18.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler19.jpg",
-        "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler20.jpg"
-    ]
+    "Doğa ve Manzara": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara01.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara02.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara03.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara04.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara05.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara06.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara07.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara08.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara09.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara10.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara11.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara12.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara13.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara14.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara15.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara16.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara17.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara18.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara19.jpg", "https://sozcelyk43.github.io/bozyap/images/dogamanzara/dogamanzara20.jpg"
+        ]
+    },
+    "Hayvanlar": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar01.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar02.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar03.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar04.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar05.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar06.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar07.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar08.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar09.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar10.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar11.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar12.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar13.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar14.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar15.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar16.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar17.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar18.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar19.jpg", "https://sozcelyk43.github.io/bozyap/images/hayvanlar/hayvanlar20.jpg"
+        ]
+    },
+    "Araçlar": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/araclar/araclar01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/araclar/araclar01.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar02.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar03.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar04.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar05.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar06.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar07.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar08.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar09.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar10.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar11.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar12.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar13.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar14.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar15.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar16.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar17.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar18.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar19.jpg", "https://sozcelyk43.github.io/bozyap/images/araclar/araclar20.jpg"
+        ]
+    },
+    "Bitkiler ve Çiçekler": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler01.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler02.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler03.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler04.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler05.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler06.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler07.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler08.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler09.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler10.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler11.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler12.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler13.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler14.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler15.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler16.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler17.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler18.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler19.jpg", "https://sozcelyk43.github.io/bozyap/images/bitkiler/bitkiler20.jpg"
+        ]
+    },
+    "Deniz Yaşamı": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/deniz/deniz01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/deniz/deniz01.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz02.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz03.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz04.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz05.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz06.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz07.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz08.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz09.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz10.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz11.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz12.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz13.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz14.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz15.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz16.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz17.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz18.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz19.jpg", "https://sozcelyk43.github.io/bozyap/images/deniz/deniz20.jpg"
+        ]
+    },
+    "Hobiler": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler01.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler02.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler03.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler04.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler05.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler06.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler07.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler08.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler09.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler10.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler11.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler12.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler13.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler14.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler15.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler16.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler17.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler18.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler19.jpg", "https://sozcelyk43.github.io/bozyap/images/hobiler/hobiler20.jpg"
+        ]
+    },
+    "Bilim": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/bilim/bilim01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/bilim/bilim01.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim02.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim03.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim04.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim05.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim06.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim07.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim08.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim09.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim10.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim11.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim12.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim13.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim14.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim15.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim16.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim17.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim18.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim19.jpg", "https://sozcelyk43.github.io/bozyap/images/bilim/bilim20.jpg"
+        ]
+    },
+    "Kişiler ve Portreler": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler01.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler02.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler03.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler04.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler05.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler06.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler07.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler08.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler09.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler10.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler11.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler12.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler13.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler14.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler15.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler16.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler17.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler18.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler19.jpg", "https://sozcelyk43.github.io/bozyap/images/kisiler/kisiler20.jpg"
+        ]
+    },
+    "Kış Manzaraları": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari01.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari02.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari03.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari04.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari05.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari06.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari07.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari08.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari09.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari10.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari11.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari12.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari13.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari14.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari15.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari16.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari17.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari18.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari19.jpg", "https://sozcelyk43.github.io/bozyap/images/kismanzaralari/kismanzaralari20.jpg"
+        ]
+    },
+    "Fantastik ve Hayali": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik01.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik02.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik03.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik04.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik05.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik06.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik07.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik08.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik09.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik10.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik11.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik12.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik13.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik14.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik15.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik16.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik17.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik18.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik19.jpg", "https://sozcelyk43.github.io/bozyap/images/fantastik/fantastik20.jpg"
+        ]
+    },
+    "Çizgi Filmler": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler01.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler02.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler03.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler04.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler05.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler06.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler07.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler08.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler09.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler10.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler11.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler12.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler13.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler14.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler15.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler16.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler17.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler18.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler19.jpg", "https://sozcelyk43.github.io/bozyap/images/cizgifilmler/cizgifilmler20.jpg"
+        ]
+    },
+    "Meyveler ve Sebzeler": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze01.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze02.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze03.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze04.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze05.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze06.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze07.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze08.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze09.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze10.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze11.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze12.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze13.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze14.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze15.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze16.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze17.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze18.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze19.jpg", "https://sozcelyk43.github.io/bozyap/images/meyvesebze/meyvesebze20.jpg"
+        ]
+    },
+    "Masallar": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/masallar/masallar01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/masallar/masallar01.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar02.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar03.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar04.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar05.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar06.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar07.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar08.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar09.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar10.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar11.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar12.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar13.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar14.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar15.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar16.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar17.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar18.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar19.jpg", "https://sozcelyk43.github.io/bozyap/images/masallar/masallar20.jpg"
+        ]
+    },
+    "Meslekler": {
+        "kapakResmi": "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler01.jpg",
+        "resimListesi": [
+            "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler01.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler02.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler03.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler04.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler05.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler06.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler07.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler08.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler09.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler10.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler11.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler12.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler13.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler14.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler15.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler16.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler17.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler18.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler19.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler20.jpg"
+        ]
+    }
+    // Not: Normalde projenizde daha fazla kategori vardı.
+    // Şimdilik sadece dolu olduğunu belirttiğiniz kategorileri ekledim.
+    // Diğerlerini de bu formatta ekleyebilirsiniz.
+    // Örnek:
+    // "Şehirler ve Mimari": {
+    //     "kapakResmi": "https://...",
+    //     "resimListesi": ["https://...", "https://..."]
+    // },
 };
