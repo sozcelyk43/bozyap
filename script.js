@@ -28,12 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let hintUsed = false;
     let confettiInstance = null;
 
-    const difficulties = [
-        { name: 'Çok Kolay', pieces: '3x2', cols: 3, rows: 2 },
-        { name: 'Kolay', pieces: '4x3', cols: 4, rows: 3 },
-        { name: 'Orta', pieces: '5x4', cols: 5, rows: 4 },
-        { name: 'Zor', pieces: '6x4', cols: 6, rows: 4 },
-        { name: 'Çok Zor', pieces: '7x5', cols: 7, rows: 5 }
+const difficulties = [
+        { name: 'Çok Kolay', pieces: '3x2', cols: 3, rows: 2, icon: '🧩' },
+        { name: 'Kolay', pieces: '4x3', cols: 4, rows: 3, icon: '🧩🧩' },
+        { name: 'Orta', pieces: '5x4', cols: 5, rows: 4, icon: '🧩🧩🧩' },
+        { name: 'Zor', pieces: '6x4', cols: 6, rows: 4, icon: '🧩🧩🧩🧩' },
+        { name: 'Çok Zor', pieces: '7x5', cols: 7, rows: 5, icon: '🧩🧩🧩🧩🧩' }
     ];
 
     // === SES FONKSİYONLARI ===
