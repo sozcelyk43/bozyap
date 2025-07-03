@@ -21,12 +21,14 @@
             <div class="category-options">
                 </div>
             <button id="startGameButton" disabled>Oyuna Başla</button>
+            <button id="leaderboardButton" class="menu-extra-button">En İyi Zamanlar</button>
         </div>
 
         <div class="game-board" id="gameBoard"></div>
 
         <div class="game-controls">
             <div id="timer" class="timer">00:00</div>
+            <button id="previewButton" class="hint-button">Önizleme</button>
             <button id="hintButton" class="hint-button">İpucu Al</button>
             <button id="mainMenuFromGame" class="hint-button">Ana Menüye Dön</button>
         </div>
@@ -42,6 +44,33 @@
             <p id="finalTime">Tamamlama Süreniz: 00:00</p>
             <button id="playAgainButton">Tekrar Oyna</button>
             <button id="mainMenuButton">Ana Menü</button>
+        </div>
+
+        <div class="overlay-screen" id="continuePrompt" style="display: none;">
+            <div class="overlay-content">
+                <h2>Kaydedilmiş Bir Oyun Bulundu!</h2>
+                <p>Kaldığınız yerden devam etmek ister misiniz?</p>
+                <div class="overlay-buttons">
+                    <button id="continueYes">Evet, Devam Et</button>
+                    <button id="continueNo">Hayır, Yeni Oyun</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="overlay-screen" id="leaderboardScreen" style="display: none;">
+            <div class="overlay-content">
+                <h2>En İyi Zamanlar</h2>
+                <div id="leaderboardContent">
+                    </div>
+                <div class="overlay-buttons">
+                    <button id="closeLeaderboard">Kapat</button>
+                    <button id="clearScores" class="danger-button">Skorları Temizle</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="previewContainer" class="preview-container" style="display: none;">
+             <img id="previewImage" src="" alt="Önizleme">
         </div>
     </div>
 
