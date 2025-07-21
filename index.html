@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <link rel="icon" href="/favicon.png" type="image/png" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boz Yap - Puzzle Oyunu</title>
@@ -9,74 +8,119 @@
     <script src="https://cdn.jsdelivr.net/npm/confetti-js@0.0.18/dist/index.min.js"></script>
 </head>
 <body>
-    <div class="game-container">
-        <h1 id="gameTitle">Boz Yap</h1>
-        
-        <div class="selection-screen" id="selectionScreen">
-            <p>Zorluk Seviyesi Seçin:</p>
-            <div class="piece-options">
-                </div>
+<div class="game-container">
+    <h1 id="gameTitle">Boz Yap</h1>
 
-            <p>Resim Kategorisi Seçin:</p>
-            <div class="category-options">
-                </div>
+    <div class="selection-screen" id="selectionScreen">
+        <p>Zorluk Seviyesi Seçin:</p>
+        <div class="piece-options">
+        </div>
+
+        <p>Resim Kategorisi Seçin:</p>
+        <div class="category-options">
+        </div>
+        <div class="main-buttons-container">
             <button id="startGameButton" disabled>Oyuna Başla</button>
-            <button id="leaderboardButton" class="menu-extra-button">En İyi Zamanlar</button>
+            <button id="quickStartButton">Hızlı Başla</button>
+            <button id="leaderboardButton">En İyi Zamanlar</button>
         </div>
+    </div>
 
-        <div class="game-board" id="gameBoard"></div>
+    <div class="game-board" id="gameBoard"></div>
 
-        <div class="game-controls">
-            <div id="timer" class="timer">00:00</div>
-            <button id="previewButton" class="hint-button">Önizleme</button>
-            <button id="hintButton" class="hint-button">İpucu Al</button>
-            <button id="mainMenuFromGame" class="hint-button">Ana Menüye Dön</button>
-        </div>
-        
-        <div class="loading-overlay" id="loadingOverlay">
-            <div class="spinner"></div>
-            <p>Yapboz Hazırlanıyor...</p>
-        </div>
+    <div class="game-controls" id="gameControls">
+        <div id="timer" class="timer">00:00</div>
+        <button id="hintButton">Önizleme</button>
+        <button id="mainMenuFromGame">Ana Menüye Dön</button>
+    </div>
 
-        <div class="win-screen" id="winScreen">
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Yapboz Hazırlanıyor...</p>
+    </div>
+
+    <div class="win-screen" id="winScreen">
+        <div class="overlay-content">
             <h2>Tebrikler!</h2>
             <p>Yapbozu başarıyla tamamladınız!</p>
             <p id="finalTime">Tamamlama Süreniz: 00:00</p>
-            <button id="playAgainButton">Tekrar Oyna</button>
-            <button id="mainMenuButton">Ana Menü</button>
-        </div>
-
-        <div class="overlay-screen" id="continuePrompt" style="display: none;">
-            <div class="overlay-content">
-                <h2>Kaydedilmiş Bir Oyun Bulundu!</h2>
-                <p>Kaldığınız yerden devam etmek ister misiniz?</p>
-                <div class="overlay-buttons">
-                    <button id="continueYes">Evet, Devam Et</button>
-                    <button id="continueNo">Hayır, Yeni Oyun</button>
-                </div>
+            <div class="overlay-buttons">
+                <button id="playAgainButton">Tekrar Oyna</button>
+                <button id="mainMenuButton">Ana Menü</button>
             </div>
         </div>
+    </div>
 
-        <div class="overlay-screen" id="leaderboardScreen" style="display: none;">
-            <div class="overlay-content">
-                <h2>En İyi Zamanlar</h2>
-                <div id="leaderboardContent">
-                    </div>
-                <div class="overlay-buttons">
-                    <button id="closeLeaderboard">Kapat</button>
-                    <button id="clearScores" class="danger-button">Skorları Temizle</button>
-                </div>
+    <div class="overlay-screen" id="continuePrompt">
+        <div class="overlay-content">
+            <h2>Kaydedilmiş Bir Oyun Bulundu!</h2>
+            <p>Kaldığınız yerden devam etmek ister misiniz?</p>
+            <div class="overlay-buttons">
+                <button id="continueYes">Evet, Devam Et</button>
+                <button id="continueNo">Hayır, Yeni Oyun</button>
             </div>
         </div>
+    </div>
 
-        <div id="previewContainer" class="preview-container" style="display: none;">
-             <img id="previewImage" src="" alt="Önizleme">
+    <div class="overlay-screen" id="leaderboardScreen">
+        <div class="overlay-content">
+            <h2>En İyi Zamanlar</h2>
+            <div id="leaderboardContent">
+            </div>
+            <div class="overlay-buttons">
+                <button id="closeLeaderboard">Kapat</button>
+                <button id="clearScores" class="danger-button">Skorları Temizle</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay-screen" id="confirmClearScores">
+        <div class="overlay-content">
+            <h2>Skorları Temizle</h2>
+            <p>Tüm skor tablosunu kalıcı olarak silmek istediğinizden emin misiniz?</p>
+            <div class="overlay-buttons">
+                <button id="confirmClearYes" class="danger-button">Evet, Sil</button>
+                <button id="confirmClearNo">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay-screen" id="customAlert">
+        <div class="overlay-content">
+            <h2 id="customAlertTitle">Uyarı</h2>
+            <p id="customAlertMessage"></p>
+            <div class="overlay-buttons">
+                <button id="customAlertOk">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay-screen" id="exitGameConfirm">
+        <div class="overlay-content">
+            <h2>Ana Menüye Dön</h2>
+            <p>İlerlemeniz kaydedilecek. Ana menüye dönmek istediğinizden emin misiniz?</p>
+            <div class="overlay-buttons">
+                <button id="exitGameYes">Evet</button>
+                <button id="exitGameNo">Hayır</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay-screen" id="quitAppConfirm">
+        <div class="overlay-content">
+            <h2>Oyundan Çık</h2>
+            <p>Oyundan çıkmak istediğinizden emin misiniz?</p>
+            <div class="overlay-buttons">
+                <button id="quitAppYes" class="danger-button">Evet, Çık</button>
+                <button id="quitAppNo">Hayır</button>
+            </div>
         </div>
     </div>
 
     <footer>Ozcelik Inc. 2025</footer>
+</div>
 
-    <script src="image-data.js"></script>
-    <script src="script.js"></script>
+<script src="image-data.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

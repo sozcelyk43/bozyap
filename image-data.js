@@ -89,12 +89,4 @@ const imageCategories = {
             "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler01.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler02.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler03.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler04.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler05.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler06.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler07.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler08.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler09.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler10.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler11.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler12.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler13.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler14.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler15.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler16.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler17.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler18.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler19.jpg", "https://sozcelyk43.github.io/bozyap/images/meslekler/meslekler20.jpg"
         ]
     }
-    // Not: Normalde projenizde daha fazla kategori vardı.
-    // Şimdilik sadece dolu olduğunu belirttiğiniz kategorileri ekledim.
-    // Diğerlerini de bu formatta ekleyebilirsiniz.
-    // Örnek:
-    // "Şehirler ve Mimari": {
-    //     "kapakResmi": "https://...",
-    //     "resimListesi": ["https://...", "https://..."]
-    // },
 };
