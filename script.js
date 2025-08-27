@@ -52,21 +52,44 @@ document.addEventListener('DOMContentLoaded', () => {
     let confettiInstance = null;
 
     const difficulties = [
-        { name: 'Çok Kolay', pieces: '3x2', cols: 3, rows: 2 },
-        { name: 'Kolay', pieces: '4x3', cols: 4, rows: 3 },
-        { name: 'Orta', pieces: '5x4', cols: 5, rows: 4 },
-        { name: 'Zor', pieces: '6x4', cols: 6, rows: 4 },
-        { name: 'Çok Zor', pieces: '7x5', cols: 7, rows: 5 }
+        { name: 'Çok Kolay', pieces: '2x4', cols: 2, rows: 4 },
+        { name: 'Kolay', pieces: '3x5', cols: 3, rows: 5 },
+        { name: 'Orta', pieces: '3x6', cols: 3, rows: 6 },
+        { name: 'Zor', pieces: '4x8', cols: 4, rows: 8 },
+        { name: 'Çok Zor', pieces: '5x10', cols: 5, rows: 9 }
     ];
+
+    let isAudioContextResumed = false;
+    document.body.addEventListener('click', resumeAudioContext, { once: true });
+    document.body.addEventListener('touchend', resumeAudioContext, { once: true });
+
+    function resumeAudioContext() {
+        if (!isAudioContextResumed && audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+        isAudioContextResumed = true;
+    }
+
+    function playSound(name) {
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+        if (sounds[name]) {
+            const source = audioContext.createBufferSource();
+            source.buffer = sounds[name];
+            source.connect(audioContext.destination);
+            source.start(0);
+        }
+    }
 
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sounds = {};
     function loadSound(name, url) { fetch(url).then(response => response.arrayBuffer()).then(buffer => audioContext.decodeAudioData(buffer)).then(decodedData => { sounds[name] = decodedData; }).catch(e => console.error(`Ses dosyası yüklenemedi: ${name}`, e)); }
     function playSound(name) { if (sounds[name]) { const source = audioContext.createBufferSource(); source.buffer = sounds[name]; source.connect(audioContext.destination); source.start(0); } }
-    loadSound('pieceMove', 'sounds/button-1.mp3');
-    loadSound('piecePlace', 'sounds/button-2.mp3');
-    loadSound('win', 'sounds/success-1.mp3');
-    loadSound('hint', 'sounds/button-3.mp3');
+    loadSound('pieceMove', 'sounds/button1.mp3');
+    loadSound('piecePlace', 'sounds/button2.mp3');
+    loadSound('win', 'sounds/success1.mp3');
+    loadSound('hint', 'sounds/button3.mp3');
 
     function showAlert(message, title = 'Uyarı') {
         customAlertTitle.textContent = title;
@@ -80,16 +103,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const button = document.createElement('button');
             button.classList.add('level-button');
 
-            // Renkler için class ekleme
-            if (index < 2) { // Çok Kolay, Kolay
+            if (index < 2) {
                 button.classList.add('easy');
-            } else if (index < 3) { // Orta
+            } else if (index < 3) {
                 button.classList.add('medium');
-            } else { // Zor, Çok Zor
+            } else {
                 button.classList.add('hard');
             }
 
-            button.textContent = level.name;
+            button.innerHTML = `${level.name}<br><small>(${level.pieces})</small>`;
             button.addEventListener('click', () => {
                 gameState.difficulty = level;
                 document.querySelectorAll('.level-button').forEach(btn => btn.classList.remove('selected'));
@@ -214,23 +236,68 @@ document.addEventListener('DOMContentLoaded', () => {
             img.onerror = reject;
         });
 
+        // --- YENİ EKLENEN KOD BAŞLANGICI ---
+
+        // 1. Oyun alanının en-boy oranını JS ile dinamik olarak ayarla
         gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-        const pieceWidth = img.width / cols;
-        const pieceHeight = img.height / rows;
+        gameBoard.style.aspectRatio = `${cols} / ${rows}`;
+
+        // 2. Resmin ve hedef yapboz gridinin en-boy oranlarını hesapla
+        const imageAspectRatio = img.width / img.height;
+        const gridAspectRatio = cols / rows;
+
+        let sx = 0, sy = 0, sWidth = img.width, sHeight = img.height;
+
+        // 3. Orijinal resmi, yapboz gridine uyacak şekilde KIRPMA HESAPLAMALARI
+        // Eğer resim, gridden daha genişse (ör: 16:9 resmi 4:3 gride sığdırmak)
+        if (imageAspectRatio > gridAspectRatio) {
+            sWidth = img.height * gridAspectRatio; // Genişliği kırp
+            sx = (img.width - sWidth) / 2; // Ortalamak için başlangıç x pozisyonunu ayarla
+        }
+        // Eğer resim, gridden daha yüksekse (ör: dikey bir resmi 4:3 gride sığdırmak)
+        else if (imageAspectRatio < gridAspectRatio) {
+            sHeight = img.width / gridAspectRatio; // Yüksekliği kırp
+            sy = (img.height - sHeight) / 2; // Ortalamak için başlangıç y pozisyonunu ayarla
+        }
+
+        // 4. Her bir KARE parçanın boyutunu hesapla (kırpılmış alana göre)
+        const pieceSourceWidth = sWidth / cols;
+        const pieceSourceHeight = sHeight / rows;
+
+        // Kanvaslar için sabit bir çözünürlük belirleyelim (kalite için)
+        const canvasSize = 200;
 
         for (let i = 0; i < cols * rows; i++) {
             const pieceDiv = document.createElement('div');
             pieceDiv.classList.add('puzzle-piece');
             pieceDiv.setAttribute('draggable', 'true');
             pieceDiv.dataset.originalIndex = i;
+
             const canvas = document.createElement('canvas');
-            canvas.width = pieceWidth;
-            canvas.height = pieceHeight;
+            // Her kanvas kare olacak
+            canvas.width = canvasSize;
+            canvas.height = canvasSize;
+
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, (i % cols) * pieceWidth, Math.floor(i / cols) * pieceHeight, pieceWidth, pieceHeight, 0, 0, pieceWidth, pieceHeight);
+
+            // 5. drawImage'in 9 parametreli versiyonunu kullanarak KIRPILMIŞ alandan parçayı çiz
+            // Kaynak resim (img) üzerindeki kırpılmış bölgeden (sx, sy, sWidth, sHeight) ilgili parçayı al
+            // ve hedef kanvasa (canvas) tam boyutunda (0, 0, canvasSize, canvasSize) çiz.
+            const sourceX = sx + (i % cols) * pieceSourceWidth;
+            const sourceY = sy + Math.floor(i / cols) * pieceSourceHeight;
+
+            ctx.drawImage(
+                img,
+                sourceX, sourceY,           // Kaynak resimdeki parçanın başlangıç (x, y) noktası
+                pieceSourceWidth, pieceSourceHeight, // Kaynak resimden alınacak parçanın genişlik ve yüksekliği
+                0, 0,                       // Kanvas üzerinde çizime başlanacak (x, y) noktası
+                canvasSize, canvasSize      // Kanvas üzerine çizilecek resmin genişlik ve yüksekliği
+            );
+
             pieceDiv.appendChild(canvas);
             puzzlePieces.push(pieceDiv);
         }
+        // --- YENİ EKLENEN KOD SONU ---
 
         const savedState = fromSave ? getSavedGame() : null;
         if (savedState && savedState.pieceOrder) {
@@ -253,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
             puzzlePieces.forEach(piece => gameBoard.appendChild(piece));
         }
 
-        addDragDropListeners();
+addMouseListeners();
         addTouchListeners();
         updatePieceState();
         if (!fromSave) saveGameState();
@@ -279,10 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPieces.forEach((piece, index) => {
             if (parseInt(piece.dataset.originalIndex) === index) {
                 piece.classList.add('locked');
-                piece.setAttribute('draggable', 'false');
             } else {
                 piece.classList.remove('locked');
-                piece.setAttribute('draggable', 'true');
             }
         });
     }
@@ -370,57 +435,206 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let draggedItem = null;
-let draggingHand; // Yeni değişken
+let draggingHand;
+
+
+// --- YENİ FARE İLE SÜRÜKLEME SİSTEMİ (KESİN ÇÖZÜM) ---
+
+let currentDraggedPiece = null;
+
+// Bu fonksiyon, fare olay dinleyicilerini ekler.
+function addMouseListeners() {
+    const pieces = gameBoard.querySelectorAll('.puzzle-piece');
+    pieces.forEach(piece => {
+        piece.addEventListener('mousedown', onMouseDown);
+    });
+}
+
+// ---- onMouseDown fonksiyonunun tamamını bununla değiştirin ----
+function onMouseDown(e) {
+    if (e.button !== 0 || this.classList.contains('locked')) return;
+    e.preventDefault();
+
+    document.body.classList.add('is-dragging');
+    currentDraggedPiece = this;
+    this.classList.add('dragging'); // Orijinal parçayı şeffaflaştırır
+
+    // --- Taşıma Hayaletini (Klon Parça + Yumruk) Oluştur ---
+    draggingHand = document.createElement('div');
+    Object.assign(draggingHand.style, {
+        position: 'fixed',
+        pointerEvents: 'none',
+        zIndex: '2000',
+        transform: 'translate(-50%, -50%)' // Hayaleti fare imlecine ortalar
+    });
+
+    // Parçanın görsel kopyasını (canvas) oluştur
+    const canvasClone = this.querySelector('canvas').cloneNode(true);
 
 
 
+const originalCanvas = this.querySelector('canvas');
+canvasClone.getContext('2d').drawImage(originalCanvas, 0, 0);
+    const pieceRect = this.getBoundingClientRect();
+    canvasClone.style.width = `${pieceRect.width}px`;
+    canvasClone.style.height = `${pieceRect.height}px`;
+    canvasClone.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.4)';
+    canvasClone.style.display = 'block';
 
-    function addDragDropListeners() { const pieces = gameBoard.querySelectorAll('.puzzle-piece'); pieces.forEach(piece => { piece.addEventListener('dragstart', dragStart); piece.addEventListener('dragenter', dragEnter); piece.addEventListener('dragleave', dragLeave); piece.addEventListener('dragover', dragOver); piece.addEventListener('drop', dragDrop); piece.addEventListener('dragend', dragEnd); }); }
+    // Yumruk emojisini oluştur
+    const fistElement = document.createElement('span');
+    fistElement.textContent = '✊';
+    Object.assign(fistElement.style, {
+        position: 'absolute',
+        right: '0px',
+        bottom: '0px',
+        fontSize: '28px',
+        // Yumruğu parçanın sağ alt köşesindeymiş gibi gösterir
+        transform: 'translate(25%, 25%)',
+        textShadow: '0 0 5px black'
+    });
 
-    function dragEnter(e) { e.preventDefault(); if (this.classList.contains('locked') || this === draggedItem) { return; } this.classList.add('drag-over'); }
-    function dragDrop() { this.classList.remove('drag-over'); if (this.classList.contains('locked')) { return; } if (draggedItem && draggedItem !== this) { swapPieces(draggedItem, this); } }
-    function dragStart(e) {
-        if (this.classList.contains('locked')) { e.preventDefault(); return; }
-        draggedItem = this;
+    // Yumruğu parçanın üzerine konumlandırmak için bir sarmalayıcı kullan
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'relative';
+    wrapper.appendChild(canvasClone);
+    wrapper.appendChild(fistElement);
+
+    // Tamamlanmış hayaleti ana taşıyıcıya ekle
+    draggingHand.appendChild(wrapper);
+    document.body.appendChild(draggingHand);
+
+    updateHandPosition(e); // Hayaleti ilk konumuna getir
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+
+    playSound('pieceMove');
+}
+
+
+function onMouseMove(e) {
+    if (!currentDraggedPiece) return;
+    
+    // YUMRUK EMOJİSİNİ FARENİN KONUMUNA GÜNCELLE
+    updateHandPosition(e);
+
+    // Üzerinden geçilen parçayı vurgula
+    const targetPiece = document.elementFromPoint(e.clientX, e.clientY)?.closest('.puzzle-piece');
+    document.querySelectorAll('.puzzle-piece.drag-over').forEach(p => p.classList.remove('drag-over'));
+    if (targetPiece && !targetPiece.classList.contains('locked') && targetPiece !== currentDraggedPiece) {
+        targetPiece.classList.add('drag-over');
+    }
+}
+
+// Farenin tuşu bırakıldığında
+function onMouseUp(e) {
+    if (!currentDraggedPiece) return;
+
+    // Yumruk emojisini animasyonla kaldır
+    if (draggingHand) {
+        draggingHand.textContent = '🖐️'; // Bırakırken açık el olsun
+        draggingHand.style.animation = 'releaseHand 0.5s ease-out forwards';
         setTimeout(() => {
-            this.classList.add('dragging');
-        }, 0);
-        playSound('pieceMove');
+            if (draggingHand) draggingHand.remove();
+            draggingHand = null;
+        }, 500);
+    }
+    
+    const targetPiece = document.elementFromPoint(e.clientX, e.clientY)?.closest('.puzzle-piece');
+    if (targetPiece && !targetPiece.classList.contains('locked') && targetPiece !== currentDraggedPiece) {
+        swapPieces(targetPiece, currentDraggedPiece);
     }
 
-    function dragEnd() {
-        this.classList.remove('dragging');
-        document.querySelectorAll('.puzzle-piece').forEach(p => p.classList.remove('drag-over'));
-    }
-    function dragOver(e) { e.preventDefault(); }
-    function dragLeave() { this.classList.remove('drag-over'); }
+    // Tüm stilleri ve dinleyicileri temizle
+    currentDraggedPiece.classList.remove('dragging');
+    document.querySelectorAll('.puzzle-piece.drag-over').forEach(p => p.classList.remove('drag-over'));
+    
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+    document.body.classList.remove('is-dragging');
+
+    currentDraggedPiece = null;
+}
+
+
+
+
+
+
 
     let currentTouchPiece = null;
     function addTouchListeners() { const pieces = gameBoard.querySelectorAll('.puzzle-piece'); pieces.forEach(piece => { piece.addEventListener('touchstart', touchStart, { passive: false }); piece.addEventListener('touchmove', touchMove, { passive: false }); piece.addEventListener('touchend', touchEnd, { passive: false }); }); }
-    function touchStart(e) {
-        if (this.classList.contains('locked')) return;
-        e.preventDefault();
-        currentTouchPiece = this;
-        this.classList.add('dragging');
 
-        // El işareti oluştur ve konumlandır
-        draggingHand = document.createElement('div');
-        draggingHand.classList.add('dragging-hand');
-        draggingHand.textContent = '✊';
-        Object.assign(draggingHand.style, {
-            position: 'fixed',
-            fontSize: '30px',
-            color: 'white',
-            textShadow: '0 0 5px black',
-            opacity: '0.9',
-            pointerEvents: 'none',
-            zIndex: '101' // Puzzle parçasının üstünde
-        });
-        document.body.appendChild(draggingHand);
-        updateHandPosition(e.touches ? e.touches.item(0) : e);
 
-        playSound('pieceMove');
-    }
+
+
+
+// ---- touchStart fonksiyonunun tamamını bununla değiştirin ----
+function touchStart(e) {
+    if (this.classList.contains('locked')) return;
+    e.preventDefault();
+
+    document.body.classList.add('is-dragging');
+    currentTouchPiece = this;
+    this.classList.add('dragging'); // Orijinal parçayı şeffaflaştırır
+
+    // --- Taşıma Hayaletini (Klon Parça + Yumruk) Oluştur ---
+    draggingHand = document.createElement('div');
+    Object.assign(draggingHand.style, {
+        position: 'fixed',
+        pointerEvents: 'none',
+        zIndex: '2000',
+        transform: 'translate(-50%, -50%)' // Hayaleti parmak ucuna ortalar
+    });
+
+    // Parçanın görsel kopyasını (canvas) oluştur
+    const canvasClone = this.querySelector('canvas').cloneNode(true);
+const originalCanvas = this.querySelector('canvas');
+canvasClone.getContext('2d').drawImage(originalCanvas, 0, 0);
+    const pieceRect = this.getBoundingClientRect();
+    canvasClone.style.width = `${pieceRect.width}px`;
+    canvasClone.style.height = `${pieceRect.height}px`;
+    canvasClone.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.4)';
+    canvasClone.style.display = 'block';
+
+    // Yumruk emojisini oluştur
+    const fistElement = document.createElement('span');
+    fistElement.textContent = '✊';
+    Object.assign(fistElement.style, {
+        position: 'absolute',
+        right: '0px',
+        bottom: '0px',
+        fontSize: '28px',
+        // Yumruğu parçanın sağ alt köşesindeymiş gibi gösterir
+        transform: 'translate(25%, 25%)',
+        textShadow: '0 0 5px black'
+    });
+
+    // Yumruğu parçanın üzerine konumlandırmak için bir sarmalayıcı kullan
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'relative';
+    wrapper.appendChild(canvasClone);
+    wrapper.appendChild(fistElement);
+
+    // Tamamlanmış hayaleti ana taşıyıcıya ekle
+    draggingHand.appendChild(wrapper);
+    document.body.appendChild(draggingHand);
+
+    updateHandPosition(e.touches ? e.touches.item(0) : e); // Hayaleti ilk konumuna getir
+
+    playSound('pieceMove');
+}
+
+
+
+
+
+
+
+
+
+
 
     function touchMove(e) {
         if (!currentTouchPiece) return;
@@ -469,6 +683,7 @@ let draggingHand; // Yeni değişken
         if (targetPiece && !targetPiece.classList.contains('locked') && targetPiece !== currentTouchPiece) {
             swapPieces(targetPiece, currentTouchPiece);
         }
+    document.body.classList.remove('is-dragging');
 
         currentTouchPiece = null;
     }

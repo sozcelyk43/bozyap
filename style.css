@@ -126,7 +126,7 @@ h1 {
 }
 .category-card:disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(80%); }
 .category-card:disabled:hover { transform: none; border-color: transparent; }
-.category-card img { width: 100%; height: 40px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
+.category-card img { width: 100%; height: 60px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
 .category-card span { font-weight: 600; font-size: 0.8em; color: var(--text-color); }
 
 .main-buttons-container {
@@ -169,7 +169,6 @@ h1 {
     background-color: rgba(44, 62, 80, 0.6);
     max-width: 800px;
     width: 100%;
-    aspect-ratio: 4 / 3;
 }
 .puzzle-piece {
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -197,7 +196,6 @@ h1 {
 #hintButton { color: var(--primary-accent); }
 #mainMenuFromGame { color: var(--danger-color); }
 
-/* --- Overlay Pencereleri --- */
 .win-screen, .loading-overlay, .overlay-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 15px; box-sizing: border-box; }
 .loading-overlay, .win-screen { position: absolute; border-radius: 20px; }
 .overlay-content { background-color: var(--primary-bg); padding: 30px 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; border: 1px solid var(--border-color); width: 100%; max-width: 500px; }
@@ -207,15 +205,13 @@ h1 {
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 footer { display: none; }
 
-/* --- Sürükleme Efektleri ve İmleçler --- */
 .puzzle-piece[draggable="true"] { cursor: grab; }
 .puzzle-piece.dragging { cursor: grabbing; transform: scale(1.05); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); z-index: 100; }
 @media (hover: none) and (pointer: coarse) {
-    .puzzle-piece.dragging::after { content: ''; } /* Emoji'yi JS ile yöneteceğimiz için CSS'ten kaldırıyoruz */
+    .puzzle-piece.dragging::after { content: ''; }
 }
 @keyframes releaseHand { from { opacity: 1; } to { opacity: 0; transform: scale(1.5); } }
 
-/* === MOBİL & TABLET EKRAN AYARLARI (MEDIA QUERIES) === */
 @media (max-width: 800px) {
     body { padding: 0; }
     .game-container { width: 100%; height: 100vh; min-height: 100vh; max-height: 100vh; border-radius: 0; padding: 15px; }
@@ -232,7 +228,6 @@ footer { display: none; }
     .game-controls #hintButton, .game-controls #mainMenuFromGame { font-size: 0.9em; padding: 12px 5px; }
 }
 
-/* === GENİŞ EKRAN BUTON DÜZENİ (ÇÖZÜM) === */
 @media (min-width: 768px) {
     .main-buttons-container {
         flex-direction: row;
@@ -244,12 +239,11 @@ footer { display: none; }
     #quickStartButton,
     #leaderboardButton {
         flex: 1;
-        width: auto; /* Genişliğin flex tarafından kontrol edilmesini sağlar */
+        width: auto;
         max-width: 300px;
     }
 }
 
-/* Zorluk Seviyesi Renkleri */
 .level-button.easy { background-color: rgba(39, 174, 96, 0.7); border-color: #27ae60; }
 .level-button.easy.selected { background-color: #2ecc71; border-color: #fff; }
 .level-button.medium { background-color: rgba(241, 196, 15, 0.7); border-color: #f39c12; }
